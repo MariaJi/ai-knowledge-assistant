@@ -1,0 +1,93 @@
+import { useState } from "react";
+import "./App.css";
+function App() {
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  async function uploadFile() {
+    if (!selectedFile) return;
+
+    setUploading(true);
+    setUploadMessage("");
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    const response = await fetch("http://127.0.0.1:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    setUploadMessage(data.message || data.error);
+	setQuestion("");
+	setAnswer("");
+    setUploading(false);
+  }
+
+  async function askAI() {
+    setLoading(true);
+    setAnswer("");
+
+    const response = await fetch("http://127.0.0.1:8000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
+    });
+
+    const data = await response.json();
+    setAnswer(data.answer);
+    setLoading(false);
+  }
+
+  return (
+    <div className="container">
+      <h1>AI Knowledge Assistant</h1>
+
+      <div className="upload-box">
+        <h2>Upload Document</h2>
+
+        <input
+          type="file"
+          accept=".txt,.pdf,.docx"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+        />
+
+        <button onClick={uploadFile} disabled={!selectedFile || uploading}>
+          {uploading ? "Uploading..." : "Upload"}
+        </button>
+
+        {uploadMessage && <p>{uploadMessage}</p>}
+      </div>
+
+      <div className="ask-box">
+        <h2>Ask Question</h2>
+
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask a question about the uploaded document..."
+        />
+
+        <button onClick={askAI} disabled={loading || !question}>
+          {loading ? "Thinking..." : "Ask AI"}
+        </button>
+      </div>
+
+      {answer && (
+        <div className="answer">
+          <h2>Answer</h2>
+          <p>{answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;

@@ -144,6 +144,32 @@ rabbitmq-data/
 # ActiveMQ
 activemq-data/
 
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Chroma vector databases
+chroma_db/
+chroma_db_*/
+
+# Temporary uploaded files
+temp_*
+
+# Frontend dependencies
+frontend/node_modules/
+frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
 # SageMath parsed files
 *.sage.py
 
