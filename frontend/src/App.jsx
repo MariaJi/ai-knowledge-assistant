@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./App.css";
+
 function App() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,16 +25,20 @@ function App() {
     });
 
     const data = await response.json();
+
     setUploadMessage(data.message || data.error);
-	setQuestion("");
-	setAnswer("");
+    setQuestion("");
+    setAnswer("");
+    setSources([]);
     setUploading(false);
   }
 
   async function askAI() {
-    setLoading(true);
-    setAnswer("");
+  setLoading(true);
+  setAnswer("");
+  setSources([]);
 
+  try {
     const response = await fetch("http://127.0.0.1:8000/ask", {
       method: "POST",
       headers: {
@@ -42,10 +48,15 @@ function App() {
     });
 
     const data = await response.json();
-    setAnswer(data.answer);
+
+    setAnswer(data.answer || data.error || "No answer returned.");
+    setSources(data.sources || []);
+  } catch (error) {
+    setAnswer("Could not connect to backend.");
+  } finally {
     setLoading(false);
   }
-
+}
   return (
     <div className="container">
       <h1>AI Knowledge Assistant</h1>
@@ -74,7 +85,9 @@ function App() {
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Ask a question about the uploaded document..."
         />
-
+		{selectedFile && (
+				<p>Selected: {selectedFile.name}</p>
+		)}
         <button onClick={askAI} disabled={loading || !question}>
           {loading ? "Thinking..." : "Ask AI"}
         </button>
@@ -84,6 +97,19 @@ function App() {
         <div className="answer">
           <h2>Answer</h2>
           <p>{answer}</p>
+
+          {sources.length > 0 && (
+            <div className="sources">
+              <h3>Sources</h3>
+
+              {sources.map((source, index) => (
+                <div key={index} className="source-card">
+                  <strong>{source.filename}</strong>
+                  <p>{source.snippet}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
