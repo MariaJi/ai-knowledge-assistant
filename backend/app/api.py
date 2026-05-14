@@ -37,7 +37,7 @@ class QuestionRequest(BaseModel):
 vector_store = None
 
 
-def create_vector_store(text):
+def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50
@@ -49,14 +49,20 @@ def create_vector_store(text):
         api_key=os.getenv("OPENAI_API_KEY")
     )
 
-    return Chroma.from_texts(
+    metadatas = [
+        {"filename": filename}
+        for _ in chunks
+    ]
+
+    vector_store = Chroma.from_texts(
         texts=chunks,
         embedding=embeddings,
-        persist_directory=f"chroma_db_{int(time.time())}",
-        collection_name=f"doc_{uuid.uuid4().hex}"
+        metadatas=metadatas,
+        persist_directory="chroma_db",
+        collection_name="documents"
     )
 
-
+    return vector_store
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     global vector_store
@@ -94,7 +100,10 @@ async def upload_file(file: UploadFile = File(...)):
     else:
         return {"error": "Only .txt, .pdf, and .docx supported"}
 
-    vector_store = create_vector_store(text)
+    vector_store = create_vector_store(
+                text,
+                file.filename
+    )
 
     return {
         "message": f"{file.filename} uploaded successfully"
@@ -134,14 +143,14 @@ async def ask_question(request: QuestionRequest):
 
     answer = response.choices[0].message.content
 
+    
     sources = [
-        {
-            "filename": "uploaded document",
-            "snippet": doc.page_content[:300]
-        }
-        for doc in docs
-    ]
-
+    {
+        "filename": doc.metadata.get("filename", "Unknown"),
+        "snippet": doc.page_content[:300]
+    }
+    for doc in docs
+]
     return {
         "answer": answer,
         "sources": sources
