@@ -37,6 +37,7 @@ class QuestionRequest(BaseModel):
 vector_store = None
 
 
+
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
         chunk_size=500,
@@ -54,12 +55,21 @@ def create_vector_store(text, filename):
         for _ in chunks
     ]
 
-    vector_store = Chroma.from_texts(
-        texts=chunks,
-        embedding=embeddings,
-        metadatas=metadatas,
+    ids = [
+        f"{filename}_{uuid.uuid4().hex}_{i}"
+        for i in range(len(chunks))
+    ]
+
+    vector_store = Chroma(
         persist_directory="chroma_db",
-        collection_name="documents"
+        collection_name="documents",
+        embedding_function=embeddings
+    )
+
+    vector_store.add_texts(
+        texts=chunks,
+        metadatas=metadatas,
+        ids=ids
     )
 
     return vector_store
