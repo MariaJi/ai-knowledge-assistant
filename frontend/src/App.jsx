@@ -37,7 +37,7 @@ function App() {
     setUploading(false);
   }
 
-  async function askAI() {
+  async function askAI_Old() {
   setLoading(true);
   setAnswer("");
   setSources([]);
@@ -66,6 +66,44 @@ function App() {
   }
 }
 
+async function askAI() {
+  setLoading(true);
+  setAnswer("");
+  setSources([]);
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/ask-stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question,
+        selected_document: selectedDocument,
+      }),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let streamedAnswer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      streamedAnswer += chunk;
+
+      setAnswer(streamedAnswer);
+    }
+  } catch (error) {
+    setAnswer("Could not connect to backend.");
+  } finally {
+    setLoading(false);
+  }
+}
   async function fetchDocuments() {
   const response = await fetch("http://127.0.0.1:8000/documents");
   const data = await response.json();

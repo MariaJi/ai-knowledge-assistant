@@ -1,7 +1,7 @@
 import os
 import uuid
 import time
-
+from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -176,7 +176,57 @@ async def ask_question(request: QuestionRequest):
         "answer": answer,
         "sources": sources
     }
-    
+@app.post("/ask-stream")
+async def ask_question_stream(request: QuestionRequest):
+    if vector_store is None:
+        return StreamingResponse(
+            iter(["Please upload a document first."]),
+            media_type="text/plain"
+        )
+
+    if request.selected_document == "all":
+        docs = vector_store.similarity_search(
+            request.question,
+            k=4
+        )
+    else:
+        docs = vector_store.similarity_search(
+            request.question,
+            k=4,
+            filter={
+                "filename": request.selected_document
+            }
+        )
+
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
+
+    def generate():
+        stream = client.chat.completions.create(
+            model="gpt-4o-mini",
+            stream=True,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Answer only from the provided document context."
+                },
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context}\n\nQuestion:\n{request.question}"
+                }
+            ]
+        )
+
+        for chunk in stream:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/plain"
+    ) 
+
 @app.get("/documents")
 async def get_documents():
     return {
