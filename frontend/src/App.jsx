@@ -9,6 +9,7 @@ function App() {
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [documents, setDocuments] = useState([]);
 
   async function uploadFile() {
     if (!selectedFile) return;
@@ -27,6 +28,7 @@ function App() {
     const data = await response.json();
 
     setUploadMessage(data.message || data.error);
+	fetchDocuments();
     setQuestion("");
     setAnswer("");
     setSources([]);
@@ -57,7 +59,13 @@ function App() {
     setLoading(false);
   }
 }
-  return (
+
+  async function fetchDocuments() {
+  const response = await fetch("http://127.0.0.1:8000/documents");
+  const data = await response.json();
+  setDocuments(data.documents || []);
+}
+ return (
     <div className="container">
       <h1>AI Knowledge Assistant</h1>
 
@@ -76,7 +84,21 @@ function App() {
 
         {uploadMessage && <p>{uploadMessage}</p>}
       </div>
+	  
+	  <div className="documents-box">
+		<h2>Uploaded Documents</h2>
 
+		{documents.length === 0 ? (
+			<p>No documents uploaded yet.</p>
+			) : (
+			<ul>
+				{documents.map((doc, index) => (
+					<li key={index}>{doc}</li>
+				))}
+			</ul>
+			)}
+	  </div>
+	  
       <div className="ask-box">
         <h2>Ask Question</h2>
 
