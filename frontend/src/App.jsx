@@ -29,6 +29,7 @@ function App() {
 
     setUploadMessage(data.message || data.error);
 	fetchDocuments();
+	setSelectedFile(null)
     setQuestion("");
     setAnswer("");
     setSources([]);
@@ -63,8 +64,29 @@ function App() {
   async function fetchDocuments() {
   const response = await fetch("http://127.0.0.1:8000/documents");
   const data = await response.json();
+  setDocuments(data.documents || []); 
+  if (selectedFile?.name === filename) {
+  setSelectedFile(null);
+}
+}
+
+async function deleteDocument(filename) {
+  const response = await fetch(
+    "http://127.0.0.1:8000/documents",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename }),
+    }
+  );
+
+  const data = await response.json();
+
   setDocuments(data.documents || []);
 }
+
  return (
     <div className="container">
       <h1>AI Knowledge Assistant</h1>
@@ -86,14 +108,23 @@ function App() {
       </div>
 	  
 	  <div className="documents-box">
-		<h2>Uploaded Documents</h2>
-
+		
+		<h2>Uploaded Documents ({documents.length})</h2>
 		{documents.length === 0 ? (
 			<p>No documents uploaded yet.</p>
 			) : (
 			<ul>
 				{documents.map((doc, index) => (
-					<li key={index}>{doc}</li>
+					<li key={index}>
+						📄 {doc}
+
+						<button
+						onClick={() => deleteDocument(doc)}
+							style={{ marginLeft: "10px" }}
+						>
+						Delete
+						</button>
+					</li>
 				))}
 			</ul>
 			)}
