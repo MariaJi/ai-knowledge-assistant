@@ -98,6 +98,19 @@ async function askAI() {
 
       setAnswer(streamedAnswer);
     }
+	const sourcesResponse = await fetch("http://127.0.0.1:8000/ask", {
+		method: "POST",
+		headers: {
+		"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			question,
+			selected_document: selectedDocument,
+		}),
+	});
+
+const sourcesData = await sourcesResponse.json();
+setSources(sourcesData.sources || []);
   } catch (error) {
     setAnswer("Could not connect to backend.");
   } finally {
