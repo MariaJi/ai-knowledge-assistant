@@ -33,6 +33,8 @@ app.add_middleware(
 class QuestionRequest(BaseModel):
     question: str
 
+class DeleteDocumentRequest(BaseModel):
+    filename: str
 
 vector_store = None
 uploaded_documents = []
@@ -169,5 +171,23 @@ async def ask_question(request: QuestionRequest):
 @app.get("/documents")
 async def get_documents():
     return {
+        "documents": uploaded_documents
+    }
+    
+
+@app.delete("/documents")
+async def delete_document(request: DeleteDocumentRequest):
+    global vector_store
+
+    if vector_store is not None:
+        vector_store.delete(
+            where={"filename": request.filename}
+        )
+
+    if request.filename in uploaded_documents:
+        uploaded_documents.remove(request.filename)
+
+    return {
+        "message": f"{request.filename} deleted successfully",
         "documents": uploaded_documents
     }
