@@ -35,8 +35,7 @@ class QuestionRequest(BaseModel):
 
 
 vector_store = None
-
-
+uploaded_documents = []
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -103,7 +102,7 @@ async def upload_file(file: UploadFile = File(...)):
             f.write(await file.read())
 
         doc = Document(temp_path)
-
+       
         for para in doc.paragraphs:
             text += para.text + "\n"
 
@@ -111,10 +110,11 @@ async def upload_file(file: UploadFile = File(...)):
         return {"error": "Only .txt, .pdf, and .docx supported"}
 
     vector_store = create_vector_store(
-                text,
-                file.filename
+        text,
+        file.filename
     )
-
+    if file.filename not in uploaded_documents:
+        uploaded_documents.append(file.filename)
     return {
         "message": f"{file.filename} uploaded successfully"
     }
@@ -132,7 +132,7 @@ async def ask_question(request: QuestionRequest):
         request.question,
         k=4
     )
-
+   
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )
@@ -160,8 +160,14 @@ async def ask_question(request: QuestionRequest):
         "snippet": doc.page_content[:300]
     }
     for doc in docs
-]
+    ]
     return {
         "answer": answer,
         "sources": sources
+    }
+    
+@app.get("/documents")
+async def get_documents():
+    return {
+        "documents": uploaded_documents
     }
