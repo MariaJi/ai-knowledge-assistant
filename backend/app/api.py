@@ -32,7 +32,7 @@ app.add_middleware(
 
 class QuestionRequest(BaseModel):
     question: str
-
+    selected_document: str = "all"
 class DeleteDocumentRequest(BaseModel):
     filename: str
 
@@ -130,11 +130,20 @@ async def ask_question(request: QuestionRequest):
             "sources": []
         }
 
-    docs = vector_store.similarity_search(
-        request.question,
-        k=4
+    
+    if request.selected_document == "all":
+        docs = vector_store.similarity_search(
+            request.question,
+            k=4
     )
-   
+    else:
+        docs = vector_store.similarity_search(
+            request.question,
+            k=4,
+            filter={
+                "filename": request.selected_document
+        }
+    )
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )

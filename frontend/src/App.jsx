@@ -10,6 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState("all");
 
   async function uploadFile() {
     if (!selectedFile) return;
@@ -47,7 +48,11 @@ function App() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ question }),
+      
+	  body: JSON.stringify({
+			question,
+			selected_document: selectedDocument,
+		}),
     });
 
     const data = await response.json();
@@ -110,6 +115,18 @@ async function deleteDocument(filename) {
 	  <div className="documents-box">
 		
 		<h2>Uploaded Documents ({documents.length})</h2>
+		<select
+			value={selectedDocument}
+			onChange={(e) => setSelectedDocument(e.target.value)}
+		>
+			<option value="all">All documents</option>
+
+				{documents.map((doc, index) => (
+					<option key={index} value={doc}>
+				{doc}
+			</option>
+			))}
+		</select>
 		{documents.length === 0 ? (
 			<p>No documents uploaded yet.</p>
 			) : (
