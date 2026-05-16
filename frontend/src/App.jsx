@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 import { useState } from "react";
 import "./App.css";
 
@@ -217,7 +218,9 @@ async function deleteDocument(filename) {
       {answer && (
         <div className="answer">
           <h2>Answer</h2>
-          <p>{answer}</p>
+          <div className="markdown-answer">
+			<ReactMarkdown>{answer}</ReactMarkdown>
+		  </div>
 
           {sources.length > 0 && (
             <div className="sources">

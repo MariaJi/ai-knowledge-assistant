@@ -72,3 +72,26 @@ button:disabled {
   margin-top: 8px;
   border-radius: 6px;
 }
+
+.markdown-answer {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.markdown-answer ul,
+.markdown-answer ol {
+  padding-left: 24px;
+}
+
+.markdown-answer code {
+  background: #f3f3f3;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.markdown-answer pre {
+  background: #f3f3f3;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
