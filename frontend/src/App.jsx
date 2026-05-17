@@ -5,7 +5,16 @@ import { useState, useEffect, useRef } from "react";
 
 function App() {
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState([]);
+  
+  const [messages, setMessages] = useState(() => {
+  const savedMessages = localStorage.getItem("chatMessages");
+
+  if (savedMessages) {
+    return JSON.parse(savedMessages);
+  }
+
+  return [];
+  });
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,6 +30,9 @@ function App() {
         chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
+  useEffect(() => {
+  localStorage.setItem("chatMessages", JSON.stringify(messages));
+}, [messages]);
   async function uploadFile() {
     if (!selectedFile) return;
 
@@ -246,7 +258,9 @@ async function deleteDocument(filename) {
           {loading ? "Thinking..." : "Ask AI"}
         </button>
       </div>
-		
+		<button onClick={() => setMessages([])}>
+			Clear Chat
+		</button>
 		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
 			<div
