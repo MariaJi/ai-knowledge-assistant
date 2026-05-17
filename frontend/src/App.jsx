@@ -1,9 +1,11 @@
 import ReactMarkdown from "react-markdown";
-import { useState } from "react";
+
 import "./App.css";
+import { useState, useEffect, useRef } from "react";
 
 function App() {
   const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState([]);
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,7 +14,7 @@ function App() {
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState("all");
-
+  
   async function uploadFile() {
     if (!selectedFile) return;
 
@@ -68,9 +70,21 @@ function App() {
 }
 
 async function askAI() {
-  setLoading(true);
-  setAnswer("");
-  setSources([]);
+	const userMessage = {
+		role: "user",
+		content: question,
+	};
+
+	const assistantMessage = {
+		role: "assistant",
+		content: "",
+	};
+
+	setMessages((prev) => [
+		...prev,
+		userMessage,
+		assistantMessage,
+	]);
 
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
@@ -97,7 +111,17 @@ async function askAI() {
       const chunk = decoder.decode(value);
       streamedAnswer += chunk;
 
-      setAnswer(streamedAnswer);
+      // setAnswer(streamedAnswer);
+	  setMessages((prev) => {
+			const updated = [...prev];
+
+	  updated[updated.length - 1] = {
+        ...updated[updated.length - 1],
+        content: streamedAnswer,
+		};
+
+	  return updated;
+	 });
     }
 	const sourcesResponse = await fetch("http://127.0.0.1:8000/ask", {
 		method: "POST",
@@ -207,6 +231,8 @@ async function deleteDocument(filename) {
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Ask a question about the uploaded document..."
         />
+		
+
 		{selectedFile && (
 				<p>Selected: {selectedFile.name}</p>
 		)}
@@ -214,8 +240,27 @@ async function deleteDocument(filename) {
           {loading ? "Thinking..." : "Ask AI"}
         </button>
       </div>
+		
+		<div className="chat-box">
+			 {messages.map((message, index) => (
+			<div
+			key={index}
+				className={`message ${message.role}`}
+			>
+				<div className="message-role">
+					{message.role === "user" ? "You" : "AI"}
+				</div>
 
-      {answer && (
+				<div className="message-content">
+					<ReactMarkdown>
+					{message.content}
+					</ReactMarkdown>
+				</div>
+			</div>
+			))}
+			
+		</div>
+      {/*answer && (
         <div className="answer">
           <h2>Answer</h2>
           <div className="markdown-answer">
@@ -235,8 +280,22 @@ async function deleteDocument(filename) {
             </div>
           )}
         </div>
-      )}
-    </div>
+      )*/}
+    
+	{sources.length > 0 && (
+            <div className="sources">
+              <h3>Sources</h3>
+
+              {sources.map((source, index) => (
+                <div key={index} className="source-card">
+                  <strong>{source.filename}</strong>
+                  <p>{source.snippet}</p>
+                </div>
+              ))}
+            </div>
+          )}
+	
+	</div>
   );
 }
 
