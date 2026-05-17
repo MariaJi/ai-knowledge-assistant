@@ -14,7 +14,13 @@ function App() {
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState("all");
-  
+  const chatBoxRef = useRef(null);
+  useEffect(() => {
+    if (chatBoxRef.current) {
+		chatBoxRef.current.scrollTop =
+        chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
   async function uploadFile() {
     if (!selectedFile) return;
 
@@ -241,7 +247,7 @@ async function deleteDocument(filename) {
         </button>
       </div>
 		
-		<div className="chat-box">
+		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
 			<div
 			key={index}

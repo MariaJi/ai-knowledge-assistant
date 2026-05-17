@@ -98,9 +98,15 @@ button:disabled {
 
 .chat-box {
   margin-top: 24px;
+  max-height: 400px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #ffffff;
 }
 
 .message {
