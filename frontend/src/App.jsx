@@ -5,8 +5,8 @@ import { useState, useEffect, useRef } from "react";
 
 function App() {
   const [question, setQuestion] = useState("");
-  
-  const [messages, setMessages] = useState(() => {
+  const [currentSessionId, setCurrentSessionId] = useState(1);
+  /*const [messages, setMessages] = useState(() => {
   const savedMessages = localStorage.getItem("chatMessages");
 
   if (savedMessages) {
@@ -14,7 +14,30 @@ function App() {
   }
 
   return [];
-  });
+  }); */
+  
+  const [sessions, setSessions] = useState(() => {
+  const savedSessions = localStorage.getItem("chatSessions");
+
+  if (savedSessions) {
+    return JSON.parse(savedSessions);
+  }
+
+  return [
+    {
+      id: 1,
+      title: "New Chat",
+      messages: [],
+    },
+  ];
+});
+
+const currentSession = sessions.find(
+  (session) => session.id === currentSessionId
+);
+
+const messages = currentSession?.messages || [];
+
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -30,9 +53,13 @@ function App() {
         chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
-  useEffect(() => {
+ /* useEffect(() => {
   localStorage.setItem("chatMessages", JSON.stringify(messages));
-}, [messages]);
+}, [messages]);*/
+
+useEffect(() => {
+  localStorage.setItem("chatSessions", JSON.stringify(sessions));
+}, [sessions]);
   async function uploadFile() {
     if (!selectedFile) return;
 
@@ -58,6 +85,16 @@ function App() {
     setUploading(false);
   }
 
+function updateCurrentSessionMessages(newMessages) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === currentSessionId
+        ? { ...session, messages: newMessages }
+        : session
+    )
+  );
+}
+  
   async function askAI_Old() {
   setLoading(true);
   setAnswer("");
@@ -97,13 +134,20 @@ async function askAI() {
 		role: "assistant",
 		content: "",
 	};
-
+/*
 	setMessages((prev) => [
 		...prev,
 		userMessage,
 		assistantMessage,
 	]);
+*/
+	const newMessages = [
+		...messages,
+		userMessage,
+		assistantMessage,
+	];
 
+	updateCurrentSessionMessages(newMessages);
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
@@ -130,7 +174,7 @@ async function askAI() {
       streamedAnswer += chunk;
 
       // setAnswer(streamedAnswer);
-	  setMessages((prev) => {
+	  /*setMessages((prev) => {
 			const updated = [...prev];
 
 	  updated[updated.length - 1] = {
@@ -139,8 +183,18 @@ async function askAI() {
 		};
 
 	  return updated;
-	 });
+	 });*/
+	 const updatedMessages = [
+    ...newMessages.slice(0, -1),
+    {
+      role: "assistant",
+      content: streamedAnswer,
+    },
+	];
+
+	updateCurrentSessionMessages(updatedMessages);
     }
+	
 	const sourcesResponse = await fetch("http://127.0.0.1:8000/ask", {
 		method: "POST",
 		headers: {
@@ -258,7 +312,8 @@ async function deleteDocument(filename) {
           {loading ? "Thinking..." : "Ask AI"}
         </button>
       </div>
-		<button onClick={() => setMessages([])}>
+		
+		<button onClick={() => updateCurrentSessionMessages([])}>
 			Clear Chat
 		</button>
 		<div className="chat-box" ref={chatBoxRef}>
