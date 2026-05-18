@@ -94,7 +94,17 @@ function updateCurrentSessionMessages(newMessages) {
     )
   );
 }
-  
+  function createNewChat() {
+  const newSession = {
+    id: Date.now(),
+    title: "New Chat",
+    messages: [],
+  };
+
+  setSessions((prev) => [...prev, newSession]);
+
+  setCurrentSessionId(newSession.id);
+}
   async function askAI_Old() {
   setLoading(true);
   setAnswer("");
