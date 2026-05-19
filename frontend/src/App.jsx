@@ -28,6 +28,7 @@ function App() {
       id: 1,
       title: "New Chat",
       messages: [],
+	  sources: [],
     },
   ];
 });
@@ -37,9 +38,10 @@ const currentSession = sessions.find(
 );
 
 const messages = currentSession?.messages || [];
+const sources = currentSession?.sources || [];
 
   const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState([]);
+  //const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -81,7 +83,8 @@ useEffect(() => {
 	setSelectedFile(null)
     setQuestion("");
     setAnswer("");
-    setSources([]);
+    //setSources([]);
+	updateCurrentSessionSources([]);
     setUploading(false);
   }
 
@@ -94,11 +97,22 @@ function updateCurrentSessionMessages(newMessages) {
     )
   );
 }
+
+function updateCurrentSessionSources(newSources) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === currentSessionId
+        ? { ...session, sources: newSources }
+        : session
+    )
+  );
+}
   function createNewChat() {
 	const newSession = {
 		id: Date.now(),
 		title: "New Chat",
 		messages: [],
+		sources: [],
   };
 function updateSessionTitle(sessionId, title) {
   setSessions((prevSessions) =>
@@ -116,7 +130,8 @@ function updateSessionTitle(sessionId, title) {
   async function askAI_Old() {
   setLoading(true);
   setAnswer("");
-  setSources([]);
+  //setSources([]);
+  updateCurrentSessionSources([]);
 
   try {
     const response = await fetch("http://127.0.0.1:8000/ask", {
@@ -231,7 +246,8 @@ async function askAI() {
 	});
 
 const sourcesData = await sourcesResponse.json();
-setSources(sourcesData.sources || []);
+//setSources(sourcesData.sources || []);
+updateCurrentSessionSources(sourcesData.sources || []);
   } catch (error) {
     setAnswer("Could not connect to backend.");
   } finally {
