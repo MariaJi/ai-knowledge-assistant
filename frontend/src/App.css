@@ -134,3 +134,22 @@ button:disabled {
 .message-content p {
   margin: 0;
 }
+
+.sessions-sidebar {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sessions-sidebar button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.active-session {
+  background: #2563eb;
+  color: white;
+}

@@ -95,12 +95,20 @@ function updateCurrentSessionMessages(newMessages) {
   );
 }
   function createNewChat() {
-  const newSession = {
-    id: Date.now(),
-    title: "New Chat",
-    messages: [],
+	const newSession = {
+		id: Date.now(),
+		title: "New Chat",
+		messages: [],
   };
-
+function updateSessionTitle(sessionId, title) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === sessionId
+        ? { ...session, title }
+        : session
+    )
+  );
+}
   setSessions((prev) => [...prev, newSession]);
 
   setCurrentSessionId(newSession.id);
@@ -158,6 +166,12 @@ async function askAI() {
 	];
 
 	updateCurrentSessionMessages(newMessages);
+	if (messages.length === 0) {
+		updateSessionTitle(
+			currentSessionId,
+			question.slice(0, 30)
+	);
+}
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
@@ -323,8 +337,29 @@ async function deleteDocument(filename) {
         </button>
       </div>
 		
+		<div className="sessions-sidebar">
+  <h3>Chats</h3>
+
+  {sessions.map((session) => (
+    <button
+      key={session.id}
+      onClick={() => setCurrentSessionId(session.id)}
+      className={
+        currentSessionId === session.id
+          ? "active-session"
+          : ""
+      }
+    >
+      {session.title}
+    </button>
+  ))}
+</div>
+		
 		<button onClick={() => updateCurrentSessionMessages([])}>
 			Clear Chat
+		</button>
+		<button onClick={createNewChat}>
+			New Chat
 		</button>
 		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
