@@ -29,6 +29,7 @@ function App() {
       title: "New Chat",
       messages: [],
 	  sources: [],
+	  selectedDocument: "all",
     },
   ];
 });
@@ -47,8 +48,9 @@ const sources = currentSession?.sources || [];
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState([]);
-  const [selectedDocument, setSelectedDocument] = useState("all");
+  //const [selectedDocument, setSelectedDocument] = useState("all");
   const chatBoxRef = useRef(null);
+  const selectedDocument = currentSession?.selectedDocument || "all";
   useEffect(() => {
     if (chatBoxRef.current) {
 		chatBoxRef.current.scrollTop =
@@ -113,6 +115,7 @@ function updateCurrentSessionSources(newSources) {
 		title: "New Chat",
 		messages: [],
 		sources: [],
+		selectedDocument: "all",
   };
 function updateSessionTitle(sessionId, title) {
   setSessions((prevSessions) =>
@@ -126,6 +129,16 @@ function updateSessionTitle(sessionId, title) {
   setSessions((prev) => [...prev, newSession]);
 
   setCurrentSessionId(newSession.id);
+}
+
+function updateCurrentSessionSelectedDocument(documentName) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === currentSessionId
+        ? { ...session, selectedDocument: documentName }
+        : session
+    )
+  );
 }
   async function askAI_Old() {
   setLoading(true);
@@ -305,7 +318,10 @@ async function deleteDocument(filename) {
 		<h2>Uploaded Documents ({documents.length})</h2>
 		<select
 			value={selectedDocument}
-			onChange={(e) => setSelectedDocument(e.target.value)}
+			
+			onChange={(e) =>
+				updateCurrentSessionSelectedDocument(e.target.value)
+			}
 		>
 			<option value="all">All documents</option>
 
