@@ -140,6 +140,17 @@ function updateCurrentSessionSelectedDocument(documentName) {
     )
   );
 }
+
+function updateSessionTitle(sessionId, title) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === sessionId
+        ? { ...session, title }
+        : session
+    )
+  );
+}
+
   async function askAI_Old() {
   setLoading(true);
   setAnswer("");
@@ -171,11 +182,14 @@ function updateCurrentSessionSelectedDocument(documentName) {
 }
 
 async function askAI() {
+	setLoading(true);
+	
+	updateCurrentSessionSources([]);
 	const userMessage = {
 		role: "user",
 		content: question,
 	};
-
+	setQuestion("");
 	const assistantMessage = {
 		role: "assistant",
 		content: "",
@@ -271,9 +285,7 @@ updateCurrentSessionSources(sourcesData.sources || []);
   const response = await fetch("http://127.0.0.1:8000/documents");
   const data = await response.json();
   setDocuments(data.documents || []); 
-  if (selectedFile?.name === filename) {
-  setSelectedFile(null);
-}
+  
 }
 
 async function deleteDocument(filename) {
