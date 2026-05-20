@@ -294,7 +294,32 @@ async function deleteDocument(filename) {
 }
 
  return (
-    <div className="container">
+   <div className="app-layout">
+  <aside className="sidebar">
+    <h2>Chats</h2>
+
+    <button onClick={createNewChat}>
+      + New Chat
+    </button>
+
+    <div className="session-list">
+      {sessions.map((session) => (
+        <button
+          key={session.id}
+          onClick={() => setCurrentSessionId(session.id)}
+          className={
+            currentSessionId === session.id
+              ? "active-session"
+              : ""
+          }
+        >
+          {session.title}
+        </button>
+      ))}
+    </div>
+  </aside>
+
+  <main className="container">
       <h1>AI Knowledge Assistant</h1>
 
       <div className="upload-box">
@@ -318,7 +343,8 @@ async function deleteDocument(filename) {
 		<h2>Uploaded Documents ({documents.length})</h2>
 		<select
 			value={selectedDocument}
-			
+			onChange={(e) => setSelectedDocument(e.target.value)
+			}
 			onChange={(e) =>
 				updateCurrentSessionSelectedDocument(e.target.value)
 			}
@@ -370,29 +396,9 @@ async function deleteDocument(filename) {
       </div>
 		
 		<div className="sessions-sidebar">
-  <h3>Chats</h3>
-
-  {sessions.map((session) => (
-    <button
-      key={session.id}
-      onClick={() => setCurrentSessionId(session.id)}
-      className={
-        currentSessionId === session.id
-          ? "active-session"
-          : ""
-      }
-    >
-      {session.title}
-    </button>
-  ))}
-</div>
+  
 		
-		<button onClick={() => updateCurrentSessionMessages([])}>
-			Clear Chat
-		</button>
-		<button onClick={createNewChat}>
-			New Chat
-		</button>
+		
 		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
 			<div
@@ -412,27 +418,7 @@ async function deleteDocument(filename) {
 			))}
 			
 		</div>
-      {/*answer && (
-        <div className="answer">
-          <h2>Answer</h2>
-          <div className="markdown-answer">
-			<ReactMarkdown>{answer}</ReactMarkdown>
-		  </div>
-
-          {sources.length > 0 && (
-            <div className="sources">
-              <h3>Sources</h3>
-
-              {sources.map((source, index) => (
-                <div key={index} className="source-card">
-                  <strong>{source.filename}</strong>
-                  <p>{source.snippet}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )*/}
+      
     
 	{sources.length > 0 && (
             <div className="sources">
@@ -448,6 +434,8 @@ async function deleteDocument(filename) {
           )}
 	
 	</div>
+	</main>
+</div>
   );
 }
 
