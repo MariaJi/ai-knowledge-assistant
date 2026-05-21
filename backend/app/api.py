@@ -36,8 +36,18 @@ class QuestionRequest(BaseModel):
 class DeleteDocumentRequest(BaseModel):
     filename: str
 
-vector_store = None
+#vector_store = None
 uploaded_documents = []
+embeddings = OpenAIEmbeddings(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+vector_store = Chroma(
+    persist_directory="chroma_db",
+    collection_name="documents",
+    embedding_function=embeddings
+)
+
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -46,10 +56,6 @@ def create_vector_store(text, filename):
     )
 
     chunks = splitter.split_text(text)
-
-    embeddings = OpenAIEmbeddings(
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
 
     metadatas = [
         {"filename": filename}
@@ -60,12 +66,6 @@ def create_vector_store(text, filename):
         f"{filename}_{uuid.uuid4().hex}_{i}"
         for i in range(len(chunks))
     ]
-
-    vector_store = Chroma(
-        persist_directory="chroma_db",
-        collection_name="documents",
-        embedding_function=embeddings
-    )
 
     vector_store.add_texts(
         texts=chunks,
@@ -227,12 +227,30 @@ async def ask_question_stream(request: QuestionRequest):
         media_type="text/plain"
     ) 
 
-@app.get("/documents")
-async def get_documents():
+def get_document_names_from_chroma():
+    data = vector_store.get()
+
+    filenames = set()
+
+    for metadata in data["metadatas"]:
+        if metadata and "filename" in metadata:
+            filenames.add(metadata["filename"])
+
+    return sorted(list(filenames))
+    
+#@app.get("/documents")
+async def get_documents_old():
     return {
         "documents": uploaded_documents
     }
-    
+
+@app.get("/documents")
+async def get_documents():
+    documents = get_document_names_from_chroma()
+
+    return {
+        "documents": documents
+    } 
 
 @app.delete("/documents")
 async def delete_document(request: DeleteDocumentRequest):

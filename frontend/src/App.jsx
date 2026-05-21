@@ -57,6 +57,10 @@ const sources = currentSession?.sources || [];
         chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
+  
+  useEffect(() => {
+  fetchDocuments();
+  }, []);
  /* useEffect(() => {
   localStorage.setItem("chatMessages", JSON.stringify(messages));
 }, [messages]);*/
