@@ -117,15 +117,8 @@ function updateCurrentSessionSources(newSources) {
 		sources: [],
 		selectedDocument: "all",
   };
-function updateSessionTitle(sessionId, title) {
-  setSessions((prevSessions) =>
-    prevSessions.map((session) =>
-      session.id === sessionId
-        ? { ...session, title }
-        : session
-    )
-  );
-}
+
+
   setSessions((prev) => [...prev, newSession]);
 
   setCurrentSessionId(newSession.id);
@@ -306,16 +299,16 @@ async function deleteDocument(filename) {
 }
 
  return (
-   <div className="app-layout">
-  <aside className="sidebar">
-    <h2>Chats</h2>
+ <div className="app-layout">
+	<aside className="sidebar">
+		<h2>Chats</h2>
 
-    <button onClick={createNewChat}>
-      + New Chat
-    </button>
+		<button onClick={createNewChat}>
+		+ New Chat
+		</button>
 
-    <div className="session-list">
-      {sessions.map((session) => (
+		<div className="session-list">
+		{sessions.map((session) => (
         <button
           key={session.id}
           onClick={() => setCurrentSessionId(session.id)}
@@ -328,39 +321,38 @@ async function deleteDocument(filename) {
           {session.title}
         </button>
       ))}
-    </div>
-  </aside>
+		</div>
+	</aside>
 
-  <main className="container">
-      <h1>AI Knowledge Assistant</h1>
+	<main className="container">
+		<h1>AI Knowledge Assistant</h1>
 
-      <div className="upload-box">
-        <h2>Upload Document</h2>
+		<div className="upload-box">
+			<h2>Upload Document</h2>
 
-        <input
-          type="file"
-          accept=".txt,.pdf,.docx"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-        />
+			<input
+				type="file"
+				accept=".txt,.pdf,.docx"
+				onChange={(e) => setSelectedFile(e.target.files[0])}
+				/>
 
-        <button onClick={uploadFile} disabled={!selectedFile || uploading}>
-          {uploading ? "Uploading..." : "Upload"}
-        </button>
+			<button onClick={uploadFile} disabled={!selectedFile || uploading}>
+				{uploading ? "Uploading..." : "Upload"}
+			</button>
 
-        {uploadMessage && <p>{uploadMessage}</p>}
-      </div>
+			{uploadMessage && <p>{uploadMessage}</p>}
+		</div>
 	  
-	  <div className="documents-box">
+		<div className="documents-box">
 		
-		<h2>Uploaded Documents ({documents.length})</h2>
-		<select
-			value={selectedDocument}
-			onChange={(e) => setSelectedDocument(e.target.value)
-			}
-			onChange={(e) =>
-				updateCurrentSessionSelectedDocument(e.target.value)
-			}
-		>
+			<h2>Uploaded Documents ({documents.length})</h2>
+			<select
+				value={selectedDocument}
+			
+				onChange={(e) =>
+					updateCurrentSessionSelectedDocument(e.target.value)
+				}
+				>
 			<option value="all">All documents</option>
 
 				{documents.map((doc, index) => (
@@ -368,10 +360,10 @@ async function deleteDocument(filename) {
 				{doc}
 			</option>
 			))}
-		</select>
-		{documents.length === 0 ? (
-			<p>No documents uploaded yet.</p>
-			) : (
+			</select>
+				{documents.length === 0 ? (
+				<p>No documents uploaded yet.</p>
+				) : (
 			<ul>
 				{documents.map((doc, index) => (
 					<li key={index}>
@@ -387,36 +379,35 @@ async function deleteDocument(filename) {
 				))}
 			</ul>
 			)}
-	  </div>
+		</div>
 	  
-      <div className="ask-box">
-        <h2>Ask Question</h2>
+		<div className="ask-box">
+			<h2>Ask Question</h2>
 
-        <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask a question about the uploaded document..."
-        />
+			<textarea
+				value={question}
+				onChange={(e) => setQuestion(e.target.value)}
+				placeholder="Ask a question about the uploaded document..."
+			/>
 		
 
-		{selectedFile && (
+			{selectedFile && (
 				<p>Selected: {selectedFile.name}</p>
-		)}
-        <button onClick={askAI} disabled={loading || !question}>
-          {loading ? "Thinking..." : "Ask AI"}
-        </button>
-      </div>
+				)}
+			<button onClick={askAI} disabled={loading || !question}>
+				{loading ? "Thinking..." : "Ask AI"}
+			</button>
+		</div>
 		
-		<div className="sessions-sidebar">
-  
+		
 		
 		
 		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
 			<div
-			key={index}
+				key={index}
 				className={`message ${message.role}`}
-			>
+				>
 				<div className="message-role">
 					{message.role === "user" ? "You" : "AI"}
 				</div>
@@ -427,28 +418,28 @@ async function deleteDocument(filename) {
 					</ReactMarkdown>
 				</div>
 			</div>
-			))}
+				))}
 			
 		</div>
       
     
-	{sources.length > 0 && (
+			{sources.length > 0 && (
             <div className="sources">
-              <h3>Sources</h3>
+				<h3>Sources</h3>
 
-              {sources.map((source, index) => (
-                <div key={index} className="source-card">
-                  <strong>{source.filename}</strong>
-                  <p>{source.snippet}</p>
-                </div>
+				{sources.map((source, index) => (
+					<div key={index} className="source-card">
+						<strong>{source.filename}</strong>
+						<p>{source.snippet}</p>
+					</div>
               ))}
             </div>
           )}
 	
-	</div>
+		
 	</main>
 </div>
-  );
+ );
 }
 
 export default App;
