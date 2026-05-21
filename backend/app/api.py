@@ -252,8 +252,8 @@ async def get_documents():
         "documents": documents
     } 
 
-@app.delete("/documents")
-async def delete_document(request: DeleteDocumentRequest):
+#@app.delete("/documents")
+async def delete_document_Old(request: DeleteDocumentRequest):
     global vector_store
 
     if vector_store is not None:
@@ -267,4 +267,17 @@ async def delete_document(request: DeleteDocumentRequest):
     return {
         "message": f"{request.filename} deleted successfully",
         "documents": uploaded_documents
+    }
+    
+@app.delete("/documents")
+async def delete_document(request: DeleteDocumentRequest):
+    vector_store.delete(
+        where={"filename": request.filename}
+    )
+
+    documents = get_document_names_from_chroma()
+
+    return {
+        "message": f"{request.filename} deleted successfully",
+        "documents": documents
     }

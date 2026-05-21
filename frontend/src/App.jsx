@@ -285,7 +285,7 @@ updateCurrentSessionSources(sourcesData.sources || []);
   
 }
 
-async function deleteDocument(filename) {
+async function deleteDocument_Old(filename) {
   const response = await fetch(
     "http://127.0.0.1:8000/documents",
     {
@@ -302,6 +302,26 @@ async function deleteDocument(filename) {
   setDocuments(data.documents || []);
 }
 
+async function deleteDocument(filename) {
+  const response = await fetch(
+    "http://127.0.0.1:8000/documents",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename }),
+    }
+  );
+
+  const data = await response.json();
+
+  setDocuments(data.documents || []);
+
+  if (selectedDocument === filename) {
+    updateCurrentSessionSelectedDocument("all");
+  }
+}
  return (
  <div className="app-layout">
 	<aside className="sidebar">
