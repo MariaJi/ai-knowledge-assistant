@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
-  
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
 
@@ -395,7 +395,14 @@ function renameChat(sessionId) {
 
  return (
  <div className="app-layout">
-	<aside className="sidebar">
+	<button
+		className="sidebar-toggle"
+		onClick={() => setSidebarOpen(!sidebarOpen)}
+		>
+		☰
+	</button>
+	{sidebarOpen && (
+		<aside className="sidebar">
 		<h2>Chats</h2>
 
 		<button onClick={createNewChat}>
@@ -431,8 +438,11 @@ function renameChat(sessionId) {
 ))}
 		</div>
 	</aside>
-
+	)}
 	<main className="container">
+		 <div className="current-chat-header">
+			{currentSession?.title}
+		</div>
 		<h1>AI Knowledge Assistant</h1>
 
 		<div className="upload-box">

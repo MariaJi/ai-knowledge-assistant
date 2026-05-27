@@ -240,3 +240,25 @@ button:disabled {
   color: red;
   border-radius: 4px;
 }
+
+.sidebar-toggle {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebar {
+  padding-top: 60px;
+}
+
+
+.current-chat-header {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 12px;
+  text-transform: capitalize;
+}
