@@ -200,29 +200,43 @@ button:disabled {
 }
 
 .session-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 28px 28px;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
 .session-title-button {
-  flex: 1;
   min-width: 0;
   text-align: left;
-  padding: 10px;
+  padding: 8px 10px;
   border-radius: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+
+
+
+.rename-chat-button,
 .delete-chat-button {
-  flex: 0 0 28px;
   width: 28px !important;
-  height: 28px;
+  height: 28px !important;
   padding: 0 !important;
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+.rename-chat-button:hover {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.delete-chat-button:hover {
+  background: #ffe5e5;
+  color: red;
+  border-radius: 4px;
 }

@@ -5,7 +5,21 @@ import { useState, useEffect, useRef } from "react";
 
 function App() {
   const [question, setQuestion] = useState("");
-  const [currentSessionId, setCurrentSessionId] = useState(1);
+  //const [currentSessionId, setCurrentSessionId] = useState(1);
+  
+  const [currentSessionId, setCurrentSessionId] = useState(() => {
+  const savedSessions = localStorage.getItem("chatSessions");
+
+  if (savedSessions) {
+    const parsed = JSON.parse(savedSessions);
+
+    if (parsed.length > 0) {
+      return parsed[0].id;
+    }
+  }
+
+  return 1;
+});
   /*const [messages, setMessages] = useState(() => {
   const savedMessages = localStorage.getItem("chatMessages");
 
@@ -361,6 +375,23 @@ function deleteChat(sessionId) {
   }
 }
 
+function renameChat(sessionId) {
+  const session = sessions.find(
+    (session) => session.id === sessionId
+  );
+
+  const newTitle = prompt(
+    "Enter a new chat title:",
+    session?.title || "New Chat"
+  );
+
+  if (!newTitle || newTitle.trim() === "") {
+    return;
+  }
+
+  updateSessionTitle(sessionId, newTitle.trim());
+}
+
 
  return (
  <div className="app-layout">
@@ -372,27 +403,29 @@ function deleteChat(sessionId) {
 		</button>
 
 		<div className="session-list">
-		{sessions.map((session) => (
-			<div
-				key={session.id}
-				className="session-item"
-			>
+			{sessions.map((session) => (
+			<div key={session.id} className="session-item">
 				<button
+				className={`session-title-button ${
+				currentSessionId === session.id ? "active-session" : ""
+				}`}
 				onClick={() => setCurrentSessionId(session.id)}
-				className={
-					currentSessionId === session.id
-					? "active-session"
-					: ""
-			}
 				>
 				{session.title}
-					</button>
+				</button>
+
+				<button
+				className="rename-chat-button"
+				onClick={() => renameChat(session.id)}
+				>
+				✏️
+				</button>
 
 				<button
 				className="delete-chat-button"
 				onClick={() => deleteChat(session.id)}
 				>
-				✕
+				×
 				</button>
 			</div>
 ))}
