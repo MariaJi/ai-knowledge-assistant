@@ -165,13 +165,25 @@ async def ask_question(request: QuestionRequest):
     answer = response.choices[0].message.content
 
     
-    sources = [
+    sources1 = [
     {
         "filename": doc.metadata.get("filename", "Unknown"),
         "snippet": doc.page_content[:300]
     }
     for doc in docs
     ]
+    unique_sources = {}
+
+    for doc in docs:
+        filename = doc.metadata.get("filename", "Unknown")
+
+    if filename not in unique_sources:
+        unique_sources[filename] = {
+            "filename": filename,
+            "snippet": doc.page_content[:300]
+        }
+
+    sources = list(unique_sources.values())
     return {
         "answer": answer,
         "sources": sources

@@ -190,7 +190,8 @@ async function askAI() {
 	const assistantMessage = {
 		role: "assistant",
 		content: "",
-	};
+		sources: [],
+};
 /*
 	setMessages((prev) => [
 		...prev,
@@ -271,7 +272,18 @@ async function askAI() {
 
 const sourcesData = await sourcesResponse.json();
 //setSources(sourcesData.sources || []);
-updateCurrentSessionSources(sourcesData.sources || []);
+// updateCurrentSessionSources(sourcesData.sources || []);
+const finalMessages = [
+  ...newMessages.slice(0, -1),
+  {
+    role: "assistant",
+    content: streamedAnswer,
+    sources: sourcesData.sources || [],
+  },
+];
+
+updateCurrentSessionMessages(finalMessages);
+
   } catch (error) {
     setAnswer("Could not connect to backend.");
   } finally {
@@ -440,6 +452,22 @@ async function deleteDocument(filename) {
 					<ReactMarkdown>
 					{message.content}
 					</ReactMarkdown>
+					
+					{message.sources && message.sources.length > 0 && (
+					<div className="message-sources">
+							<strong>Sources:</strong>
+
+							{message.sources.map((source, index) => (
+						<div key={index} className="message-source-card">
+								<span>{source.filename}</span>
+								<p>{source.snippet}</p>
+						</div>
+						))}
+					</div>
+					)}
+					
+				
+				
 				</div>
 			</div>
 				))}
