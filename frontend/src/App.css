@@ -198,3 +198,31 @@ button:disabled {
   margin: 0 auto;
   padding: 30px;
 }
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.session-title-button {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delete-chat-button {
+  flex: 0 0 28px;
+  width: 28px !important;
+  height: 28px;
+  padding: 0 !important;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}

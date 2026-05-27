@@ -334,6 +334,34 @@ async function deleteDocument(filename) {
     updateCurrentSessionSelectedDocument("all");
   }
 }
+
+function deleteChat(sessionId) {
+  const remainingSessions = sessions.filter(
+    (session) => session.id !== sessionId
+  );
+
+  if (remainingSessions.length === 0) {
+    const newSession = {
+      id: Date.now(),
+      title: "New Chat",
+      messages: [],
+      sources: [],
+      selectedDocument: "all",
+    };
+
+    setSessions([newSession]);
+    setCurrentSessionId(newSession.id);
+    return;
+  }
+
+  setSessions(remainingSessions);
+
+  if (currentSessionId === sessionId) {
+    setCurrentSessionId(remainingSessions[0].id);
+  }
+}
+
+
  return (
  <div className="app-layout">
 	<aside className="sidebar">
@@ -345,18 +373,29 @@ async function deleteDocument(filename) {
 
 		<div className="session-list">
 		{sessions.map((session) => (
-        <button
-          key={session.id}
-          onClick={() => setCurrentSessionId(session.id)}
-          className={
-            currentSessionId === session.id
-              ? "active-session"
-              : ""
-          }
-        >
-          {session.title}
-        </button>
-      ))}
+			<div
+				key={session.id}
+				className="session-item"
+			>
+				<button
+				onClick={() => setCurrentSessionId(session.id)}
+				className={
+					currentSessionId === session.id
+					? "active-session"
+					: ""
+			}
+				>
+				{session.title}
+					</button>
+
+				<button
+				className="delete-chat-button"
+				onClick={() => deleteChat(session.id)}
+				>
+				✕
+				</button>
+			</div>
+))}
 		</div>
 	</aside>
 
