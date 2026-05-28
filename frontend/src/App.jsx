@@ -357,6 +357,13 @@ async function deleteDocument(filename) {
 }
 
 function deleteChat(sessionId) {
+	const shouldDelete = window.confirm(
+    "Are you sure you want to delete this chat?"
+  );
+
+  if (!shouldDelete) {
+    return;
+  }
   const remainingSessions = sessions.filter(
     (session) => session.id !== sessionId
   );
