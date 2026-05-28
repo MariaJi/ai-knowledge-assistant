@@ -64,6 +64,7 @@ const sources = currentSession?.sources || [];
   const [documents, setDocuments] = useState([]);
   //const [selectedDocument, setSelectedDocument] = useState("all");
   const chatBoxRef = useRef(null);
+  const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || "all";
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -107,6 +108,12 @@ useEffect(() => {
 	updateCurrentSessionSources([]);
     setUploading(false);
   }
+function toggleSources(index) {
+  setOpenSources((prev) => ({
+    ...prev,
+    [index]: !prev[index],
+  }));
+}
 
 function updateCurrentSessionMessages(newMessages) {
   setSessions((prevSessions) =>
@@ -441,7 +448,7 @@ function renameChat(sessionId) {
 	)}
 	<main className="container">
 		 <div className="current-chat-header">
-			{currentSession?.title}
+		{currentSession?.title}
 		</div>
 		<h1>AI Knowledge Assistant</h1>
 
@@ -536,18 +543,26 @@ function renameChat(sessionId) {
 					</ReactMarkdown>
 					
 					{message.sources && message.sources.length > 0 && (
-					<div className="message-sources">
-							<strong>Sources:</strong>
+  <div className="message-sources">
+    <button
+      className="sources-toggle"
+      onClick={() => toggleSources(index)}
+    >
+      {openSources[index] ? "▼" : "▶"} Sources ({message.sources.length})
+    </button>
 
-							{message.sources.map((source, index) => (
-						<div key={index} className="message-source-card">
-								<span>{source.filename}</span>
-								<p>{source.snippet}</p>
-						</div>
-						))}
-					</div>
-					)}
-					
+    {openSources[index] && (
+      <div>
+        {message.sources.map((source, sourceIndex) => (
+          <div key={sourceIndex} className="message-source-card">
+            <strong>{source.filename}</strong>
+            <p>{source.snippet}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
 				
 				
 				</div>

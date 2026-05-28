@@ -262,3 +262,18 @@ button:disabled {
   margin-bottom: 12px;
   text-transform: capitalize;
 }
+.sources-toggle {
+  margin-top: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.message-source-card {
+  margin-top: 8px;
+  padding: 10px;
+  border-left: 3px solid #2563eb;
+  background: #f8f8f8;
+  border-radius: 6px;
+}
