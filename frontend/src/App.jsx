@@ -53,9 +53,9 @@ const currentSession = sessions.find(
 );
 
 const messages = currentSession?.messages || [];
-const sources = currentSession?.sources || [];
+//const sources = currentSession?.sources || [];
 
-  const [answer, setAnswer] = useState("");
+  //const [answer, setAnswer] = useState("");
   //const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
@@ -603,8 +603,8 @@ function renameChat(sessionId) {
 			
 		</div>
       
-    
-			{sources.length > 0 && (
+    {/* 
+			{{sources.length > 0 && (
             <div className="sources">
 				<h3>Sources</h3>
 
@@ -616,7 +616,7 @@ function renameChat(sessionId) {
               ))}
             </div>
           )}
-	
+	*/}
 		
 	</main>
 </div>

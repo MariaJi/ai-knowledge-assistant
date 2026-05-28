@@ -134,12 +134,12 @@ async def ask_question(request: QuestionRequest):
     if request.selected_document == "all":
         docs = vector_store.similarity_search(
             request.question,
-            k=4
+            k=8
     )
     else:
         docs = vector_store.similarity_search(
             request.question,
-            k=4,
+            k=8,
             filter={
                 "filename": request.selected_document
         }
@@ -171,11 +171,11 @@ async def ask_question(request: QuestionRequest):
     for doc in docs:
         filename = doc.metadata.get("filename", "Unknown")
 
-    if filename not in unique_sources:
-        unique_sources[filename] = {
-            "filename": filename,
-            "snippet": doc.page_content[:300]
-        }
+        if filename not in unique_sources:
+            unique_sources[filename] = {
+                "filename": filename,
+                "snippet": doc.page_content[:300]
+            }
 
     sources = list(unique_sources.values())
     return {
@@ -193,12 +193,12 @@ async def ask_question_stream(request: QuestionRequest):
     if request.selected_document == "all":
         docs = vector_store.similarity_search(
             request.question,
-            k=4
+            k=8
         )
     else:
         docs = vector_store.similarity_search(
             request.question,
-            k=4,
+            k=8,
             filter={
                 "filename": request.selected_document
             }
