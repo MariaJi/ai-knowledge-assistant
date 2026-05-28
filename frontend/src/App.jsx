@@ -209,9 +209,9 @@ async function askAI() {
 	};
 	setQuestion("");
 	const assistantMessage = {
-		role: "assistant",
-		content: "",
-		sources: [],
+  role: "assistant",
+  content: "Thinking...",
+  sources: [],
 };
 /*
 	setMessages((prev) => [
@@ -538,10 +538,10 @@ function renameChat(sessionId) {
 				</div>
 
 				<div className="message-content">
-					<ReactMarkdown>
-					{message.content}
-					</ReactMarkdown>
 					
+				<ReactMarkdown>
+					{message.content || "_Thinking..._"}
+				</ReactMarkdown>
 					{message.sources && message.sources.length > 0 && (
   <div className="message-sources">
     <button
