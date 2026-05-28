@@ -251,3 +251,13 @@ button:disabled {
   background: #f8f8f8;
   border-radius: 6px;
 }
+
+.current-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.export-chat-button {
+  margin-top: 0;
+}

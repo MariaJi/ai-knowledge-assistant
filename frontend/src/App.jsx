@@ -83,33 +83,7 @@ const messages = currentSession?.messages || [];
 useEffect(() => {
   localStorage.setItem("chatSessions", JSON.stringify(sessions));
 }, [sessions]);
- /* async function uploadFile() {
-    if (!selectedFile) return;
-
-    setUploading(true);
-    setUploadMessage("");
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    const response = await fetch("http://127.0.0.1:8000/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    setUploadMessage(data.message || data.error);
-	fetchDocuments();
-	setSelectedFile(null)
-    setQuestion("");
-    setAnswer("");
-    //setSources([]);
-	updateCurrentSessionSources([]);
-    setUploading(false);
-  }
-  
-*/ 
+ 
  async function uploadFile() {
   if (!selectedFile) return;
 
@@ -245,13 +219,7 @@ async function askAI() {
   content: "Thinking...",
   sources: [],
 };
-/*
-	setMessages((prev) => [
-		...prev,
-		userMessage,
-		assistantMessage,
-	]);
-*/
+
 	const newMessages = [
 		...messages,
 		userMessage,
@@ -431,6 +399,42 @@ function renameChat(sessionId) {
   updateSessionTitle(sessionId, newTitle.trim());
 }
 
+function exportCurrentChat() {
+  if (!currentSession) return;
+
+  const text = currentSession.messages
+    .map((message) => {
+      const role = message.role === "user" ? "You" : "AI";
+
+      let messageText = `${role}:\n${message.content}`;
+
+      if (message.sources && message.sources.length > 0) {
+        const sourcesText = message.sources
+          .map((source) => {
+            return `Source: ${source.filename}\n${source.snippet}`;
+          })
+          .join("\n\n");
+
+        messageText += `\n\nSources:\n${sourcesText}`;
+      }
+
+      return messageText;
+    })
+    .join("\n\n--------------------\n\n");
+
+  const blob = new Blob([text], {
+    type: "text/plain",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${currentSession.title}.txt`;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
 
  return (
  <div className="app-layout">
@@ -479,9 +483,16 @@ function renameChat(sessionId) {
 	</aside>
 	)}
 	<main className="container">
-		 <div className="current-chat-header">
-		{currentSession?.title}
-		</div>
+		<div className="current-chat-header">
+  {currentSession?.title}
+
+  <button
+    className="export-chat-button"
+    onClick={exportCurrentChat}
+  >
+    Export Chat
+  </button>
+</div>
 		<h1>AI Knowledge Assistant</h1>
 
 		<div className="upload-box">
