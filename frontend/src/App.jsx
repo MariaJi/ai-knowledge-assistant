@@ -9,7 +9,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
-
+  
   if (savedSessions) {
     const parsed = JSON.parse(savedSessions);
 
@@ -83,7 +83,7 @@ const sources = currentSession?.sources || [];
 useEffect(() => {
   localStorage.setItem("chatSessions", JSON.stringify(sessions));
 }, [sessions]);
-  async function uploadFile() {
+ /* async function uploadFile() {
     if (!selectedFile) return;
 
     setUploading(true);
@@ -108,6 +108,38 @@ useEffect(() => {
 	updateCurrentSessionSources([]);
     setUploading(false);
   }
+  
+*/ 
+ async function uploadFile() {
+  if (!selectedFile) return;
+
+  setUploading(true);
+  setUploadMessage("");
+
+  try {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    const response = await fetch("http://127.0.0.1:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    setUploadMessage(data.message || data.error);
+    fetchDocuments();
+    setSelectedFile(null);
+    setQuestion("");
+    setAnswer("");
+    updateCurrentSessionSources([]);
+  } catch (error) {
+    setUploadMessage("Could not upload file.");
+  } finally {
+    setUploading(false);
+  }
+}
+ 
 function toggleSources(index) {
   setOpenSources((prev) => ({
     ...prev,
