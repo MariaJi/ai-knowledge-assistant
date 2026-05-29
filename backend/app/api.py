@@ -308,16 +308,22 @@ async def search_documents(request: SearchRequest):
             }
         )
 
-    results = []
+   
+    unique_results = {}
 
     for doc in docs:
-        results.append({
-            "filename": doc.metadata.get(
-                "filename",
-                "Unknown"
-            ),
-            "snippet": doc.page_content[:300]
-        })
+        filename = doc.metadata.get(
+            "filename",
+            "Unknown"
+        )
+
+        if filename not in unique_results:
+            unique_results[filename] = {
+                "filename": filename,
+                "snippet": doc.page_content[:300]
+        }
+
+    results = list(unique_results.values())
 
     return {
         "results": results
