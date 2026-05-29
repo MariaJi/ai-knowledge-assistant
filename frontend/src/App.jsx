@@ -7,9 +7,13 @@ function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
   
+
   if (savedSessions) {
     const parsed = JSON.parse(savedSessions);
 
@@ -455,6 +459,28 @@ function exportCurrentChat() {
   URL.revokeObjectURL(url);
 }
 
+async function searchDocuments() {
+  if (!searchQuery.trim()) {
+    return;
+  }
+
+  const response = await fetch("http://127.0.0.1:8000/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: searchQuery,
+      selected_document: selectedDocument,
+    }),
+  });
+
+  const data = await response.json();
+
+  setSearchResults(data.results || []);
+}
+
+
  return (
  <div className="app-layout">
 	<button
@@ -573,6 +599,35 @@ function exportCurrentChat() {
 			</ul>
 			)}
 		</div>
+		
+		<div className="search-box">
+  <h2>Search Documents</h2>
+
+  <input
+    type="text"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    placeholder="Search uploaded documents..."
+  />
+
+  <button onClick={searchDocuments} disabled={!searchQuery.trim()}>
+    Search
+  </button>
+
+  {searchResults.length > 0 && (
+    <div className="search-results">
+      <h3>Search Results</h3>
+
+      {searchResults.map((result, index) => (
+        <div key={index} className="search-result-card">
+          <strong>{result.filename}</strong>
+          <p>{result.snippet}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+		
 	  
 		<div className="ask-box">
 			<h2>Ask Question</h2>

@@ -48,6 +48,10 @@ vector_store = Chroma(
     embedding_function=embeddings
 )
 
+class SearchRequest(BaseModel):
+    query: str
+    selected_document: str = "all"
+
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -286,4 +290,35 @@ async def delete_document(request: DeleteDocumentRequest):
     return {
         "message": f"{request.filename} deleted successfully",
         "documents": documents
+    }
+@app.post("/search")
+async def search_documents(request: SearchRequest):
+
+    if request.selected_document == "all":
+        docs = vector_store.similarity_search(
+            request.query,
+            k=10
+        )
+    else:
+        docs = vector_store.similarity_search(
+            request.query,
+            k=10,
+            filter={
+                "filename": request.selected_document
+            }
+        )
+
+    results = []
+
+    for doc in docs:
+        results.append({
+            "filename": doc.metadata.get(
+                "filename",
+                "Unknown"
+            ),
+            "snippet": doc.page_content[:300]
+        })
+
+    return {
+        "results": results
     }
