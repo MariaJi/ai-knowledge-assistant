@@ -389,6 +389,18 @@ function deleteChat(sessionId) {
   }
 }
 
+function clearCurrentChat() {
+  const shouldClear = window.confirm(
+    "Clear all messages in this chat?"
+  );
+
+  if (!shouldClear) {
+    return;
+  }
+
+  updateCurrentSessionMessages([]);
+}
+
 function renameChat(sessionId) {
   const session = sessions.find(
     (session) => session.id === sessionId
@@ -499,6 +511,12 @@ function exportCurrentChat() {
   >
     Export Chat
   </button>
+  <button
+      className="clear-chat-button"
+      onClick={clearCurrentChat}
+    >
+      Clear Chat
+    </button>
 </div>
 		<h1>AI Knowledge Assistant</h1>
 

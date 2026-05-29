@@ -261,3 +261,7 @@ button:disabled {
 .export-chat-button {
   margin-top: 0;
 }
+
+.clear-chat-button {
+  margin-left: 8px;
+}
