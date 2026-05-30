@@ -774,8 +774,17 @@ function highlightText(text, searchTerm) {
 )}
 {filteredMessages.length > 0 && (
   <>
-    <button onClick={previousSearchResult}>↑</button>
-    <button onClick={nextSearchResult}>↓</button>
+    <button onClick={previousSearchResult}>
+      ↑
+    </button>
+
+    <span className="search-navigation">
+  {Math.min(currentSearchIndex + 1, filteredMessages.length)} / {filteredMessages.length}
+</span>
+
+    <button onClick={nextSearchResult}>
+      ↓
+    </button>
   </>
 )}
 		{messages.length === 0 ? (
