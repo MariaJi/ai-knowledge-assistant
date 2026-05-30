@@ -284,3 +284,13 @@ button:disabled {
   border-left: 4px solid #2563eb;
   border-radius: 6px;
 }
+
+.empty-chat-message {
+  margin-top: 24px;
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  border: 1px dashed #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+}

@@ -59,7 +59,7 @@ const currentSession = sessions.find(
 const messages = currentSession?.messages || [];
 //const sources = currentSession?.sources || [];
 
-  //const [answer, setAnswer] = useState("");
+   const [answer, setAnswer] = useState("");
   //const [sources, setSources] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
@@ -88,7 +88,7 @@ useEffect(() => {
   localStorage.setItem("chatSessions", JSON.stringify(sessions));
 }, [sessions]);
  
- async function uploadFile() {
+async function uploadFile() {
   if (!selectedFile) return;
 
   setUploading(true);
@@ -105,14 +105,15 @@ useEffect(() => {
 
     const data = await response.json();
 
-    setUploadMessage(data.message || data.error);
+    setUploadMessage(data.message || data.error || "Upload complete.");
+
     fetchDocuments();
     setSelectedFile(null);
     setQuestion("");
     setAnswer("");
     updateCurrentSessionSources([]);
   } catch (error) {
-    setUploadMessage("Could not upload file.");
+    setUploadMessage(`Could not upload file: ${error.message}`);
   } finally {
     setUploading(false);
   }
@@ -179,36 +180,7 @@ function updateSessionTitle(sessionId, title) {
   );
 }
 
-  async function askAI_Old() {
-  setLoading(true);
-  setAnswer("");
-  //setSources([]);
-  updateCurrentSessionSources([]);
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      
-	  body: JSON.stringify({
-			question,
-			selected_document: selectedDocument,
-		}),
-    });
-
-    const data = await response.json();
-
-    setAnswer(data.answer || data.error || "No answer returned.");
-    setSources(data.sources || []);
-  } catch (error) {
-    setAnswer("Could not connect to backend.");
-  } finally {
-    setLoading(false);
-  }
-}
-
+ 
 async function askAI() {
 	setLoading(true);
 	
@@ -552,7 +524,10 @@ async function searchDocuments() {
 			<input
 				type="file"
 				accept=".txt,.pdf,.docx"
-				onChange={(e) => setSelectedFile(e.target.files[0])}
+				 onChange={(e) => {
+					setSelectedFile(e.target.files[0]);
+					setUploadMessage("");
+					}}
 				/>
 
 			<button onClick={uploadFile} disabled={!selectedFile || uploading}>
@@ -648,7 +623,11 @@ async function searchDocuments() {
 		</div>
 		
 		
-		
+		{messages.length === 0 ? (
+  <div className="empty-chat-message">
+    No messages yet. Ask a question to start this chat.
+  </div>
+) : (
 		
 		<div className="chat-box" ref={chatBoxRef}>
 			 {messages.map((message, index) => (
@@ -693,7 +672,7 @@ async function searchDocuments() {
 				))}
 			
 		</div>
-      
+   )}   
     {/* 
 			{{sources.length > 0 && (
             <div className="sources">
