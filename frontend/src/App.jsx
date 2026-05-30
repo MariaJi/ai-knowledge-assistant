@@ -8,6 +8,10 @@ function App() {
   //const [currentSessionId, setCurrentSessionId] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
+  const [darkMode, setDarkMode] = useState(() => {
+  return localStorage.getItem("darkMode") === "true";
+	});
+
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
   
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,6 +94,11 @@ useEffect(() => {
   localStorage.setItem("chatSessions", JSON.stringify(sessions));
 }, [sessions]);
  
+
+useEffect(() => {
+  localStorage.setItem("darkMode", darkMode);
+}, [darkMode]);
+
 async function uploadFile() {
   if (!selectedFile) return;
 
@@ -473,7 +482,8 @@ async function copyMessage(content, index) {
 }
 
  return (
- <div className="app-layout">
+
+ <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
 	<button
 		className="sidebar-toggle"
 		onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -521,6 +531,14 @@ async function copyMessage(content, index) {
 	<main className="container">
 		<div className="current-chat-header">
   {currentSession?.title}
+	
+   <button
+     className="theme-toggle-button"
+     onClick={() => setDarkMode(!darkMode)}
+   >
+    {darkMode ? "☀️ Light" : "🌙 Dark"}
+   </button>
+
 
   <button
     className="export-chat-button"

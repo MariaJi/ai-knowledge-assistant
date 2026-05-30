@@ -300,3 +300,112 @@ button:disabled {
   color: #888;
   margin-bottom: 20px;
 }
+
+.dark-mode {
+  color: #f9fafb;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3 {
+  color: #f9fafb;
+}
+
+.dark-mode .current-chat-header {
+  color: #f9fafb;
+}
+
+.dark-mode .sidebar h2 {
+  color: #f9fafb;
+}
+.dark-mode .message.assistant {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .message.user {
+  background: #1e40af;
+  color: #ffffff;
+}
+.dark-mode .message-source-card {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .source-card {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .sidebar {
+  background: #111827;
+  color: #f9fafb;
+}
+.dark-mode .upload-box,
+.dark-mode .documents-box,
+.dark-mode .ask-box,
+.dark-mode .search-box,
+.dark-mode .chat-box {
+  background: #111827;
+  color: #f9fafb;
+}
+.dark-mode .documents-box li {
+  color: #f9fafb;
+}
+
+.dark-mode textarea {
+  background: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+}
+.dark-mode select {
+  background: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+}
+
+body:has(.dark-mode) {
+  background: #111827;
+}
+
+.dark-mode {
+  background: #111827;
+  min-height: 100vh;
+}
+
+.dark-mode .container {
+  background: #111827;
+  color: #f9fafb;
+}
+
+.dark-mode .documents-box li {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode input {
+  background: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+}
+
+.dark-mode button {
+  background: #374151;
+  color: #f9fafb;
+  border: 1px solid #6b7280;
+}
+
+.dark-mode button:disabled {
+  background: #4b5563;
+  color: #9ca3af;
+}
+
+.dark-mode .session-title-button {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .active-session {
+  background: #2563eb;
+  color: white;
+}
