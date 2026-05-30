@@ -8,6 +8,8 @@ function App() {
   //const [currentSessionId, setCurrentSessionId] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(() => {
@@ -453,10 +455,18 @@ async function searchDocuments() {
 }
 
 
-async function copyMessage(content) {
+
+
+async function copyMessage(content, index) {
   try {
     await navigator.clipboard.writeText(content);
-    alert("Copied!");
+
+    setCopiedMessageIndex(index);
+
+    setTimeout(() => {
+      setCopiedMessageIndex(null);
+    }, 2000);
+
   } catch (error) {
     alert("Could not copy message.");
   }
@@ -664,11 +674,11 @@ async function copyMessage(content) {
 
 					{message.role === "assistant" && (
 						<button
-							className="copy-message-button"
-						onClick={() => copyMessage(message.content)}
-					>
-							📋
-					</button>
+								className="copy-message-button"
+								onClick={() => copyMessage(message.content, index)}
+							>
+							{copiedMessageIndex === index ? "✓" : "📋"}
+						</button>
 					)}
 				</div>
 
