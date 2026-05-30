@@ -510,6 +510,8 @@ function highlightText(text, searchTerm) {
 }
 
 
+
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -757,9 +759,18 @@ function highlightText(text, searchTerm) {
 				<div className="message-content">
 					
 				{message.role === "assistant" ? (
-  <ReactMarkdown>
-    {message.content || "_Thinking..._"}
-  </ReactMarkdown>
+ <ReactMarkdown
+  components={{
+    p: ({ children }) => (
+      <p>{highlightText(String(children), chatSearchTerm)}</p>
+    ),
+    li: ({ children }) => (
+      <li>{highlightText(String(children), chatSearchTerm)}</li>
+    ),
+  }}
+>
+  {message.content || "_Thinking..._"}
+</ReactMarkdown>
 ) : (
   <div>
     {highlightText(message.content, chatSearchTerm)}
