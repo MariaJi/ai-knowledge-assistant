@@ -489,6 +489,27 @@ async function copyMessage(content, index) {
   }
 }
 
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlightText(text, searchTerm) {
+  if (!searchTerm?.trim()) return text;
+
+  const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, "gi");
+
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <mark key={index} className="search-highlight">
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
+
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -735,9 +756,15 @@ async function copyMessage(content, index) {
 
 				<div className="message-content">
 					
-				<ReactMarkdown>
-					{message.content || "_Thinking..._"}
-				</ReactMarkdown>
+				{message.role === "assistant" ? (
+  <ReactMarkdown>
+    {message.content || "_Thinking..._"}
+  </ReactMarkdown>
+) : (
+  <div>
+    {highlightText(message.content, chatSearchTerm)}
+  </div>
+)}
 					{message.sources && message.sources.length > 0 && (
   <div className="message-sources">
     <button
