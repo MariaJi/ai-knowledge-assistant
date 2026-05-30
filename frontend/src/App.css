@@ -294,3 +294,9 @@ button:disabled {
   border-radius: 12px;
   background: #fafafa;
 }
+
+.current-document-header {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}

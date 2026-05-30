@@ -518,6 +518,19 @@ async function searchDocuments() {
       Clear Chat
     </button>
 </div>
+
+
+<div
+  className="current-document-header"
+  title={selectedDocument}
+	>
+	Document: {
+    selectedDocument === "all"
+      ? "All documents"
+      : selectedDocument
+		}
+</div>
+
 		<h1>AI Knowledge Assistant</h1>
 
 		<div className="upload-box">
