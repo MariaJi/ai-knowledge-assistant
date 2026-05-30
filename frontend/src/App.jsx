@@ -284,7 +284,7 @@ async function askAI() {
       body: JSON.stringify({
   question,
   selected_document: selectedDocument,
-  chat_history: messages.slice(-6).map((message) => ({
+  chat_history: messages.slice(-10).map((message) => ({
     role: message.role,
     content: message.content,
   })),
