@@ -128,6 +128,17 @@ const isSearching = chatSearchTerm.trim() !== "";
   }, [messages]);
   
   useEffect(() => {
+  if (chatSearchTerm.trim() === "") return;
+  if (filteredMessages.length === 0) return;
+
+  setCurrentSearchIndex(0);
+
+  setTimeout(() => {
+    goToSearchResult(0);
+  }, 100);
+}, [chatSearchTerm, filteredMessages.length]);
+  
+  useEffect(() => {
   fetchDocuments();
   }, []);
  /* useEffect(() => {
