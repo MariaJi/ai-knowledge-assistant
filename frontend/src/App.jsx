@@ -689,6 +689,14 @@ async function copyMessage(content, index) {
     onChange={(e) => setChatSearchTerm(e.target.value)}
     placeholder="Search this chat..."
   />
+   {chatSearchTerm && (
+    <button
+      className="clear-search-button"
+      onClick={() => setChatSearchTerm("")}
+    >
+      Clear
+    </button>
+  )}
 </div>
 
 {chatSearchTerm.trim() !== "" && (

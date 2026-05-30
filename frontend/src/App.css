@@ -420,3 +420,12 @@ body:has(.dark-mode) {
 .dark-mode .chat-search-count {
   color: #d1d5db;
 }
+
+.chat-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clear-search-button {
+  margin-left: 0;
+}
