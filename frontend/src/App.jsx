@@ -17,6 +17,8 @@ function App() {
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
+  
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
   
@@ -64,11 +66,44 @@ const currentSession = sessions.find(
 );
 
 const messages = currentSession?.messages || [];
+
 const filteredMessages = messages.filter((message) =>
-  message.content
-    .toLowerCase()
-    .includes(chatSearchTerm.toLowerCase())
+  message.content.toLowerCase().includes(chatSearchTerm.toLowerCase())
 );
+
+const goToSearchResult = (index) => {
+  const element = searchResultRefs.current[index];
+
+  if (element) {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
+};
+
+const nextSearchResult = () => {
+  if (filteredMessages.length === 0) return;
+
+  const nextIndex =
+    (currentSearchIndex + 1) % filteredMessages.length;
+
+  setCurrentSearchIndex(nextIndex);
+  goToSearchResult(nextIndex);
+};
+
+const previousSearchResult = () => {
+  if (filteredMessages.length === 0) return;
+
+  const prevIndex =
+    (currentSearchIndex - 1 + filteredMessages.length) %
+    filteredMessages.length;
+
+  setCurrentSearchIndex(prevIndex);
+  goToSearchResult(prevIndex);
+};
+
+
 
 const isSearching = chatSearchTerm.trim() !== "";
 //const sources = currentSession?.sources || [];
@@ -82,6 +117,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const [documents, setDocuments] = useState([]);
   //const [selectedDocument, setSelectedDocument] = useState("all");
   const chatBoxRef = useRef(null);
+  const searchResultRefs = useRef([]);
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || "all";
   useEffect(() => {
@@ -709,7 +745,10 @@ function highlightText(text, searchTerm) {
   <input
     type="text"
     value={chatSearchTerm}
-    onChange={(e) => setChatSearchTerm(e.target.value)}
+	onChange={(e) => {
+	setChatSearchTerm(e.target.value);
+	setCurrentSearchIndex(0);
+	}}
     placeholder="Search this chat..."
   />
    {chatSearchTerm && (
@@ -719,6 +758,8 @@ function highlightText(text, searchTerm) {
     >
       Clear
     </button>
+	
+	
   )}
 </div>
 
@@ -731,6 +772,12 @@ function highlightText(text, searchTerm) {
         }`}
   </p>
 )}
+{filteredMessages.length > 0 && (
+  <>
+    <button onClick={previousSearchResult}>↑</button>
+    <button onClick={nextSearchResult}>↓</button>
+  </>
+)}
 		{messages.length === 0 ? (
   <div className="empty-chat-message">
     No messages yet. Ask a question to start this chat.
@@ -740,9 +787,10 @@ function highlightText(text, searchTerm) {
 		<div className="chat-box" ref={chatBoxRef}>
 			 {filteredMessages.map((message, index) => (
 			<div
-				key={index}
-				className={`message ${message.role}`}
-				>
+					key={index}
+					ref={(el) => (searchResultRefs.current[index] = el)}
+					className={`message ${message.role}`}
+			>
 				<div className="message-role">
 					{message.role === "user" ? "You" : "AI"}
 
