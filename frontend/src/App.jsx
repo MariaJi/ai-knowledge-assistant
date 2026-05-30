@@ -69,6 +69,8 @@ const filteredMessages = messages.filter((message) =>
     .toLowerCase()
     .includes(chatSearchTerm.toLowerCase())
 );
+
+const isSearching = chatSearchTerm.trim() !== "";
 //const sources = currentSession?.sources || [];
 
    const [answer, setAnswer] = useState("");
@@ -688,6 +690,16 @@ async function copyMessage(content, index) {
     placeholder="Search this chat..."
   />
 </div>
+
+{chatSearchTerm.trim() !== "" && (
+  <p className="chat-search-count">
+    {filteredMessages.length === 0
+      ? "No matching messages"
+      : `${filteredMessages.length} matching message${
+          filteredMessages.length === 1 ? "" : "s"
+        }`}
+  </p>
+)}
 		{messages.length === 0 ? (
   <div className="empty-chat-message">
     No messages yet. Ask a question to start this chat.

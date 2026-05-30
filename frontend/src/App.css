@@ -409,3 +409,14 @@ body:has(.dark-mode) {
   background: #2563eb;
   color: white;
 }
+
+.chat-search-count {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.dark-mode .chat-search-count {
+  color: #d1d5db;
+}
