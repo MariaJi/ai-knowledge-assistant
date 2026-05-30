@@ -7,6 +7,7 @@ function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [chatSearchTerm, setChatSearchTerm] = useState("");
   
   const [darkMode, setDarkMode] = useState(() => {
   return localStorage.getItem("darkMode") === "true";
@@ -63,6 +64,11 @@ const currentSession = sessions.find(
 );
 
 const messages = currentSession?.messages || [];
+const filteredMessages = messages.filter((message) =>
+  message.content
+    .toLowerCase()
+    .includes(chatSearchTerm.toLowerCase())
+);
 //const sources = currentSession?.sources || [];
 
    const [answer, setAnswer] = useState("");
@@ -674,7 +680,14 @@ async function copyMessage(content, index) {
 			</button>
 		</div>
 		
-		
+		<div className="chat-search-box">
+  <input
+    type="text"
+    value={chatSearchTerm}
+    onChange={(e) => setChatSearchTerm(e.target.value)}
+    placeholder="Search this chat..."
+  />
+</div>
 		{messages.length === 0 ? (
   <div className="empty-chat-message">
     No messages yet. Ask a question to start this chat.
@@ -682,7 +695,7 @@ async function copyMessage(content, index) {
 ) : (
 		
 		<div className="chat-box" ref={chatBoxRef}>
-			 {messages.map((message, index) => (
+			 {filteredMessages.map((message, index) => (
 			<div
 				key={index}
 				className={`message ${message.role}`}
