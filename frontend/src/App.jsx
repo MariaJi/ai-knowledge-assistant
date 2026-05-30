@@ -506,12 +506,14 @@ async function searchDocuments() {
   <button
     className="export-chat-button"
     onClick={exportCurrentChat}
+	disabled={messages.length === 0}
   >
     Export Chat
   </button>
   <button
       className="clear-chat-button"
       onClick={clearCurrentChat}
+	  disabled={messages.length === 0}
     >
       Clear Chat
     </button>
