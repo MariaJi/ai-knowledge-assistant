@@ -33,6 +33,8 @@ app.add_middleware(
 class QuestionRequest(BaseModel):
     question: str
     selected_document: str = "all"
+    chat_history: list = []
+    
 class DeleteDocumentRequest(BaseModel):
     filename: str
 
@@ -48,10 +50,14 @@ vector_store = Chroma(
     embedding_function=embeddings
 )
 
-class SearchRequest(BaseModel):
+class SearchRequest1(BaseModel):
     query: str
     selected_document: str = "all"
 
+class SearchRequest(BaseModel):
+    query: str
+    selected_document: str = "all"
+    chat_history: list = []
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -212,6 +218,12 @@ async def ask_question_stream(request: QuestionRequest):
         [doc.page_content for doc in docs]
     )
 
+    chat_history = "\n".join(
+        [
+            f"{msg['role']}: {msg['content']}"
+            for msg in request.chat_history
+        ]
+    )
     def generate():
         stream = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -223,7 +235,16 @@ async def ask_question_stream(request: QuestionRequest):
                 },
                 {
                     "role": "user",
-                    "content": f"Context:\n{context}\n\nQuestion:\n{request.question}"
+                    "content": f"""
+                    Conversation history:
+                    {chat_history}
+
+                    Document context:
+                    {context}
+
+                    Current question:
+                    {request.question}
+                    """
                 }
             ]
         )

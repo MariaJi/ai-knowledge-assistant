@@ -282,11 +282,14 @@ async function askAI() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        question,
-        selected_document: selectedDocument,
-      }),
-    });
-
+  question,
+  selected_document: selectedDocument,
+  chat_history: messages.slice(-6).map((message) => ({
+    role: message.role,
+    content: message.content,
+  })),
+}),
+});
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
