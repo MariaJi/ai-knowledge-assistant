@@ -453,6 +453,15 @@ async function searchDocuments() {
 }
 
 
+async function copyMessage(content) {
+  try {
+    await navigator.clipboard.writeText(content);
+    alert("Copied!");
+  } catch (error) {
+    alert("Could not copy message.");
+  }
+}
+
  return (
  <div className="app-layout">
 	<button
@@ -652,6 +661,15 @@ async function searchDocuments() {
 				>
 				<div className="message-role">
 					{message.role === "user" ? "You" : "AI"}
+
+					{message.role === "assistant" && (
+						<button
+							className="copy-message-button"
+						onClick={() => copyMessage(message.content)}
+					>
+							📋
+					</button>
+					)}
 				</div>
 
 				<div className="message-content">
