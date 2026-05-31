@@ -822,7 +822,7 @@ async function summarizeDocument() {
         }`}
   </p>
 )}
-{filteredMessages.length > 0 && (
+{isSearching && filteredMessages.length > 0 && (
   <>
     <button onClick={previousSearchResult}>
       ↑
