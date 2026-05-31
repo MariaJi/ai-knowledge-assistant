@@ -657,6 +657,31 @@ function exportMessageAsMarkdown(message, index) {
   URL.revokeObjectURL(url);
 }
 
+function exportChatAsMarkdown() {
+  if (messages.length === 0) return;
+
+  const markdown = messages
+    .map((message) => {
+      const roleLabel = message.role === "user" ? "User" : "AI";
+
+      return `## ${roleLabel}\n\n${message.content}`;
+    })
+    .join("\n\n---\n\n");
+
+  const blob = new Blob([`# Chat Session\n\n${markdown}`], {
+    type: "text/markdown",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "chat-session.md";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -721,7 +746,7 @@ function exportMessageAsMarkdown(message, index) {
     onClick={exportCurrentChat}
 	disabled={messages.length === 0}
   >
-    Export Chat
+    Save Session
   </button>
   <button
       className="clear-chat-button"
@@ -730,6 +755,14 @@ function exportMessageAsMarkdown(message, index) {
     >
       Clear Chat
     </button>
+	
+	<button
+		className="export-chat-button"
+		onClick={exportChatAsMarkdown}
+		disabled={messages.length === 0}
+	>
+		Export Markdown
+	</button>
 </div>
 
 
