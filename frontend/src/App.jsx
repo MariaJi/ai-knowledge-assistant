@@ -70,10 +70,12 @@ const currentSession = sessions.find(
 
 const messages = currentSession?.messages || [];
 
-const filteredMessages = messages.filter((message) =>
-  message.content.toLowerCase().includes(chatSearchTerm.toLowerCase())
-);
 
+const filteredMessages = messages.filter((message) =>
+  String(message.content || "")
+  .toLowerCase()
+  .includes(chatSearchTerm.toLowerCase())
+);
 const goToSearchResult = (index) => {
   const element = searchResultRefs.current[index];
 
@@ -250,13 +252,13 @@ function updateSessionTitle(sessionId, title) {
 }
 
  
-async function askAI() {
+async function askAI(questionOverride = null) {
 	setLoading(true);
-	
+	const questionToAsk = questionOverride || question;
 	updateCurrentSessionSources([]);
 	const userMessage = {
 		role: "user",
-		content: question,
+		content: questionToAsk,
 	};
 	setQuestion("");
 	const assistantMessage = {
@@ -275,7 +277,7 @@ async function askAI() {
 	if (messages.length === 0) {
 		updateSessionTitle(
 			currentSessionId,
-			question.slice(0, 30)
+			questionToAsk.slice(0, 30)
 	);
 }
   try {
@@ -285,7 +287,7 @@ async function askAI() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-  question,
+  question: questionToAsk,
   selected_document: selectedDocument,
   chat_history: messages.slice(-10).map((message) => ({
     role: message.role,
@@ -334,7 +336,7 @@ async function askAI() {
 		"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			question,
+			question: questionToAsk,
 			selected_document: selectedDocument,
 		}),
 	});
@@ -368,7 +370,10 @@ updateCurrentSessionMessages(finalMessages);
     setLoading(false);
   }
 }
-  async function fetchDocuments() {
+ 
+
+
+ async function fetchDocuments() {
   const response = await fetch("http://127.0.0.1:8000/documents");
   const data = await response.json();
   setDocuments(data.documents || []); 
@@ -691,6 +696,20 @@ function exportChatAsMarkdown() {
   URL.revokeObjectURL(url);
 }
 
+function regenerateResponse(index) {
+  const previousUserMessage = [...messages]
+    .slice(0, index)
+    .reverse()
+    .find((message) => message.role === "user");
+
+  if (!previousUserMessage) {
+    alert("No previous user question found.");
+    return;
+  }
+
+  askAI(previousUserMessage.content);
+}
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -929,7 +948,7 @@ function exportChatAsMarkdown() {
 			{selectedFile && (
 				<p>Selected: {selectedFile.name}</p>
 				)}
-			<button onClick={askAI} disabled={loading || !question}>
+			<button onClick={() => askAI()} disabled={loading || !question}>
 				{loading ? "Thinking..." : "Ask AI"}
 			</button>
 		</div>
@@ -1009,6 +1028,12 @@ function exportChatAsMarkdown() {
 								onClick={() => exportMessageAsMarkdown(message, index)}
 						>
 							⬇️ MD
+						</button>
+						<button
+								className="regenerate-message-button"
+								onClick={() => regenerateResponse(index)}
+						>
+							↻ Regenerate
 						</button>
 						 </>
 					)}
