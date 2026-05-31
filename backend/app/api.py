@@ -62,6 +62,9 @@ class SearchRequest(BaseModel):
 class SummaryRequest(BaseModel):
     selected_document: str
 
+class CompareRequest(BaseModel):
+    document_a: str
+    document_b: str
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -396,4 +399,65 @@ Only use information from the document.
 
     return {
         "summary": response.choices[0].message.content
+    }
+    
+@app.post("/compare")
+async def compare_documents(request: CompareRequest):
+    docs_a = vector_store.similarity_search(
+        request.document_a,
+        k=20,
+        filter={
+            "filename": request.document_a
+        }
+    )
+
+    docs_b = vector_store.similarity_search(
+        request.document_b,
+        k=20,
+        filter={
+            "filename": request.document_b
+        }
+    )
+    context_a = "\n\n".join(
+        [doc.page_content for doc in docs_a]
+    )
+
+    context_b = "\n\n".join(
+        [doc.page_content for doc in docs_b]
+    )
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+Compare the two documents and return:
+
+# Executive Summary
+
+# Similarities
+
+# Differences
+
+# Important Changes
+
+# Recommendations
+
+Only use information from the provided documents.
+"""
+            },
+            {
+                "role": "user",
+                "content": f"""
+Document A:
+{context_a}
+
+Document B:
+{context_b}
+"""
+            }
+        ]
+    )
+    return {
+        "comparison": response.choices[0].message.content
     }

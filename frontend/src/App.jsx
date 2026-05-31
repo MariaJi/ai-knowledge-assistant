@@ -19,6 +19,9 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
   
+  const [compareDocumentA, setCompareDocumentA] = useState("");
+  const [compareDocumentB, setCompareDocumentB] = useState("");
+  
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
   
@@ -590,6 +593,44 @@ async function summarizeDocument() {
   }
 }
 
+async function compareDocuments() {
+    if (!compareDocumentA || !compareDocumentB) {
+        alert("Please select two documents.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:8000/compare",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    document_a: compareDocumentA,
+                    document_b: compareDocumentB,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        const comparisonMessage = {
+            role: "assistant",
+            content: data.comparison,
+            isComparison: true,
+        };
+
+        updateCurrentSessionMessages([
+            ...messages,
+            comparisonMessage,
+        ]);
+
+    } catch (error) {
+        alert("Compare failed.");
+    }
+}
 
  return (
 
@@ -718,6 +759,41 @@ async function summarizeDocument() {
 			</option>
 			))}
 			</select>
+			
+
+<h3>Compare Documents</h3>
+
+<select
+    value={compareDocumentA}
+    onChange={(e) => setCompareDocumentA(e.target.value)}
+>
+    <option value="">Select Document A</option>
+
+    {documents.map((doc, index) => (
+        <option key={index} value={doc}>
+            {doc}
+        </option>
+    ))}
+</select>
+
+<select
+    value={compareDocumentB}
+    onChange={(e) => setCompareDocumentB(e.target.value)}
+>
+    <option value="">Select Document B</option>
+
+    {documents.map((doc, index) => (
+        <option key={index} value={doc}>
+            {doc}
+        </option>
+    ))}
+</select>
+
+<button onClick={compareDocuments}>
+    Compare Documents
+</button>
+
+
 			<button
 					onClick={summarizeDocument}
 					disabled={selectedDocument === "all"}
