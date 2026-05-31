@@ -354,7 +354,16 @@ const finalMessages = [
 updateCurrentSessionMessages(finalMessages);
 
   } catch (error) {
-    setAnswer("Could not connect to backend.");
+    const errorMessages = [
+    ...newMessages.slice(0, -1),
+    {
+      role: "assistant",
+      content: "Error: Could not connect to server.",
+      sources: [],
+    },
+  ];
+
+  updateCurrentSessionMessages(errorMessages);
   } finally {
     setLoading(false);
   }
