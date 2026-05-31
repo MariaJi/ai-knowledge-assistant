@@ -559,7 +559,36 @@ function highlightText(text, searchTerm) {
   );
 }
 
+async function summarizeDocument() {
+  if (selectedDocument === "all") return;
 
+  try {
+    const response = await fetch("http://127.0.0.1:8000/summarize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        selected_document: selectedDocument,
+      }),
+    });
+
+    const data = await response.json();
+
+    const summaryMessage = {
+		role: "assistant",
+		content: `📄 Summary of ${selectedDocument}\n\n${data.summary}`,
+		sources: [],
+	};
+
+	updateCurrentSessionMessages([
+		...messages,
+		summaryMessage,
+	]);
+  } catch (error) {
+    alert("Could not summarize document.");
+  }
+}
 
 
  return (
@@ -649,6 +678,7 @@ function highlightText(text, searchTerm) {
 		}
 </div>
 
+
 		<h1>AI Knowledge Assistant</h1>
 
 		<div className="upload-box">
@@ -688,6 +718,12 @@ function highlightText(text, searchTerm) {
 			</option>
 			))}
 			</select>
+			<button
+					onClick={summarizeDocument}
+					disabled={selectedDocument === "all"}
+					>
+				📄 Summarize Document
+			</button>
 				{documents.length === 0 ? (
 				<p>No documents uploaded yet.</p>
 				) : (

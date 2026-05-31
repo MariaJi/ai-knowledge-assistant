@@ -58,6 +58,10 @@ class SearchRequest(BaseModel):
     query: str
     selected_document: str = "all"
     chat_history: list = []
+    
+class SummaryRequest(BaseModel):
+    selected_document: str
+
 
 def create_vector_store(text, filename):
     splitter = CharacterTextSplitter(
@@ -314,7 +318,6 @@ async def delete_document(request: DeleteDocumentRequest):
     }
 @app.post("/search")
 async def search_documents(request: SearchRequest):
-
     if request.selected_document == "all":
         docs = vector_store.similarity_search(
             request.query,
@@ -348,4 +351,49 @@ async def search_documents(request: SearchRequest):
 
     return {
         "results": results
+    }
+
+@app.post("/summarize")
+async def summarize_document(request: SummaryRequest):
+
+    docs = vector_store.similarity_search(
+        request.selected_document,
+        k=20,
+        filter={
+            "filename": request.selected_document
+        }
+    )
+
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+Summarize the document using this format:
+
+# Executive Summary
+
+# Key Points
+
+# Important Facts
+
+# Action Items
+
+Only use information from the document.
+"""
+            },
+            {
+                "role": "user",
+                "content": context
+            }
+        ]
+    )
+
+    return {
+        "summary": response.choices[0].message.content
     }
