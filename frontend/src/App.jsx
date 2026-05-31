@@ -632,6 +632,31 @@ async function compareDocuments() {
     }
 }
 
+function exportMessageAsMarkdown(message, index) {
+  let filePrefix = "ai-response";
+
+  if (message.content.includes("Summary of")) {
+    filePrefix = "ai-summary";
+  }
+
+  if (message.isComparison) {
+    filePrefix = "ai-comparison";
+  }
+
+  const blob = new Blob([message.content], {
+    type: "text/markdown",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${filePrefix}-${index + 1}.md`;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -930,12 +955,20 @@ async function compareDocuments() {
 					{message.role === "user" ? "You" : "AI"}
 
 					{message.role === "assistant" && (
+					 <>
 						<button
 								className="copy-message-button"
 								onClick={() => copyMessage(message.content, index)}
 							>
 							{copiedMessageIndex === index ? "✓" : "📋"}
 						</button>
+						<button
+								className="export-message-button"
+								onClick={() => exportMessageAsMarkdown(message, index)}
+						>
+							⬇️ MD
+						</button>
+						 </>
 					)}
 				</div>
 
