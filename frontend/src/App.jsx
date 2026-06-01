@@ -236,6 +236,7 @@ function updateCurrentSessionSources(newSources) {
 		messages: [],
 		sources: [],
 		selectedDocument: "all",
+		isFavorite: false,
   };
 
 
@@ -723,6 +724,17 @@ function regenerateResponse(index) {
   askAI(previousUserMessage.content);
 }
 
+function toggleFavoriteSession(sessionId) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === sessionId
+        ? { ...session, isFavorite: !session.isFavorite }
+        : session
+    )
+  );
+}
+
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -751,7 +763,12 @@ function regenerateResponse(index) {
 				>
 				{session.title}
 				</button>
-
+				<button
+					onClick={() => toggleFavoriteSession(session.id)}
+					className="favorite-chat-button"
+				>
+					{session.isFavorite ? "⭐" : "☆"}
+				</button>
 				<button
 				className="rename-chat-button"
 				onClick={() => renameChat(session.id)}
@@ -765,6 +782,7 @@ function regenerateResponse(index) {
 				>
 				×
 				</button>
+				
 			</div>
 ))}
 		</div>
@@ -820,7 +838,6 @@ function regenerateResponse(index) {
 
 
 		<h1>AI Knowledge Assistant</h1>
-		<div className="chat-statistics">
 		
 		<div className="chat-statistics">
 				<strong>Stats:</strong>

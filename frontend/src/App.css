@@ -177,12 +177,20 @@ button:disabled {
   padding: 30px;
 }
 
+
+
 .session-item {
   display: grid;
-  grid-template-columns: 1fr 28px 28px;
+  grid-template-columns: 1fr 32px 28px 28px;
   align-items: center;
   gap: 4px;
   margin-bottom: 8px;
+}
+
+.favorite-chat-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
 .session-title-button {
