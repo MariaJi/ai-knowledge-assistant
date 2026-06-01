@@ -63,14 +63,27 @@ function App() {
     },
   ];
 });
-
+const [documents, setDocuments] = useState([]);
 const currentSession = sessions.find(
   (session) => session.id === currentSessionId
 );
 
 const messages = currentSession?.messages || [];
 
+const userMessageCount = messages.filter(
+  (message) => message.role === "user"
+).length;
 
+const aiMessageCount = messages.filter(
+  (message) => message.role === "assistant"
+).length;
+
+const totalMessageCount = messages.length;
+
+const documentCount = documents.length;
+const totalWords = messages.reduce((count, message) => {
+  return count + String(message.content || "").split(/\s+/).filter(Boolean).length;
+}, 0);
 const filteredMessages = messages.filter((message) =>
   String(message.content || "")
   .toLowerCase()
@@ -119,7 +132,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [documents, setDocuments] = useState([]);
+  
   //const [selectedDocument, setSelectedDocument] = useState("all");
   const chatBoxRef = useRef(null);
   const searchResultRefs = useRef([]);
@@ -807,7 +820,16 @@ function regenerateResponse(index) {
 
 
 		<h1>AI Knowledge Assistant</h1>
-
+		<div className="chat-statistics">
+		
+		<div className="chat-statistics">
+				<strong>Stats:</strong>
+				{" "}Messages: {messages.length}
+				{" | "}User: {userMessageCount}
+				{" | "}AI: {aiMessageCount}
+				{" | "}Documents: {documentCount}
+				{" | "}Words: {totalWords}
+		</div>
 		<div className="upload-box">
 			<h2>Upload Document</h2>
 

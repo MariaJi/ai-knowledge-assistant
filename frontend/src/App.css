@@ -444,3 +444,18 @@ body:has(.dark-mode) {
   font-size: 14px;
   font-weight: 500;
 }
+
+.chat-statistics {
+  margin: 10px 0 20px 0;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dark-mode .chat-statistics {
+  background-color: #374151;
+  color: #f9fafb;
+}
