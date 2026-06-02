@@ -753,7 +753,9 @@ function toggleFavoriteSession(sessionId) {
 		</button>
 
 		<div className="session-list">
-			{sessions.map((session) => (
+			{[...sessions]
+					.sort((a, b) => Number(b.isFavorite) - Number(a.isFavorite))
+				.map((session) =>  (
 			<div key={session.id} className="session-item">
 				<button
 				className={`session-title-button ${
