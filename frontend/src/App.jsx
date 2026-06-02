@@ -142,6 +142,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const searchResultRefs = useRef([]);
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || "all";
+  const [categoryFilter, setCategoryFilter] = useState("All");
   useEffect(() => {
     if (chatBoxRef.current) {
 		chatBoxRef.current.scrollTop =
@@ -759,6 +760,17 @@ function updateSessionCategory(sessionId, newCategory) {
   );
 }
 
+const filteredSessions = sessions
+  .filter(
+    (session) =>
+      categoryFilter === "All" ||
+      session.category === categoryFilter
+  )
+  .sort(
+    (a, b) =>
+      Number(b.isFavorite) - Number(a.isFavorite)
+  );
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -775,11 +787,21 @@ function updateSessionCategory(sessionId, newCategory) {
 		<button onClick={createNewChat}>
 		+ New Chat
 		</button>
-
+<select  className="category-filter"
+  value={categoryFilter}
+  onChange={(e) =>
+    setCategoryFilter(e.target.value)
+  }
+>
+  <option value="All">All Categories</option>
+  <option value="General">General</option>
+  <option value="Work">Work</option>
+  <option value="AI">AI</option>
+  <option value="Travel">Travel</option>
+  <option value="Personal">Personal</option>
+</select>
 		<div className="session-list">
-			{[...sessions]
-					.sort((a, b) => Number(b.isFavorite) - Number(a.isFavorite))
-				.map((session) =>  (
+			{filteredSessions.map((session)  =>  (
 			<div key={session.id} className="session-item">
 				<button
 				className={`session-title-button ${
@@ -810,7 +832,9 @@ function updateSessionCategory(sessionId, newCategory) {
 			<option value="Personal">Personal</option>
 		</select>
 
-
+<button className="favorite-chat-button">
+  ...
+</button>
 				
 				<button
 					onClick={() => toggleFavoriteSession(session.id)}
