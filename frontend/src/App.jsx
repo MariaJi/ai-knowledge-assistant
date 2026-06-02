@@ -219,7 +219,7 @@ function updateCurrentSessionMessages(newMessages) {
   setSessions((prevSessions) =>
     prevSessions.map((session) =>
       session.id === currentSessionId
-        ? { ...session, messages: newMessages }
+        ? { ...session, messages: newMessages, updatedAt: new Date().toISOString(), }
         : session
     )
   );
@@ -243,6 +243,8 @@ function updateCurrentSessionSources(newSources) {
 		selectedDocument: "all",
 		isFavorite: false,
 		category: "General",
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
   };
 
 
@@ -801,7 +803,17 @@ const filteredSessions = sessions
   <option value="Personal">Personal</option>
 </select>
 		<div className="session-list">
-			{filteredSessions.map((session)  =>  (
+			{filteredSessions
+  .sort((a, b) => {
+    if (a.isFavorite && !b.isFavorite) return -1;
+    if (!a.isFavorite && b.isFavorite) return 1;
+
+    const aTime = new Date(a.updatedAt || a.createdAt || 0).getTime();
+    const bTime = new Date(b.updatedAt || b.createdAt || 0).getTime();
+
+    return bTime - aTime;
+  })
+  .map((session) => (
 			<div key={session.id} className="session-item">
 				<button
 				className={`session-title-button ${
