@@ -70,6 +70,10 @@ const currentSession = sessions.find(
 
 const messages = currentSession?.messages || [];
 
+const pinnedMessages = messages.filter(
+  (message) => message.isPinned
+);
+
 const userMessageCount = messages.filter(
   (message) => message.role === "user"
 ).length;
@@ -734,6 +738,16 @@ function toggleFavoriteSession(sessionId) {
   );
 }
 
+function togglePinnedMessage(index) {
+  const updatedMessages = messages.map((message, messageIndex) =>
+    messageIndex === index
+      ? { ...message, isPinned: !message.isPinned }
+      : message
+  );
+
+  updateCurrentSessionMessages(updatedMessages);
+}
+
 
  return (
 
@@ -1047,6 +1061,20 @@ function toggleFavoriteSession(sessionId) {
 ) : (
 		
 		<div className="chat-box" ref={chatBoxRef}>
+		{pinnedMessages.length > 0 && (
+  <div className="pinned-messages">
+    
+	<h4>📌 Pinned Messages ({pinnedMessages.length})</h4>
+    {pinnedMessages.map((message, index) => (
+      <div
+        key={index}
+        className="pinned-message-item"
+      >
+        {message.content}
+      </div>
+    ))}
+  </div>
+)}
 			 {filteredMessages.map((message, index) => (
 			<div
 					key={index}
@@ -1075,6 +1103,12 @@ function toggleFavoriteSession(sessionId) {
 								onClick={() => regenerateResponse(index)}
 						>
 							↻ Regenerate
+						</button>
+						<button
+							className="pin-message-button"
+							onClick={() => togglePinnedMessage(index)}
+						>
+							{message.isPinned ? "📌" : "📍"}
 						</button>
 						 </>
 					)}

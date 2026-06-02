@@ -467,3 +467,20 @@ body:has(.dark-mode) {
   background-color: #374151;
   color: #f9fafb;
 }
+
+.pinned-messages {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.pinned-message-item {
+  padding: 10px;
+  margin-top: 8px;
+  background: white;
+  border-left: 4px solid orange;
+  border-radius: 6px;
+  text-align: left;
+}
