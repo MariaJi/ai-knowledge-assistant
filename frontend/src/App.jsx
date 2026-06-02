@@ -241,6 +241,7 @@ function updateCurrentSessionSources(newSources) {
 		sources: [],
 		selectedDocument: "all",
 		isFavorite: false,
+		category: "General",
   };
 
 
@@ -748,6 +749,15 @@ function togglePinnedMessage(index) {
   updateCurrentSessionMessages(updatedMessages);
 }
 
+function updateSessionCategory(sessionId, newCategory) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === sessionId
+        ? { ...session, category: newCategory }
+        : session
+    )
+  );
+}
 
  return (
 
@@ -779,6 +789,29 @@ function togglePinnedMessage(index) {
 				>
 				{session.title}
 				</button>
+				
+
+
+		
+		<select
+			className="session-category-select"
+			value={session.category || "General"}
+			onChange={(e) =>
+			updateSessionCategory(
+			session.id,
+			e.target.value
+		)
+			}
+		>
+			<option value="General">General</option>
+			<option value="Work">Work</option>
+			<option value="AI">AI</option>
+			<option value="Travel">Travel</option>
+			<option value="Personal">Personal</option>
+		</select>
+
+
+				
 				<button
 					onClick={() => toggleFavoriteSession(session.id)}
 					className="favorite-chat-button"
@@ -804,6 +837,7 @@ function togglePinnedMessage(index) {
 		</div>
 	</aside>
 	)}
+	
 	<main className="container">
 		<div className="current-chat-header">
   {currentSession?.title}

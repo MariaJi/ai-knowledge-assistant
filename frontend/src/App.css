@@ -142,7 +142,7 @@ button:disabled {
 }
 
 .sidebar {
-  width: 260px;
+  width: 350px;
   padding: 60px 20px 20px;
   border-right: 1px solid #ddd;
   background: #f8f8f8;
@@ -179,12 +179,13 @@ button:disabled {
 
 
 
+
+
 .session-item {
   display: grid;
-  grid-template-columns: 1fr 32px 28px 28px;
+  grid-template-columns: minmax(120px, 1fr) 60px 32px 32px 32px;
   align-items: center;
   gap: 4px;
-  margin-bottom: 8px;
 }
 
 .favorite-chat-button {
@@ -193,16 +194,15 @@ button:disabled {
   padding: 0;
 }
 
+
+
 .session-title-button {
+  width: auto;
   min-width: 0;
-  text-align: left;
-  padding: 8px 10px;
-  border-radius: 8px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
 
 
 
@@ -484,3 +484,10 @@ body:has(.dark-mode) {
   border-radius: 6px;
   text-align: left;
 }
+
+.session-category-select {
+  width: 60px;
+  font-size: 11px;
+  padding: 2px;
+}
+
