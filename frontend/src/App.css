@@ -177,13 +177,9 @@ button:disabled {
   padding: 30px;
 }
 
-
-
-
-
 .session-item {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 60px 32px 32px 32px;
+  grid-template-columns: minmax(120px, 1fr) 60px 32px 32px 32px 32px;
   align-items: center;
   gap: 4px;
 }
