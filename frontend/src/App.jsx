@@ -763,6 +763,25 @@ function updateSessionCategory(sessionId, newCategory) {
   );
 }
 
+function getSessionSearchPreview(session) {
+  const search = chatSearchTerm.toLowerCase().trim();
+
+  if (!search) return "";
+
+  const matchingMessage = session.messages?.find(
+    (message) =>
+      message.content?.toLowerCase().includes(search)
+  );
+
+  if (!matchingMessage) return "";
+
+  const text = matchingMessage.content;
+
+  return text.length > 60
+    ? text.substring(0, 60) + "..."
+    : text;
+}
+
 const filteredSessions = sessions.filter((session) => {
   const matchesCategory =
     categoryFilter === "All" ||
@@ -830,6 +849,7 @@ const filteredSessions = sessions.filter((session) => {
   })
   .map((session) => (
 			<div key={session.id} className="session-item">
+			<div className="session-info">
 				<button
 				className={`session-title-button ${
 				currentSessionId === session.id ? "active-session" : ""
@@ -838,8 +858,13 @@ const filteredSessions = sessions.filter((session) => {
 				>
 				{session.title}
 				</button>
-				
-
+				{chatSearchTerm.trim() !== "" &&
+					getSessionSearchPreview(session) && (
+				<div className="session-search-preview">
+				↳ {getSessionSearchPreview(session)}
+				</div>
+				)}
+			</div>
 
 		
 		<select
