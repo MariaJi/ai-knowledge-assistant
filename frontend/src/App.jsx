@@ -774,7 +774,7 @@ const filteredSessions = sessions.filter((session) => {
     search === "" ||
     session.title?.toLowerCase().includes(search) ||
     session.messages?.some((message) =>
-      message.text?.toLowerCase().includes(search)
+      message.conten?.toLowerCase().includes(search)
     );
 
   return matchesCategory && matchesSearch;
@@ -1095,23 +1095,21 @@ const filteredSessions = sessions.filter((session) => {
 		<div className="chat-search-box">
   <input
     type="text"
-    value={chatSearchTerm}
+	value={messageSearchTerm}
 	onChange={(e) => {
-	setChatSearchTerm(e.target.value);
+	setMessageSearchTerm(e.target.value);
 	setCurrentSearchIndex(0);
-	}}
+}}
     placeholder="Search this chat..."
   />
-   {chatSearchTerm && (
-    <button
-      className="clear-search-button"
-      onClick={() => setChatSearchTerm("")}
-    >
-      Clear
-    </button>
-	
-	
-  )}
+   {messageSearchTerm && (
+  <button
+    className="clear-search-button"
+    onClick={() => setMessageSearchTerm("")}
+  >
+    Clear
+  </button>
+)}
 </div>
 
 {chatSearchTerm.trim() !== "" && (
@@ -1204,10 +1202,10 @@ const filteredSessions = sessions.filter((session) => {
  <ReactMarkdown
   components={{
     p: ({ children }) => (
-      <p>{highlightText(String(children), chatSearchTerm)}</p>
+      <p>{highlightText(String(children), messageSearchTerm)}</p>
     ),
     li: ({ children }) => (
-      <li>{highlightText(String(children), chatSearchTerm)}</li>
+      <li>{highlightText(String(children), messageSearchTerm)}</li>
     ),
   }}
 >
@@ -1215,7 +1213,7 @@ const filteredSessions = sessions.filter((session) => {
 </ReactMarkdown>
 ) : (
   <div>
-    {highlightText(message.content, chatSearchTerm)}
+    {highlightText(message.content, messageSearchTerm)}
   </div>
 )}
 					{message.sources && message.sources.length > 0 && (
