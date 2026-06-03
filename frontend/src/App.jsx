@@ -8,7 +8,7 @@ function App() {
   //const [currentSessionId, setCurrentSessionId] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chatSearchTerm, setChatSearchTerm] = useState("");
-  
+  const [messageSearchTerm, setMessageSearchTerm] = useState("");
   const [darkMode, setDarkMode] = useState(() => {
   return localStorage.getItem("darkMode") === "true";
 	});
@@ -143,6 +143,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || "all";
   const [categoryFilter, setCategoryFilter] = useState("All");
+
   useEffect(() => {
     if (chatBoxRef.current) {
 		chatBoxRef.current.scrollTop =
@@ -762,16 +763,22 @@ function updateSessionCategory(sessionId, newCategory) {
   );
 }
 
-const filteredSessions = sessions
-  .filter(
-    (session) =>
-      categoryFilter === "All" ||
-      session.category === categoryFilter
-  )
-  .sort(
-    (a, b) =>
-      Number(b.isFavorite) - Number(a.isFavorite)
-  );
+const filteredSessions = sessions.filter((session) => {
+  const matchesCategory =
+    categoryFilter === "All" ||
+    session.category === categoryFilter;
+
+  const search = chatSearchTerm.toLowerCase().trim();
+
+  const matchesSearch =
+    search === "" ||
+    session.title?.toLowerCase().includes(search) ||
+    session.messages?.some((message) =>
+      message.text?.toLowerCase().includes(search)
+    );
+
+  return matchesCategory && matchesSearch;
+});
 
  return (
 
@@ -802,6 +809,13 @@ const filteredSessions = sessions
   <option value="Travel">Travel</option>
   <option value="Personal">Personal</option>
 </select>
+	<input
+  className="chat-search-input"
+  type="text"
+  placeholder="Search chats..."
+  value={chatSearchTerm}
+  onChange={(e) => setChatSearchTerm(e.target.value)}
+	/>
 		<div className="session-list">
 			{filteredSessions
   .sort((a, b) => {
