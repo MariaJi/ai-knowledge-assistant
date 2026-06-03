@@ -774,11 +774,12 @@ const filteredSessions = sessions.filter((session) => {
     search === "" ||
     session.title?.toLowerCase().includes(search) ||
     session.messages?.some((message) =>
-      message.conten?.toLowerCase().includes(search)
+      message.content?.toLowerCase().includes(search)
     );
 
   return matchesCategory && matchesSearch;
 });
+
 
  return (
 
