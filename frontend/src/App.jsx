@@ -9,12 +9,13 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chatSearchTerm, setChatSearchTerm] = useState("");
   const [messageSearchTerm, setMessageSearchTerm] = useState("");
+
   const [darkMode, setDarkMode] = useState(() => {
   return localStorage.getItem("darkMode") === "true";
-	});
+  });
 
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
-  
+  const [collapsedCategories, setCollapsedCategories] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
@@ -22,6 +23,7 @@ function App() {
   const [compareDocumentA, setCompareDocumentA] = useState("");
   const [compareDocumentB, setCompareDocumentB] = useState("");
   
+
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
   
@@ -762,6 +764,12 @@ function updateSessionCategory(sessionId, newCategory) {
     )
   );
 }
+function toggleCategory(category) {
+  setCollapsedCategories((prev) => ({
+    ...prev,
+    [category]: !prev[category],
+  }));
+}
 
 function getSessionSearchPreview(session) {
   const search = chatSearchTerm.toLowerCase().trim();
@@ -798,6 +806,29 @@ const filteredSessions = sessions.filter((session) => {
 
   return matchesCategory && matchesSearch;
 });
+
+
+
+const groupedSessions = filteredSessions.reduce((groups, session) => {
+  const category = session.category || "General";
+
+  if (!groups[category]) {
+    groups[category] = [];
+  }
+
+  groups[category].push(session);
+
+  return groups;
+}, {});
+
+ console.log(groupedSessions);
+
+function toggleCategory(category) {
+  setCollapsedCategories((prev) => ({
+    ...prev,
+    [category]: !prev[category],
+  }));
+}
 
 
  return (
@@ -837,7 +868,19 @@ const filteredSessions = sessions.filter((session) => {
   onChange={(e) => setChatSearchTerm(e.target.value)}
 	/>
 		<div className="session-list">
-			{filteredSessions
+
+		{Object.entries(groupedSessions).map(([category, categorySessions]) => (
+  <div key={category} className="category-group">
+    <button
+      className="category-group-header"
+      onClick={() => toggleCategory(category)}
+    >
+      {collapsedCategories[category] ? "▶" : "▼"} {category} ({categorySessions.length})
+    </button>
+
+    {!collapsedCategories[category] && (
+  <div className="category-sessions">
+			{categorySessions
   .sort((a, b) => {
     if (a.isFavorite && !b.isFavorite) return -1;
     if (!a.isFavorite && b.isFavorite) return 1;
@@ -909,6 +952,10 @@ const filteredSessions = sessions.filter((session) => {
 				</button>
 				
 			</div>
+			))}
+      </div>
+    )}
+  </div>
 ))}
 		</div>
 	</aside>

@@ -508,3 +508,25 @@ body:has(.dark-mode) {
   white-space: normal;
   overflow-wrap: break-word;
 }
+
+.category-group {
+  margin-bottom: 10px;
+}
+
+.category-group-header {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 8px 0 6px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.category-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
