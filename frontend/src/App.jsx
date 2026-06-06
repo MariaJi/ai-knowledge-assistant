@@ -771,6 +771,21 @@ function toggleCategory(category) {
   }));
 }
 
+function expandAllCategories() {
+  setCollapsedCategories({});
+}
+
+function collapseAllCategories() {
+  const collapsed = {};
+
+  Object.keys(groupedSessions).forEach((category) => {
+    collapsed[category] = true;
+  });
+
+  setCollapsedCategories(collapsed);
+}
+
+
 function getSessionSearchPreview(session) {
   const search = chatSearchTerm.toLowerCase().trim();
 
@@ -867,6 +882,15 @@ function toggleCategory(category) {
   value={chatSearchTerm}
   onChange={(e) => setChatSearchTerm(e.target.value)}
 	/>
+	<div className="category-controls">
+  <button onClick={expandAllCategories}>
+    Expand All
+  </button>
+
+  <button onClick={collapseAllCategories}>
+    Collapse All
+  </button>
+</div>
 		<div className="session-list">
 
 		{Object.entries(groupedSessions).map(([category, categorySessions]) => (

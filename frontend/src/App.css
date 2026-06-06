@@ -530,3 +530,16 @@ body:has(.dark-mode) {
   flex-direction: column;
   gap: 6px;
 }
+
+.category-controls {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.category-controls button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
