@@ -1343,6 +1343,7 @@ function saveRecentSearch(searchTerm) {
 }}
 />
 
+
             <button
               onClick={() => deleteDocument(doc)}
                style={{
