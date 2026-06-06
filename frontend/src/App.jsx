@@ -164,6 +164,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   return JSON.parse(localStorage.getItem("documentTags") || "{}");
 	});
 
+const [tagSearch, setTagSearch] = useState("");
 useEffect(() => {
   localStorage.setItem(
     "documentTags",
@@ -171,15 +172,22 @@ useEffect(() => {
   );
 }, [documentTags]);
 
-  const filteredDocuments =
-  selectedCollection === "All"
-    ? documents
-    : documents.filter(
-        (doc) =>
-          (documentCollections[doc] || "Uncategorized") === selectedCollection
-      );
+ 
   
-  
+  const filteredDocuments = documents.filter((doc) => {
+  const matchesCollection =
+    selectedCollection === "All" ||
+    (documentCollections[doc] || "Uncategorized") === selectedCollection;
+
+  const matchesTag =
+    tagSearch.trim() === "" ||
+    (documentTags[doc] || "")
+      .toLowerCase()
+      .includes(tagSearch.toLowerCase());
+
+  return matchesCollection && matchesTag;
+});
+
   const [categoryFilter, setCategoryFilter] = useState("All");
 
 
@@ -1210,6 +1218,18 @@ function saveRecentSearch(searchTerm) {
 			<option value="Travel">Travel</option>
 			</select>
 		</div>
+		
+		<div className="tag-filter">
+				<label>Tag Search: </label>
+
+				<input
+					type="text"
+					value={tagSearch}
+					onChange={(e) => setTagSearch(e.target.value)}
+					placeholder="Search tags..."
+					/>
+		</div>
+		
 			<select
 				multiple
 				value={selectedDocuments}
