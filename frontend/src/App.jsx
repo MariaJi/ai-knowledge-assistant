@@ -160,6 +160,17 @@ const isSearching = chatSearchTerm.trim() !== "";
 	return JSON.parse(localStorage.getItem("documentCollections") || "{}");
 	});
 	
+  const [documentTags, setDocumentTags] = useState(() => {
+  return JSON.parse(localStorage.getItem("documentTags") || "{}");
+	});
+
+useEffect(() => {
+  localStorage.setItem(
+    "documentTags",
+    JSON.stringify(documentTags)
+  );
+}, [documentTags]);
+
   const filteredDocuments =
   selectedCollection === "All"
     ? documents
@@ -1275,7 +1286,8 @@ function saveRecentSearch(searchTerm) {
     ) : (
       <ul>
         {filteredDocuments.map((doc, index) => (
-          <li key={index}>
+          <li key={index}
+			className="document-row">
             📄 {doc}
 
             <select
@@ -1295,9 +1307,29 @@ function saveRecentSearch(searchTerm) {
               <option value="Travel">Travel</option>
             </select>
 
+<input
+  type="text"
+  value={documentTags[doc] || ""}
+  onChange={(e) =>
+    setDocumentTags({
+      ...documentTags,
+      [doc]: e.target.value,
+    })
+  }
+  placeholder="Tags: RAG, React, OpenAI"
+  style={{
+  marginLeft: "10px",
+  width: "150px",
+}}
+/>
+
             <button
               onClick={() => deleteDocument(doc)}
-              style={{ marginLeft: "10px" }}
+               style={{
+    marginLeft: "10px",
+    display: "inline-block",
+    verticalAlign: "top",
+  }}
             >
               Delete
             </button>

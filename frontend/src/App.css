@@ -558,3 +558,10 @@ body:has(.dark-mode) {
   height: 100vh;
   overflow-y: auto;
 }
+
+.document-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 180px 80px;
+  align-items: center;
+  gap: 10px;
+}
