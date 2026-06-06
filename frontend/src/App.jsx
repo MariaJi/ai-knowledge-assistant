@@ -152,14 +152,25 @@ const isSearching = chatSearchTerm.trim() !== "";
   const selectedDocument = currentSession?.selectedDocument || [];
   
   const selectedDocuments = currentSession?.selectedDocuments || [];
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  
+  const [selectedCollection, setSelectedCollection] = useState("All");
 
-	const [documentCollections, setDocumentCollections] = useState(() => {
-	 	
+
+  const [documentCollections, setDocumentCollections] = useState(() => {
 	return JSON.parse(localStorage.getItem("documentCollections") || "{}");
 	});
+	
+  const filteredDocuments =
+  selectedCollection === "All"
+    ? documents
+    : documents.filter(
+        (doc) =>
+          (documentCollections[doc] || "Uncategorized") === selectedCollection
+      );
+  
+  
+  const [categoryFilter, setCategoryFilter] = useState("All");
 
-	const [selectedCollection, setSelectedCollection] = useState("All");
 
 useEffect(() => {
   console.log("Saving collections:", documentCollections);
@@ -1173,7 +1184,21 @@ function saveRecentSearch(searchTerm) {
 		
 			<h2>Uploaded Documents ({documents.length})</h2>
 			
-			
+			<div className="collection-filter">
+			<label>Collection: </label>
+
+			<select
+			value={selectedCollection}
+			onChange={(e) => setSelectedCollection(e.target.value)}
+			>
+			<option value="All">All Collections</option>
+			<option value="Uncategorized">Uncategorized</option>
+			<option value="Job Search">Job Search</option>
+			<option value="AI Learning">AI Learning</option>
+			<option value="Work">Work</option>
+			<option value="Travel">Travel</option>
+			</select>
+		</div>
 			<select
 				multiple
 				value={selectedDocuments}
@@ -1210,7 +1235,7 @@ function saveRecentSearch(searchTerm) {
 >
     <option value="">Select Document A</option>
 
-    {documents.map((doc, index) => (
+    {filteredDocuments.map((doc, index) => (
         <option key={index} value={doc}>
             {doc}
         </option>
@@ -1241,42 +1266,48 @@ function saveRecentSearch(searchTerm) {
 					>
 				📄 Summarize Document
 			</button>
-				{documents.length === 0 ? (
-				<p>No documents uploaded yet.</p>
-				) : (
-			<ul>
-				
-				{documents.map((doc, index) => (
-					<li key={index}>
-					📄 {doc}
+			{documents.length === 0 ? (
+  <p>No documents uploaded yet.</p>
+) : (
+  <>
+    {filteredDocuments.length === 0 ? (
+      <p>No documents in this collection.</p>
+    ) : (
+      <ul>
+        {filteredDocuments.map((doc, index) => (
+          <li key={index}>
+            📄 {doc}
 
-				<select
-					value={documentCollections[doc] || "Uncategorized"}
-					onChange={(e) =>
-					setDocumentCollections({
-					...documentCollections,
-					[doc]: e.target.value,
-					})
-				}
-				style={{ marginLeft: "10px" }}
-				>
-					<option value="Uncategorized">Uncategorized</option>
-					<option value="Job Search">Job Search</option>
-					<option value="AI Learning">AI Learning</option>
-					<option value="Work">Work</option>
-					<option value="Travel">Travel</option>
-				</select>
+            <select
+              value={documentCollections[doc] || "Uncategorized"}
+              onChange={(e) =>
+                setDocumentCollections({
+                  ...documentCollections,
+                  [doc]: e.target.value,
+                })
+              }
+              style={{ marginLeft: "10px" }}
+            >
+              <option value="Uncategorized">Uncategorized</option>
+              <option value="Job Search">Job Search</option>
+              <option value="AI Learning">AI Learning</option>
+              <option value="Work">Work</option>
+              <option value="Travel">Travel</option>
+            </select>
 
-					<button
-					onClick={() => deleteDocument(doc)}
-					style={{ marginLeft: "10px" }}
-					>
-						Delete
-					</button>
-					</li>
-			))}
-			</ul>
-			)}
+            <button
+              onClick={() => deleteDocument(doc)}
+              style={{ marginLeft: "10px" }}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </>
+)}
+			
 		</div>
 		
 		<div className="search-box">
