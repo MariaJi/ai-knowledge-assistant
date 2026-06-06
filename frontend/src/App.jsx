@@ -154,6 +154,22 @@ const isSearching = chatSearchTerm.trim() !== "";
   const selectedDocuments = currentSession?.selectedDocuments || [];
   const [categoryFilter, setCategoryFilter] = useState("All");
 
+	const [documentCollections, setDocumentCollections] = useState(() => {
+	 	
+	return JSON.parse(localStorage.getItem("documentCollections") || "{}");
+	});
+
+	const [selectedCollection, setSelectedCollection] = useState("All");
+
+useEffect(() => {
+  console.log("Saving collections:", documentCollections);
+
+  localStorage.setItem(
+    "documentCollections",
+    JSON.stringify(documentCollections)
+  );
+}, [documentCollections]);
+
   useEffect(() => {
     if (chatBoxRef.current) {
 		chatBoxRef.current.scrollTop =
@@ -1229,18 +1245,36 @@ function saveRecentSearch(searchTerm) {
 				<p>No documents uploaded yet.</p>
 				) : (
 			<ul>
+				
 				{documents.map((doc, index) => (
 					<li key={index}>
-						📄 {doc}
+					📄 {doc}
 
-						<button
-						onClick={() => deleteDocument(doc)}
-							style={{ marginLeft: "10px" }}
-						>
+				<select
+					value={documentCollections[doc] || "Uncategorized"}
+					onChange={(e) =>
+					setDocumentCollections({
+					...documentCollections,
+					[doc]: e.target.value,
+					})
+				}
+				style={{ marginLeft: "10px" }}
+				>
+					<option value="Uncategorized">Uncategorized</option>
+					<option value="Job Search">Job Search</option>
+					<option value="AI Learning">AI Learning</option>
+					<option value="Work">Work</option>
+					<option value="Travel">Travel</option>
+				</select>
+
+					<button
+					onClick={() => deleteDocument(doc)}
+					style={{ marginLeft: "10px" }}
+					>
 						Delete
-						</button>
+					</button>
 					</li>
-				))}
+			))}
 			</ul>
 			)}
 		</div>
