@@ -146,6 +146,8 @@ const isSearching = chatSearchTerm.trim() !== "";
   //const [selectedDocument, setSelectedDocument] = useState("all");
   const chatBoxRef = useRef(null);
   const searchResultRefs = useRef([]);
+  const chatSearchInputRef = useRef(null);
+  
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || "all";
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -902,6 +904,7 @@ function saveRecentSearch(searchTerm) {
   className="chat-search-input"
   type="text"
   placeholder="Search chats..."
+  ref={chatSearchInputRef}
   value={chatSearchTerm}
   onChange={(e) => setChatSearchTerm(e.target.value)}
   onBlur={() => saveRecentSearch(chatSearchTerm)}
