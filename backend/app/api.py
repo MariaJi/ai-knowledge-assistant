@@ -38,6 +38,9 @@ class QuestionRequest(BaseModel):
 class DeleteDocumentRequest(BaseModel):
     filename: str
 
+class MultiSummaryRequest(BaseModel):
+    selected_documents: list[str] = []
+
 #vector_store = None
 uploaded_documents = []
 embeddings = OpenAIEmbeddings(
@@ -468,4 +471,86 @@ Document B:
     )
     return {
         "comparison": response.choices[0].message.content
+    }
+    
+@app.post("/summarize-multiple")
+async def summarize_multiple_documents(request: MultiSummaryRequest):
+    if vector_store is None:
+        raise HTTPException(status_code=400, detail="No documents uploaded yet.")
+
+    if len(request.selected_documents) == 0:
+        docs = vector_store.similarity_search(
+            "Summarize the main topics, key points, and important details.",
+            k=20
+        )
+    else:
+        docs = vector_store.similarity_search(
+            "Summarize the main topics, key points, and important details.",
+            k=20,
+            filter={
+                "filename": {
+                    "$in": request.selected_documents
+                }
+            }
+        )
+
+    if not docs:
+        return {
+            "summary": "No document content found for the selected documents.",
+            "sources": []
+        }
+
+    context = "\n\n".join([doc.page_content for doc in docs])
+
+    selected_text = (
+        "all uploaded documents"
+        if len(request.selected_documents) == 0
+        else ", ".join(request.selected_documents)
+    )
+
+    prompt = f"""
+You are summarizing multiple documents.
+
+Documents selected:
+{selected_text}
+
+Use only the provided document context.
+
+Please provide:
+
+1. Executive Summary
+2. Key Topics
+3. Important Details
+4. Common Themes Across Documents
+5. Differences Between Documents
+6. Recommended Next Steps or Takeaways
+
+Document context:
+{context}
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful AI assistant."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    sources = list(
+        {
+            doc.metadata.get("filename", "Unknown")
+            for doc in docs
+        }
+    )
+
+    return {
+        "summary": response.choices[0].message.content,
+        "sources": sources
     }
