@@ -65,7 +65,7 @@ function App() {
       title: "New Chat",
       messages: [],
 	  sources: [],
-	  selectedDocument: "all",
+	  selectedDocuments: [],
     },
   ];
 });
@@ -149,7 +149,9 @@ const isSearching = chatSearchTerm.trim() !== "";
   const chatSearchInputRef = useRef(null);
   
   const [openSources, setOpenSources] = useState({});
-  const selectedDocument = currentSession?.selectedDocument || "all";
+  const selectedDocument = currentSession?.selectedDocument || [];
+  
+  const selectedDocuments = currentSession?.selectedDocuments || [];
   const [categoryFilter, setCategoryFilter] = useState("All");
 
   useEffect(() => {
@@ -277,7 +279,7 @@ function updateCurrentSessionSources(newSources) {
 		title: "New Chat",
 		messages: [],
 		sources: [],
-		selectedDocument: "all",
+		selectedDocument: [],
 		isFavorite: false,
 		category: "General",
 		createdAt: new Date().toISOString(),
@@ -295,6 +297,18 @@ function updateCurrentSessionSelectedDocument(documentName) {
     prevSessions.map((session) =>
       session.id === currentSessionId
         ? { ...session, selectedDocument: documentName }
+        : session
+    )
+  );
+}
+
+//Add new function for multi-document chat
+
+function updateCurrentSessionSelectedDocuments(documentNames) {
+  setSessions((prevSessions) =>
+    prevSessions.map((session) =>
+      session.id === currentSessionId
+        ? { ...session, selectedDocuments: documentNames }
         : session
     )
   );
@@ -347,7 +361,7 @@ async function askAI(questionOverride = null) {
       },
       body: JSON.stringify({
   question: questionToAsk,
-  selected_document: selectedDocument,
+  selected_documents: selectedDocuments,
   chat_history: messages.slice(-10).map((message) => ({
     role: message.role,
     content: message.content,
@@ -1142,23 +1156,36 @@ function saveRecentSearch(searchTerm) {
 		<div className="documents-box">
 		
 			<h2>Uploaded Documents ({documents.length})</h2>
-			<select
-				value={selectedDocument}
 			
-				onChange={(e) =>
-					updateCurrentSessionSelectedDocument(e.target.value)
-				}
-				>
-			<option value="all">All documents</option>
+			
+			<select
+				multiple
+				value={selectedDocuments}
+				onChange={(e) => {
+				const selected = Array.from(
+					e.target.selectedOptions,
+				(option) => option.value
+				);
 
-				{documents.map((doc, index) => (
-					<option key={index} value={doc}>
-				{doc}
-			</option>
-			))}
+				
+
+				updateCurrentSessionSelectedDocuments(selected);
+				}}
+			>
+
+				{documents.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+					</option>
+				))}
+			
 			</select>
 			
-
+			<p className="selected-documents-count">
+						{selectedDocuments.length === 0
+						? "Searching all documents"
+						: `${selectedDocuments.length} document(s) selected`}
+			</p>
 <h3>Compare Documents</h3>
 
 <select

@@ -32,7 +32,7 @@ app.add_middleware(
 
 class QuestionRequest(BaseModel):
     question: str
-    selected_document: str = "all"
+    selected_documents: list[str] = []
     chat_history: list = []
     
 class DeleteDocumentRequest(BaseModel):
@@ -148,19 +148,24 @@ async def ask_question(request: QuestionRequest):
         }
 
     
-    if request.selected_document == "all":
+    
+    
+    if len(request.selected_documents) == 0:
         docs = vector_store.similarity_search(
             request.question,
-            k=8
-    )
+            k=4
+        )
     else:
         docs = vector_store.similarity_search(
             request.question,
-            k=8,
+            k=4,
             filter={
-                "filename": request.selected_document
+                "filename": {
+                "$in": request.selected_documents
+                }
         }
     )
+    
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )
@@ -207,7 +212,8 @@ async def ask_question_stream(request: QuestionRequest):
             media_type="text/plain"
         )
 
-    if request.selected_document == "all":
+    
+    if len(request.selected_documents) == 0:
         docs = vector_store.similarity_search(
             request.question,
             k=8
@@ -216,11 +222,13 @@ async def ask_question_stream(request: QuestionRequest):
         docs = vector_store.similarity_search(
             request.question,
             k=8,
-            filter={
-                "filename": request.selected_document
+                filter={
+                "filename": {
+                "$in": request.selected_documents
+                }
             }
         )
-
+    
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )
