@@ -23,6 +23,10 @@ function App() {
   const [compareDocumentA, setCompareDocumentA] = useState("");
   const [compareDocumentB, setCompareDocumentB] = useState("");
   
+  const [recentSearches, setRecentSearches] = useState(() => {
+  return JSON.parse(localStorage.getItem("recentSearches") || "[]");
+});
+
 
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
@@ -845,6 +849,25 @@ function toggleCategory(category) {
   }));
 }
 
+function saveRecentSearch(searchTerm) {
+  const trimmedSearch = searchTerm.trim();
+
+  if (trimmedSearch.length < 3) return;
+
+  const updatedSearches = [
+    trimmedSearch,
+    ...recentSearches.filter(
+      (search) => search.toLowerCase() !== trimmedSearch.toLowerCase()
+    ),
+  ].slice(0, 5);
+
+  setRecentSearches(updatedSearches);
+
+  localStorage.setItem(
+    "recentSearches",
+    JSON.stringify(updatedSearches)
+  );
+}
 
  return (
 
@@ -881,7 +904,29 @@ function toggleCategory(category) {
   placeholder="Search chats..."
   value={chatSearchTerm}
   onChange={(e) => setChatSearchTerm(e.target.value)}
+  onBlur={() => saveRecentSearch(chatSearchTerm)}
+  
 	/>
+	{recentSearches.length > 0 && (
+  <div className="recent-searches">
+    <div className="recent-searches-title">
+      Recent Searches
+    </div>
+
+    {recentSearches.map((search) => (
+      <button
+        key={search}
+        className="recent-search-button"
+        onClick={() => {
+				setChatSearchTerm(search);
+				saveRecentSearch(search);
+		}}
+      >
+        {search}
+      </button>
+    ))}
+  </div>
+)}
 	<div className="category-controls">
   <button onClick={expandAllCategories}>
     Expand All
