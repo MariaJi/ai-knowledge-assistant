@@ -186,6 +186,34 @@ useEffect(() => {
   localStorage.setItem("darkMode", darkMode);
 }, [darkMode]);
 
+useEffect(() => {
+  function handleKeyDown(e) {
+    // Ctrl + K → Focus search
+    if (e.ctrlKey && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      chatSearchInputRef.current?.focus();
+    }
+	
+	// Alt + N → New Chat
+	if (e.altKey && e.key.toLowerCase() === "n") {
+		e.preventDefault();
+		createNewChat();
+	}
+	// Esc → Clear sidebar search
+	if (e.key === "Escape") {
+	setChatSearchTerm("");
+	}
+  }
+
+
+  window.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+}, []);
+
+
 async function uploadFile() {
   if (!selectedFile) return;
 
