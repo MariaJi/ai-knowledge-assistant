@@ -164,6 +164,10 @@ const isSearching = chatSearchTerm.trim() !== "";
   return JSON.parse(localStorage.getItem("documentTags") || "{}");
 	});
 
+const [documentMetadata, setDocumentMetadata] = useState(() => {
+  return JSON.parse(localStorage.getItem("documentMetadata") || "{}");
+});
+
 const [tagSearch, setTagSearch] = useState("");
 useEffect(() => {
   localStorage.setItem(
@@ -172,7 +176,13 @@ useEffect(() => {
   );
 }, [documentTags]);
 
- 
+useEffect(() => {
+  localStorage.setItem(
+    "documentMetadata",
+    JSON.stringify(documentMetadata)
+  );
+}, [documentMetadata]);
+
   
   const filteredDocuments = documents.filter((doc) => {
   const matchesCollection =
@@ -280,6 +290,13 @@ async function uploadFile() {
     const data = await response.json();
 
     setUploadMessage(data.message || data.error || "Upload complete.");
+	
+	setDocumentMetadata((prev) => ({
+		...prev,
+		[selectedFile.name]: {
+	uploadedAt: new Date().toLocaleDateString(),
+	},
+	}));
 
     fetchDocuments();
     setSelectedFile(null);
@@ -1342,7 +1359,11 @@ function saveRecentSearch(searchTerm) {
   width: "150px",
 }}
 />
-
+<span style={{ marginLeft: "10px" }}>
+  Uploaded: {
+    documentMetadata[doc]?.uploadedAt || "Unknown"
+  }
+</span>
 
             <button
               onClick={() => deleteDocument(doc)}
