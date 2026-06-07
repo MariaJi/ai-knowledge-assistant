@@ -294,9 +294,16 @@ async function uploadFile() {
 	setDocumentMetadata((prev) => ({
 		...prev,
 		[selectedFile.name]: {
-	uploadedAt: new Date().toLocaleDateString(),
-	},
+		uploadedAt: new Date().toLocaleDateString(),
+		},
 	}));
+
+	if (data.keywords) {
+		setDocumentTags((prev) => ({
+		...prev,
+		[selectedFile.name]: data.keywords,
+		}));
+	}
 
     fetchDocuments();
     setSelectedFile(null);

@@ -135,10 +135,29 @@ async def upload_file(file: UploadFile = File(...)):
         text,
         file.filename
     )
+    keyword_prompt = f"""
+        Extract 5 to 8 short keywords from this document.
+        Return only a comma-separated list. No explanation.
+
+        Document:
+        {text[:3000]}
+    """
+
+    keyword_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": keyword_prompt}
+        ]
+    )
+
+    keywords = keyword_response.choices[0].message.content
+    
     if file.filename not in uploaded_documents:
         uploaded_documents.append(file.filename)
+   
     return {
-        "message": f"{file.filename} uploaded successfully"
+        "message": f"{file.filename} uploaded successfully",
+        "keywords": keywords
     }
 
 
