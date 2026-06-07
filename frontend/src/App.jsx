@@ -291,13 +291,16 @@ async function uploadFile() {
 
     setUploadMessage(data.message || data.error || "Upload complete.");
 	
+	
 	setDocumentMetadata((prev) => ({
 		...prev,
 		[selectedFile.name]: {
 		uploadedAt: new Date().toLocaleDateString(),
+		wordCount: data.word_count,
+		characterCount: data.character_count,
+		readingTime: data.reading_time_minutes,
 		},
 	}));
-
 	if (data.keywords) {
 		setDocumentTags((prev) => ({
 		...prev,
@@ -1367,9 +1370,13 @@ function saveRecentSearch(searchTerm) {
 }}
 />
 <span style={{ marginLeft: "10px" }}>
-  Uploaded: {
-    documentMetadata[doc]?.uploadedAt || "Unknown"
-  }
+    Uploaded: {documentMetadata[doc]?.uploadedAt || "Unknown"}
+	<br />
+	Words: {documentMetadata[doc]?.wordCount || 0}
+
+	<br />
+	Reading: {documentMetadata[doc]?.readingTime || 0} min
+  
 </span>
 
             <button
