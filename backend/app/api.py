@@ -157,13 +157,14 @@ async def upload_file(file: UploadFile = File(...)):
     word_count = len(text.split())
     character_count = len(text)
     reading_time_minutes = max(1, round(word_count / 200))
-    
+    preview = text[:500]
     return {
         "message": f"{file.filename} uploaded successfully",
         "keywords": keywords,
         "word_count": word_count,
         "character_count": character_count,
-        "reading_time_minutes": reading_time_minutes
+        "reading_time_minutes": reading_time_minutes,
+        "preview": preview
     }
 
 

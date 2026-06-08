@@ -316,6 +316,7 @@ async function uploadFile() {
 		wordCount: data.word_count,
 		characterCount: data.character_count,
 		readingTime: data.reading_time_minutes,
+		preview: data.preview,
 		},
 	}));
 	if (data.keywords) {
@@ -324,7 +325,7 @@ async function uploadFile() {
 		[selectedFile.name]: data.keywords,
 		}));
 	}
-
+	
     fetchDocuments();
     setSelectedFile(null);
     setQuestion("");
@@ -1668,7 +1669,13 @@ function saveRecentSearch(searchTerm) {
         <strong>Reading Time:</strong>{" "}
         {selectedDocumentDetails.metadata?.readingTime || 0} min
       </p>
-
+	<div className="document-preview">
+		<strong>Preview:</strong>
+		<p>
+		{selectedDocumentDetails.metadata?.preview ||
+		"No preview available."}
+		</p>
+	</div>
       <button onClick={() => setSelectedDocumentDetails(null)}>
         Close
       </button>
