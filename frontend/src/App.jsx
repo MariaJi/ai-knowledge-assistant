@@ -1656,20 +1656,19 @@ function saveRecentSearch(searchTerm) {
         {selectedDocumentDetails.metadata?.uploadedAt || "Unknown"}
       </p>
 
-      <p>
-        <strong>Words:</strong>{" "}
-        {selectedDocumentDetails.metadata?.wordCount || 0}
-      </p>
+      <div className="document-insights">
+		<div className="insight-card">
+		📄 {selectedDocumentDetails.metadata?.wordCount || 0} Words
+		</div>
 
-      <p>
-        <strong>Characters:</strong>{" "}
-        {selectedDocumentDetails.metadata?.characterCount || 0}
-      </p>
+		<div className="insight-card">
+			🔤 {selectedDocumentDetails.metadata?.characterCount || 0} Characters
+		</div>
 
-      <p>
-        <strong>Reading Time:</strong>{" "}
-        {selectedDocumentDetails.metadata?.readingTime || 0} min
-      </p>
+		<div className="insight-card">
+			⏱ {selectedDocumentDetails.metadata?.readingTime || 0} Min Read
+		</div>
+</div>
 	<div className="document-preview">
 		<strong>Preview:</strong>
 		<p>

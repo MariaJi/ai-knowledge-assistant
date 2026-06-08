@@ -589,3 +589,21 @@ body:has(.dark-mode) {
   max-width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
+
+.document-insights {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.insight-card {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
