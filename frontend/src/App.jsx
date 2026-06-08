@@ -179,6 +179,21 @@ useEffect(() => {
 const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
 
 useEffect(() => {
+  const handleEsc = (event) => {
+    if (event.key === "Escape") {
+      setSelectedDocumentDetails(null);
+    }
+  };
+
+  window.addEventListener("keydown", handleEsc);
+
+  return () => {
+    window.removeEventListener("keydown", handleEsc);
+  };
+}, []);
+
+
+useEffect(() => {
   localStorage.setItem(
     "documentMetadata",
     JSON.stringify(documentMetadata)
@@ -1620,8 +1635,8 @@ function saveRecentSearch(searchTerm) {
 	</main>
 	
 	{selectedDocumentDetails && (
-  <div className="document-modal">
-    <div className="document-modal-content">
+  <div className="document-modal"  onClick={() => setSelectedDocumentDetails(null)}>
+    <div className="document-modal-content" onClick={(e) => e.stopPropagation()}>
       <h3>{selectedDocumentDetails.name}</h3>
 
       <p>
