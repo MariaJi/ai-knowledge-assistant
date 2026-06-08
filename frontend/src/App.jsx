@@ -314,6 +314,7 @@ async function uploadFile() {
 		[selectedFile.name]: {
 		uploadedAt: new Date().toLocaleDateString(),
 		wordCount: data.word_count,
+		summary: data.summary,
 		characterCount: data.character_count,
 		readingTime: data.reading_time_minutes,
 		preview: data.preview,
@@ -1674,6 +1675,13 @@ function saveRecentSearch(searchTerm) {
 		<p>
 		{selectedDocumentDetails.metadata?.preview ||
 		"No preview available."}
+		</p>
+	</div>
+	<div className="document-summary">
+		<strong>AI Summary:</strong>
+		<p>
+			{selectedDocumentDetails.metadata?.summary ||
+			"No summary available."}
 		</p>
 	</div>
       <button onClick={() => setSelectedDocumentDetails(null)}>

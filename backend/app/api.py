@@ -152,6 +152,24 @@ async def upload_file(file: UploadFile = File(...)):
 
     keywords = keyword_response.choices[0].message.content
     
+    summary_prompt = f"""
+    Summarize this document in 2 to 3 concise sentences.
+    Use only the document text.
+
+    Document:
+    {text[:3000]}
+    """
+
+    summary_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": summary_prompt}
+        ]
+    )
+
+    summary = summary_response.choices[0].message.content
+    
+    
     if file.filename not in uploaded_documents:
         uploaded_documents.append(file.filename)
     word_count = len(text.split())
@@ -161,6 +179,7 @@ async def upload_file(file: UploadFile = File(...)):
     return {
         "message": f"{file.filename} uploaded successfully",
         "keywords": keywords,
+        "summary": summary,
         "word_count": word_count,
         "character_count": character_count,
         "reading_time_minutes": reading_time_minutes,
