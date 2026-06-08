@@ -176,6 +176,8 @@ useEffect(() => {
   );
 }, [documentTags]);
 
+const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
+
 useEffect(() => {
   localStorage.setItem(
     "documentMetadata",
@@ -1335,8 +1337,23 @@ function saveRecentSearch(searchTerm) {
         {filteredDocuments.map((doc, index) => (
           <li key={index}
 			className="document-row">
-            📄 {doc}
-
+            📄 
+			 <span
+    style={{
+      cursor: "pointer",
+      textDecoration: "underline",
+    }}
+    onClick={() =>
+      setSelectedDocumentDetails({
+        name: doc,
+        category: documentCollections[doc],
+        tags: documentTags[doc],
+        metadata: documentMetadata[doc],
+      })
+    }
+  >
+			{doc}
+</span>
             <select
               value={documentCollections[doc] || "Uncategorized"}
               onChange={(e) =>
@@ -1598,22 +1615,52 @@ function saveRecentSearch(searchTerm) {
 			
 		</div>
    )}   
-    {/* 
-			{{sources.length > 0 && (
-            <div className="sources">
-				<h3>Sources</h3>
-
-				{sources.map((source, index) => (
-					<div key={index} className="source-card">
-						<strong>{source.filename}</strong>
-						<p>{source.snippet}</p>
-					</div>
-              ))}
-            </div>
-          )}
-	*/}
+    
 		
 	</main>
+	
+	{selectedDocumentDetails && (
+  <div className="document-modal">
+    <div className="document-modal-content">
+      <h3>{selectedDocumentDetails.name}</h3>
+
+      <p>
+        <strong>Category:</strong>{" "}
+        {selectedDocumentDetails.category || "Uncategorized"}
+      </p>
+
+      <p>
+        <strong>Tags:</strong>{" "}
+        {selectedDocumentDetails.tags || "No tags"}
+      </p>
+
+      <p>
+        <strong>Uploaded:</strong>{" "}
+        {selectedDocumentDetails.metadata?.uploadedAt || "Unknown"}
+      </p>
+
+      <p>
+        <strong>Words:</strong>{" "}
+        {selectedDocumentDetails.metadata?.wordCount || 0}
+      </p>
+
+      <p>
+        <strong>Characters:</strong>{" "}
+        {selectedDocumentDetails.metadata?.characterCount || 0}
+      </p>
+
+      <p>
+        <strong>Reading Time:</strong>{" "}
+        {selectedDocumentDetails.metadata?.readingTime || 0} min
+      </p>
+
+      <button onClick={() => setSelectedDocumentDetails(null)}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
+	
 </div>
  );
 }
