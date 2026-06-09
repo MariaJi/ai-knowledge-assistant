@@ -177,6 +177,8 @@ useEffect(() => {
   );
 }, [documentTags]);
 
+const [topicSearch, setTopicSearch] = useState("");
+
 const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
 
 useEffect(() => {
@@ -202,7 +204,7 @@ useEffect(() => {
 }, [documentMetadata]);
 
   
-  const filteredDocuments = documents.filter((doc) => {
+const filteredDocuments = documents.filter((doc) => {
   const matchesCollection =
     selectedCollection === "All" ||
     (documentCollections[doc] || "Uncategorized") === selectedCollection;
@@ -213,7 +215,13 @@ useEffect(() => {
       .toLowerCase()
       .includes(tagSearch.toLowerCase());
 
-  return matchesCollection && matchesTag;
+  const matchesTopic =
+    topicSearch.trim() === "" ||
+    (documentMetadata[doc]?.topic || "")
+      .toLowerCase()
+      .includes(topicSearch.toLowerCase());
+
+  return matchesCollection && matchesTag && matchesTopic;
 });
 
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -1282,6 +1290,17 @@ function saveRecentSearch(searchTerm) {
 					/>
 		</div>
 		
+		<div className="topic-filter">
+  <label>Topic Search: </label>
+
+  <input
+    type="text"
+    value={topicSearch}
+    onChange={(e) => setTopicSearch(e.target.value)}
+    placeholder="Search AI topics..."
+  />
+</div>
+		
 			<select
 				multiple
 				value={selectedDocuments}
@@ -1297,7 +1316,7 @@ function saveRecentSearch(searchTerm) {
 				}}
 			>
 
-				{documents.map((doc) => (
+				{filteredDocuments.map((doc) => (
 					<option key={doc} value={doc}>
 					{doc}
 					</option>
