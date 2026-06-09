@@ -473,18 +473,18 @@ async function askAI(questionOverride = null) {
 			questionToAsk.slice(0, 30)
 	);
 }
-  try {
+
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-  question: questionToAsk,
-  selected_documents: selectedDocuments,
-  chat_history: messages.slice(-10).map((message) => ({
-    role: message.role,
-    content: message.content,
+	  question: questionToAsk,
+	  selected_documents: selectedDocuments,
+	  chat_history: messages.slice(-10).map((message) => ({
+      role: message.role,
+      content: message.content,
   })),
 }),
 });
@@ -1813,6 +1813,7 @@ function getRelatedDocuments(targetDoc) {
 				key={index}
 				className="suggested-question"
 				onClick={() => {
+				updateCurrentSessionSelectedDocuments([docName]);
 				setQuestion(question);
 				setSelectedDocumentDetails(null);
 				setTimeout(() => {

@@ -235,8 +235,8 @@ async def ask_question(request: QuestionRequest):
 
     
     
-    
-    if len(request.selected_documents) == 0:
+    if not request.selected_documents:
+    #if len(request.selected_documents) == 0:
         docs = vector_store.similarity_search(
             request.question,
             k=4
