@@ -181,6 +181,7 @@ const [topicSearch, setTopicSearch] = useState("");
 
 const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
 
+const [relatedDocuments, setRelatedDocuments] = useState([]);
 useEffect(() => {
   const handleEsc = (event) => {
     if (event.key === "Escape") {
@@ -1031,6 +1032,62 @@ function saveRecentSearch(searchTerm) {
   );
 }
 
+function getRelatedDocuments(targetDoc) {
+  const targetTags = (documentTags[targetDoc] || "")
+    .toLowerCase()
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag !== "");
+
+  const targetTopic = (
+    documentMetadata[targetDoc]?.topic || ""
+  ).toLowerCase();
+
+  return documents
+    .filter((doc) => doc !== targetDoc)
+    .map((doc) => {
+      const docTags = (documentTags[doc] || "")
+        .toLowerCase()
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== "");
+
+      const docTopic = (
+        documentMetadata[doc]?.topic || ""
+      ).toLowerCase();
+
+      let score = 0;
+
+      // shared tag score
+      targetTags.forEach((tag) => {
+        if (docTags.includes(tag)) {
+          score += 2;
+        }
+      });
+
+      // topic word score
+      targetTopic.split(" ").forEach((word) => {
+        if (
+          word.length > 3 &&
+          docTopic.includes(word)
+        ) {
+          score += 1;
+        }
+      });
+
+      return {
+        name: doc,
+        score,
+      };
+    })
+    .filter((doc) => doc.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+}
+
+
+
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -1411,14 +1468,18 @@ function saveRecentSearch(searchTerm) {
       cursor: "pointer",
       textDecoration: "underline",
     }}
-    onClick={() =>
-      setSelectedDocumentDetails({
-        name: doc,
-        category: documentCollections[doc],
-        tags: documentTags[doc],
-        metadata: documentMetadata[doc],
-      })
-    }
+   
+	
+	onClick={() => {
+		setSelectedDocumentDetails({
+			name: doc,
+			category: documentCollections[doc],
+			tags: documentTags[doc],
+			metadata: documentMetadata[doc],
+		});
+
+		setRelatedDocuments(getRelatedDocuments(doc));
+	}}
   >
 			{doc}
 </span>
@@ -1736,6 +1797,22 @@ function saveRecentSearch(searchTerm) {
 			{selectedDocumentDetails.metadata?.summary ||
 			"No summary available."}
 		</p>
+	</div>
+	<div className="related-documents">
+			<strong>Related Documents:</strong>
+
+			{relatedDocuments.length === 0 ? (
+				<p>No related documents found.</p>
+			) : (
+			<ul>
+				{relatedDocuments.map((relatedDoc) => (
+					<li key={relatedDoc.name}>
+					{relatedDoc.name}{" "}
+				
+					</li>
+			))}
+			</ul>
+		)}
 	</div>
       <button onClick={() => setSelectedDocumentDetails(null)}>
         Close

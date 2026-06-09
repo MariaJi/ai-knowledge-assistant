@@ -577,7 +577,8 @@ body:has(.dark-mode) {
   display: flex;
   justify-content: center;
   align-items: center;
-
+  max-height: 85vh;
+  overflow-y: auto;
   z-index: 1000;
 }
 
