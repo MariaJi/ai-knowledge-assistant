@@ -230,6 +230,13 @@ function clearDocumentFilters() {
   setTopicSearch("");
 }
 
+const hasActiveDocumentFilters =
+  selectedCollection !== "All Collections" ||
+  tagSearch.trim() !== "" ||
+  topicSearch.trim() !== "";
+  
+  
+
   const [categoryFilter, setCategoryFilter] = useState("All");
 
 
@@ -1268,7 +1275,17 @@ function saveRecentSearch(searchTerm) {
 		<div className="documents-box">
 		
 			<h2>Uploaded Documents ({documents.length})</h2>
-			
+			{hasActiveDocumentFilters && (
+  <p>
+    Active Filters:
+    {selectedCollection !== "All Collections" &&
+      ` Collection = ${selectedCollection}`}
+    {tagSearch &&
+      ` | Tag = ${tagSearch}`}
+    {topicSearch &&
+      ` | Topic = ${topicSearch}`}
+  </p>
+)}
 			<div className="collection-filter">
 			<label>Collection: </label>
 
