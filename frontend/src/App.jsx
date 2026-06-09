@@ -1815,6 +1815,9 @@ function getRelatedDocuments(targetDoc) {
 				onClick={() => {
 				setQuestion(question);
 				setSelectedDocumentDetails(null);
+				setTimeout(() => {
+					askAI();
+				}, 100);
 				}}
 			>
 				{question}
