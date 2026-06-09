@@ -169,6 +169,25 @@ async def upload_file(file: UploadFile = File(...)):
 
     summary = summary_response.choices[0].message.content
     
+    topic_prompt = f"""
+    Identify the main topic of this document.
+    Return only a short topic label, 2 to 5 words.
+    No explanation.
+
+    Document:
+    {text[:3000]}
+    """
+
+    topic_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": topic_prompt}
+        ]
+    )
+
+    topic = topic_response.choices[0].message.content
+    
+    
     
     if file.filename not in uploaded_documents:
         uploaded_documents.append(file.filename)
@@ -180,6 +199,7 @@ async def upload_file(file: UploadFile = File(...)):
         "message": f"{file.filename} uploaded successfully",
         "keywords": keywords,
         "summary": summary,
+        "topic": topic,
         "word_count": word_count,
         "character_count": character_count,
         "reading_time_minutes": reading_time_minutes,

@@ -147,6 +147,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const chatBoxRef = useRef(null);
   const searchResultRefs = useRef([]);
   const chatSearchInputRef = useRef(null);
+  const fileInputRef = useRef(null)
   
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || [];
@@ -315,6 +316,7 @@ async function uploadFile() {
 		uploadedAt: new Date().toLocaleDateString(),
 		wordCount: data.word_count,
 		summary: data.summary,
+		topic: data.topic,
 		characterCount: data.character_count,
 		readingTime: data.reading_time_minutes,
 		preview: data.preview,
@@ -329,6 +331,9 @@ async function uploadFile() {
 	
     fetchDocuments();
     setSelectedFile(null);
+	if (fileInputRef.current) {
+		fileInputRef.current.value = "";
+	}
     setQuestion("");
     setAnswer("");
     updateCurrentSessionSources([]);
@@ -1232,6 +1237,7 @@ function saveRecentSearch(searchTerm) {
 			<input
 				type="file"
 				accept=".txt,.pdf,.docx"
+				ref={fileInputRef}
 				 onChange={(e) => {
 					setSelectedFile(e.target.files[0]);
 					setUploadMessage("");
@@ -1645,7 +1651,10 @@ function saveRecentSearch(searchTerm) {
         <strong>Category:</strong>{" "}
         {selectedDocumentDetails.category || "Uncategorized"}
       </p>
-
+	<p>
+		<strong>AI Topic:</strong>{" "}
+		{selectedDocumentDetails.metadata?.topic || "Unknown"}
+	</p>
       <p>
         <strong>Tags:</strong>{" "}
         {selectedDocumentDetails.tags || "No tags"}
