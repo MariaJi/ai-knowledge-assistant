@@ -342,6 +342,7 @@ async function uploadFile() {
 		characterCount: data.character_count,
 		readingTime: data.reading_time_minutes,
 		preview: data.preview,
+		suggestedQuestions: data.suggested_questions,
 		},
 	}));
 	if (data.keywords) {
@@ -1798,6 +1799,33 @@ function getRelatedDocuments(targetDoc) {
 			"No summary available."}
 		</p>
 	</div>
+	<div className="suggested-questions">
+			<strong>Suggested Questions:</strong>
+
+			{selectedDocumentDetails.metadata?.suggestedQuestions ? (
+		<ul>
+			{selectedDocumentDetails.metadata.suggestedQuestions
+				.split("\n")
+			.map((question) => question.trim())
+			.filter((question) => question !== "")
+			.map((question, index) => (
+			<li
+				key={index}
+				className="suggested-question"
+				onClick={() => {
+				setQuestion(question);
+				setSelectedDocumentDetails(null);
+				}}
+			>
+				{question}
+			</li>
+			))}
+		</ul>
+		) : (
+		<p>No suggested questions available.</p>
+		)}
+	</div>
+	
 	<div className="related-documents">
 			<strong>Related Documents:</strong>
 

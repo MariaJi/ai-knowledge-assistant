@@ -608,3 +608,13 @@ body:has(.dark-mode) {
   font-weight: 500;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
+.suggested-question {
+  cursor: pointer;
+  color: #2563eb;
+  margin-bottom: 6px;
+}
+
+.suggested-question:hover {
+  text-decoration: underline;
+}

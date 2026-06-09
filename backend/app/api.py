@@ -188,6 +188,23 @@ async def upload_file(file: UploadFile = File(...)):
     topic = topic_response.choices[0].message.content
     
     
+    questions_prompt = f"""
+            Generate 3 useful questions a user might ask about this document.
+            Return only the questions, one per line.
+            No numbering. No explanation.
+
+            Document:
+            {text[:3000]}
+    """
+
+    questions_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": questions_prompt}
+        ]
+    )
+
+    suggested_questions = questions_response.choices[0].message.content
     
     if file.filename not in uploaded_documents:
         uploaded_documents.append(file.filename)
@@ -199,11 +216,12 @@ async def upload_file(file: UploadFile = File(...)):
         "message": f"{file.filename} uploaded successfully",
         "keywords": keywords,
         "summary": summary,
-        "topic": topic,
+        "topic" : topic,
         "word_count": word_count,
         "character_count": character_count,
         "reading_time_minutes": reading_time_minutes,
-        "preview": preview
+        "preview": preview,
+        "suggested_questions": suggested_questions,
     }
 
 
