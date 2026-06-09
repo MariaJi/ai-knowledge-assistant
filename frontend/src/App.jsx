@@ -224,6 +224,12 @@ const filteredDocuments = documents.filter((doc) => {
   return matchesCollection && matchesTag && matchesTopic;
 });
 
+function clearDocumentFilters() {
+  setSelectedCollection("All");
+  setTagSearch("");
+  setTopicSearch("");
+}
+
   const [categoryFilter, setCategoryFilter] = useState("All");
 
 
@@ -1299,6 +1305,9 @@ function saveRecentSearch(searchTerm) {
     onChange={(e) => setTopicSearch(e.target.value)}
     placeholder="Search AI topics..."
   />
+  <button onClick={clearDocumentFilters}>
+	Clear Filters
+  </button>
 </div>
 		
 			<select
