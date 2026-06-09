@@ -474,6 +474,7 @@ async function askAI(questionOverride = null) {
 	);
 }
 
+  try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
       headers: {
@@ -1395,7 +1396,7 @@ function getRelatedDocuments(targetDoc) {
 				);
 
 				
-
+				
 				updateCurrentSessionSelectedDocuments(selected);
 				}}
 			>
@@ -1410,9 +1411,18 @@ function getRelatedDocuments(targetDoc) {
 			
 			<p className="selected-documents-count">
 						{selectedDocuments.length === 0
-						? "Searching all documents"
+						? "No documents selected (searching all documents)"
 						: `${selectedDocuments.length} document(s) selected`}
 			</p>
+			<button
+  onClick={() => {
+    
+    updateCurrentSessionSelectedDocuments([]);
+  }}
+  disabled={selectedDocuments.length === 0}
+>
+  Clear Selected Documents
+</button>
 <h3>Compare Documents</h3>
 
 <select
@@ -1576,11 +1586,22 @@ function getRelatedDocuments(targetDoc) {
 	  
 		<div className="ask-box">
 			<h2>Ask Question</h2>
+{selectedDocuments.length > 0 && (
+  <div className="selected-documents-bar">
+    <strong>Selected documents:</strong>
+    {selectedDocuments.map((doc) => (
+      <span key={doc} className="selected-document-chip">
+        {doc}
+      </span>
+    ))}
+  </div>
+)}
+
 
 			<textarea
 				value={question}
 				onChange={(e) => setQuestion(e.target.value)}
-				placeholder="Ask a question about the uploaded document..."
+				placeholder="Ask a question about the uploaded documents..."
 			/>
 		
 
