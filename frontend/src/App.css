@@ -635,3 +635,13 @@ body:has(.dark-mode) {
   background: white;
   font-size: 12px;
 }
+
+.document-selection-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.document-selection-actions button {
+  flex: 1;
+}

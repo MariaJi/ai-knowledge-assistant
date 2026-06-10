@@ -1386,6 +1386,26 @@ function getRelatedDocuments(targetDoc) {
   </button>
 </div>
 		
+		<div className="document-selection-actions">
+  <button
+    onClick={() => {
+      updateCurrentSessionSelectedDocuments(filteredDocuments);
+    }}
+    disabled={filteredDocuments.length === 0}
+  >
+    Select All
+  </button>
+
+  <button
+    onClick={() => {
+      updateCurrentSessionSelectedDocuments([]);
+    }}
+    disabled={selectedDocuments.length === 0}
+  >
+    Select None
+  </button>
+</div>
+		
 			<select
 				multiple
 				value={selectedDocuments}
@@ -1414,15 +1434,7 @@ function getRelatedDocuments(targetDoc) {
 						? "No documents selected (searching all documents)"
 						: `${selectedDocuments.length} document(s) selected`}
 			</p>
-			<button
-  onClick={() => {
-    
-    updateCurrentSessionSelectedDocuments([]);
-  }}
-  disabled={selectedDocuments.length === 0}
->
-  Clear Selected Documents
-</button>
+			
 <h3>Compare Documents</h3>
 
 <select
