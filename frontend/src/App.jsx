@@ -51,6 +51,9 @@ function App() {
 
   return [];
   }); */
+  const [resumeDocument, setResumeDocument] = useState("");
+  const [jobDescriptionDocument, setJobDescriptionDocument] = useState("");
+  
   
   const [sessions, setSessions] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
@@ -445,7 +448,8 @@ function updateSessionTitle(sessionId, title) {
 }
 
  
-async function askAI(questionOverride = null) {
+
+async function askAI(questionOverride = null, selectedDocumentsOverride = null) {
 	setLoading(true);
 	const questionToAsk = questionOverride || question;
 	updateCurrentSessionSources([]);
@@ -474,6 +478,10 @@ async function askAI(questionOverride = null) {
 	);
 }
 
+const documentsToUse = selectedDocumentsOverride || selectedDocuments;
+
+console.log("Documents sent to backend:", documentsToUse);
+alert(JSON.stringify(documentsToUse));
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
@@ -482,7 +490,7 @@ async function askAI(questionOverride = null) {
       },
       body: JSON.stringify({
 	  question: questionToAsk,
-	  selected_documents: selectedDocuments,
+	  selected_documents: documentsToUse,
 	  chat_history: messages.slice(-10).map((message) => ({
       role: message.role,
       content: message.content,
@@ -502,17 +510,7 @@ async function askAI(questionOverride = null) {
       const chunk = decoder.decode(value);
       streamedAnswer += chunk;
 
-      // setAnswer(streamedAnswer);
-	  /*setMessages((prev) => {
-			const updated = [...prev];
-
-	  updated[updated.length - 1] = {
-        ...updated[updated.length - 1],
-        content: streamedAnswer,
-		};
-
-	  return updated;
-	 });*/
+    
 	 const updatedMessages = [
     ...newMessages.slice(0, -1),
     {
@@ -531,7 +529,7 @@ async function askAI(questionOverride = null) {
 		},
 		body: JSON.stringify({
 			question: questionToAsk,
-			selected_document: selectedDocument,
+			selected_documents: documentsToUse,
 		}),
 	});
 
@@ -1087,6 +1085,40 @@ function getRelatedDocuments(targetDoc) {
     .slice(0, 3);
 }
 
+async function analyzeResumeMatch() {
+  const prompt = `
+Analyze the resume against the job description using only these two uploaded documents.
+
+Resume Document:
+${resumeDocument}
+
+Job Description Document:
+${jobDescriptionDocument}
+
+Return the answer in this format:
+
+## Match Score
+Give a score from 0 to 100.
+
+## Key Strengths
+List the strongest matches.
+
+## Missing Skills
+List important missing or weak skills.
+
+## Resume Improvements
+Suggest specific resume changes.
+
+## Interview Questions
+Create likely interview questions.
+`;
+
+updateCurrentSessionSelectedDocuments([
+  resumeDocument,
+  jobDescriptionDocument,
+]);
+  askAI(prompt, [resumeDocument, jobDescriptionDocument]);
+}
 
 
 
@@ -1184,14 +1216,25 @@ function getRelatedDocuments(targetDoc) {
   .map((session) => (
 			<div key={session.id} className="session-item">
 			<div className="session-info">
+			
+				
 				<button
-				className={`session-title-button ${
-				currentSessionId === session.id ? "active-session" : ""
-				}`}
-				onClick={() => setCurrentSessionId(session.id)}
+					className={`session-title-button ${
+					currentSessionId === session.id ? "active-session" : ""
+					}`}
+					onClick={() => setCurrentSessionId(session.id)}
 				>
-				{session.title}
-				</button>
+				 <span>{session.title}</span>
+
+				{session.selectedDocuments?.length > 0 && (
+					<span className="session-doc-count">
+					{" "}
+					({session.selectedDocuments.length} docs)
+					</span>
+				)}
+			   </button>
+				
+				
 				{chatSearchTerm.trim() !== "" &&
 					getSessionSearchPreview(session) && (
 				<div className="session-search-preview">
@@ -1474,6 +1517,46 @@ function getRelatedDocuments(targetDoc) {
 					>
 				📄 Summarize Document
 			</button>
+			
+			<div className="career-assistant-box">
+				<h3>Resume</h3>
+
+				<select
+					value={resumeDocument}
+					onChange={(e) => setResumeDocument(e.target.value)}
+				>
+					<option value="">Select Resume</option>
+
+				{documents.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+					</option>
+				))}
+				</select>
+
+				<h3>Job Description</h3>
+
+				<select
+						value={jobDescriptionDocument}
+						onChange={(e) => setJobDescriptionDocument(e.target.value)}
+				>
+						<option value="">Select Job Description</option>
+
+						{documents.map((doc) => (
+							<option key={doc} value={doc}>
+						{doc}
+							</option>
+						))}
+				</select>
+				<button
+					onClick={analyzeResumeMatch}
+					disabled={!resumeDocument || !jobDescriptionDocument}
+				>
+					Analyze Match
+				</button>
+			</div>
+
+			
 			{documents.length === 0 ? (
   <p>No documents uploaded yet.</p>
 ) : (
