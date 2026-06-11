@@ -318,7 +318,9 @@ async def ask_question_stream(request: QuestionRequest):
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )
-
+    print("========== ASK STREAM CONTEXT ==========")
+    print(context[:3000])
+    print("========================================")
     chat_history = "\n".join(
         [
             f"{msg['role']}: {msg['content']}"

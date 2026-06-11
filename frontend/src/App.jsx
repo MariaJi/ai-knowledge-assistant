@@ -1086,7 +1086,10 @@ function getRelatedDocuments(targetDoc) {
 }
 
 async function analyzeResumeMatch() {
-  const prompt = `
+
+const prompt = `
+You are an AI career assistant.
+
 Analyze the resume against the job description using only these two uploaded documents.
 
 Resume Document:
@@ -1095,22 +1098,24 @@ ${resumeDocument}
 Job Description Document:
 ${jobDescriptionDocument}
 
-Return the answer in this format:
+Return a professional job-fit report in this exact format:
 
 ## Match Score
-Give a score from 0 to 100.
+Give a score from 0 to 100 and briefly explain why.
 
 ## Key Strengths
-List the strongest matches.
+List the strongest matches between the resume and job description.
 
 ## Missing Skills
 List important missing or weak skills.
 
 ## Resume Improvements
-Suggest specific resume changes.
+Suggest specific resume bullet improvements based on the job description.
 
 ## Interview Questions
-Create likely interview questions.
+Create 5 likely interview questions for this role.
+
+Do not mention information that is not supported by the uploaded documents.
 `;
 
 updateCurrentSessionSelectedDocuments([
@@ -1816,14 +1821,10 @@ updateCurrentSessionSelectedDocuments([
 					
 				{message.role === "assistant" ? (
  <ReactMarkdown
-  components={{
-    p: ({ children }) => (
-      <p>{highlightText(String(children), messageSearchTerm)}</p>
-    ),
-    li: ({ children }) => (
-      <li>{highlightText(String(children), messageSearchTerm)}</li>
-    ),
-  }}
+ components={{
+  p: ({ children }) => <p>{children}</p>,
+  li: ({ children }) => <li>{children}</li>,
+}}
 >
   {message.content || "_Thinking..._"}
 </ReactMarkdown>
