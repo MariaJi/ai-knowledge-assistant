@@ -41,6 +41,10 @@ class DeleteDocumentRequest(BaseModel):
 class MultiSummaryRequest(BaseModel):
     selected_documents: list[str] = []
 
+class ResumeMatchRequest(BaseModel):
+    resume_document: str
+    job_description_document: str
+    
 #vector_store = None
 uploaded_documents = []
 embeddings = OpenAIEmbeddings(
@@ -497,6 +501,102 @@ Only use information from the document.
         "summary": response.choices[0].message.content
     }
     
+
+
+@app.post("/resume-match")
+async def resume_match(request: ResumeMatchRequest):
+    if vector_store is None:
+        return {
+            "answer": "Please upload documents first.",
+            "sources": []
+        }
+
+    resume_docs = vector_store.similarity_search(
+        "professional experience skills projects education",
+        k=8,
+        filter={
+            "filename": request.resume_document
+        }
+    )
+
+    job_docs = vector_store.similarity_search(
+        "job requirements responsibilities required skills qualifications",
+        k=8,
+        filter={
+            "filename": request.job_description_document
+        }
+    )
+
+    resume_context = "\n\n".join(
+        [doc.page_content for doc in resume_docs]
+    )
+
+    job_context = "\n\n".join(
+        [doc.page_content for doc in job_docs]
+    )
+
+    prompt = f"""
+You are an AI career assistant.
+
+Analyze the resume against the job description using only the provided resume context and job description context.
+
+Resume Context:
+{resume_context}
+
+Job Description Context:
+{job_context}
+
+Return a professional job-fit report in this exact format:
+
+## Match Score
+Give a score from 0 to 100 and briefly explain why.
+
+## Key Strengths
+List the strongest matches between the resume and job description.
+
+## Missing Skills
+List important missing or weak skills.
+
+## Resume Improvements
+Suggest specific resume bullet improvements based on the job description.
+
+## Interview Questions
+Create 5 likely interview questions for this role.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "Only use the provided resume and job description context."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    answer = response.choices[0].message.content
+
+    return {
+        "answer": answer,
+        "sources": [
+            {
+                "filename": request.resume_document,
+                    "snippet": resume_context[:300]
+            },
+            {
+                "filename": request.job_description_document,
+                "snippet": job_context[:300]
+            }
+        ]
+    }
+    
+    
+    
+
 @app.post("/compare")
 async def compare_documents(request: CompareRequest):
     docs_a = vector_store.similarity_search(

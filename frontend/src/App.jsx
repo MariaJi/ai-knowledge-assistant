@@ -1085,7 +1085,7 @@ function getRelatedDocuments(targetDoc) {
     .slice(0, 3);
 }
 
-async function analyzeResumeMatch() {
+async function analyzeResumeMatch1() {
 
 const prompt = `
 You are an AI career assistant.
@@ -1126,6 +1126,72 @@ updateCurrentSessionSelectedDocuments([
 }
 
 
+async function analyzeResumeMatch() {
+  setLoading(true);
+
+  const userMessage = {
+    role: "user",
+    content: `Analyze resume match:\nResume: ${resumeDocument}\nJob Description: ${jobDescriptionDocument}`,
+  };
+
+  const assistantMessage = {
+    role: "assistant",
+    content: "Analyzing resume match...",
+    sources: [],
+  };
+
+  const newMessages = [
+    ...messages,
+    userMessage,
+    assistantMessage,
+  ];
+
+  updateCurrentSessionMessages(newMessages);
+
+  updateCurrentSessionSelectedDocuments([
+    resumeDocument,
+    jobDescriptionDocument,
+  ]);
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/resume-match", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        resume_document: resumeDocument,
+        job_description_document: jobDescriptionDocument,
+      }),
+    });
+
+    const data = await response.json();
+
+    const finalMessages = [
+      ...newMessages.slice(0, -1),
+      {
+        role: "assistant",
+        content: data.answer,
+        sources: data.sources || [],
+      },
+    ];
+
+    updateCurrentSessionMessages(finalMessages);
+  } catch (error) {
+    const errorMessages = [
+      ...newMessages.slice(0, -1),
+      {
+        role: "assistant",
+        content: "Error: Could not analyze resume match.",
+        sources: [],
+      },
+    ];
+
+    updateCurrentSessionMessages(errorMessages);
+  } finally {
+    setLoading(false);
+  }
+}
 
  return (
 
