@@ -2061,12 +2061,15 @@ function getSuggestedCollectionFromTags(tags) {
 				key={index}
 				className="suggested-question"
 				onClick={() => {
-				updateCurrentSessionSelectedDocuments([docName]);
-				setQuestion(question);
-				setSelectedDocumentDetails(null);
-				setTimeout(() => {
-					askAI();
-				}, 100);
+				const selectedName = selectedDocumentDetails.name;
+
+updateCurrentSessionSelectedDocuments([selectedName]);
+setQuestion(question);
+setSelectedDocumentDetails(null);
+
+setTimeout(() => {
+  askAI(question, [selectedName]);
+}, 100);
 				}}
 			>
 				{question}
