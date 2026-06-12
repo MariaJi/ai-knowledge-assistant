@@ -1194,6 +1194,39 @@ async function autoTagAllDocuments() {
   }
 }
 
+function getSuggestedCollectionFromTags(tags) {
+  const tagText = tags.toLowerCase();
+
+  if (
+    tagText.includes("resume") ||
+    tagText.includes("career") ||
+    tagText.includes("job") ||
+    tagText.includes("interview")
+  ) {
+    return "Job Search";
+  }
+
+  if (
+    tagText.includes("ai") ||
+    tagText.includes("rag") ||
+    tagText.includes("openai") ||
+    tagText.includes("fastapi") ||
+    tagText.includes("react")
+  ) {
+    return "AI Learning";
+  }
+
+  if (
+    tagText.includes("travel") ||
+    tagText.includes("hiking") ||
+    tagText.includes("trail")
+  ) {
+    return "Travel";
+  }
+
+  return "Uncategorized";
+}
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -1700,12 +1733,22 @@ async function autoTagAllDocuments() {
 
 <button
   onClick={async () => {
-    const tags = await suggestTags(doc);
+   const tags = await suggestTags(doc);
 
-    setDocumentTags({
-      ...documentTags,
-      [doc]: tags.join(", "),
-    });
+	const tagText = tags.join(", ");
+
+	setDocumentTags((prev) => ({
+		...prev,
+		[doc]: tagText,
+	}));
+
+	const suggestedCollection =
+		getSuggestedCollectionFromTags(tagText);
+
+	setDocumentCollections((prev) => ({
+	...prev,
+	[doc]: suggestedCollection,
+		}));
   }}
   style={{ marginLeft: "10px" }}
 >
