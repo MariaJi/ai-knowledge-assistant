@@ -480,7 +480,7 @@ async function askAI(questionOverride = null, selectedDocumentsOverride = null) 
 
 const documentsToUse = selectedDocumentsOverride || selectedDocuments;
 
-console.log("Documents sent to backend:", documentsToUse);
+
 alert(JSON.stringify(documentsToUse));
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
@@ -1003,7 +1003,7 @@ const groupedSessions = filteredSessions.reduce((groups, session) => {
   return groups;
 }, {});
 
- console.log(groupedSessions);
+ 
 
 function toggleCategory(category) {
   setCollapsedCategories((prev) => ({
@@ -1175,6 +1175,21 @@ async function suggestTags(filename) {
   } catch (error) {
     console.error("Error suggesting tags:", error);
     return [];
+  }
+}
+
+async function autoTagAllDocuments() {
+  for (const doc of documents) {
+    try {
+      const tags = await suggestTags(doc);
+
+      setDocumentTags((prev) => ({
+        ...prev,
+        [doc]: tags.join(", "),
+      }));
+    } catch (error) {
+      console.error(`Failed to auto tag ${doc}:`, error);
+    }
   }
 }
 
@@ -1502,6 +1517,9 @@ async function suggestTags(filename) {
     disabled={selectedDocuments.length === 0}
   >
     Select None
+  </button>
+  <button onClick={autoTagAllDocuments}>
+	 Auto Tag All
   </button>
 </div>
 		
