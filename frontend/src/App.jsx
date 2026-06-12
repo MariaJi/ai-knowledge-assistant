@@ -1085,45 +1085,6 @@ function getRelatedDocuments(targetDoc) {
     .slice(0, 3);
 }
 
-async function analyzeResumeMatch1() {
-
-const prompt = `
-You are an AI career assistant.
-
-Analyze the resume against the job description using only these two uploaded documents.
-
-Resume Document:
-${resumeDocument}
-
-Job Description Document:
-${jobDescriptionDocument}
-
-Return a professional job-fit report in this exact format:
-
-## Match Score
-Give a score from 0 to 100 and briefly explain why.
-
-## Key Strengths
-List the strongest matches between the resume and job description.
-
-## Missing Skills
-List important missing or weak skills.
-
-## Resume Improvements
-Suggest specific resume bullet improvements based on the job description.
-
-## Interview Questions
-Create 5 likely interview questions for this role.
-
-Do not mention information that is not supported by the uploaded documents.
-`;
-
-updateCurrentSessionSelectedDocuments([
-  resumeDocument,
-  jobDescriptionDocument,
-]);
-  askAI(prompt, [resumeDocument, jobDescriptionDocument]);
-}
 
 
 async function analyzeResumeMatch() {
@@ -1190,6 +1151,30 @@ async function analyzeResumeMatch() {
     updateCurrentSessionMessages(errorMessages);
   } finally {
     setLoading(false);
+  }
+}
+
+async function suggestTags(filename) {
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/suggest-tags",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          filename,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    return data.tags || [];
+  } catch (error) {
+    console.error("Error suggesting tags:", error);
+    return [];
   }
 }
 
@@ -1692,6 +1677,22 @@ async function analyzeResumeMatch() {
   width: "150px",
 }}
 />
+
+<button
+  onClick={async () => {
+    const tags = await suggestTags(doc);
+
+    setDocumentTags({
+      ...documentTags,
+      [doc]: tags.join(", "),
+    });
+  }}
+  style={{ marginLeft: "10px" }}
+>
+  Auto Tag
+</button>
+
+
 <span style={{ marginLeft: "10px" }}>
     Uploaded: {documentMetadata[doc]?.uploadedAt || "Unknown"}
 	<br />

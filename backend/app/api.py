@@ -44,6 +44,9 @@ class MultiSummaryRequest(BaseModel):
 class ResumeMatchRequest(BaseModel):
     resume_document: str
     job_description_document: str
+
+class TagSuggestionRequest(BaseModel):
+    filename: str
     
 #vector_store = None
 uploaded_documents = []
@@ -738,4 +741,56 @@ Document context:
     return {
         "summary": response.choices[0].message.content,
         "sources": sources
+    }
+    
+@app.post("/suggest-tags")
+async def suggest_tags(request: TagSuggestionRequest):
+
+    docs = vector_store.similarity_search(
+        request.filename,
+        k=10,
+        filter={
+            "filename": request.filename
+        }
+    )
+
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You suggest short useful document tags."
+            },
+            {
+                "role": "user",
+                "content": f"""
+Suggest 3 to 5 short tags for this document.
+
+Rules:
+- Return only comma-separated tags.
+- No explanation.
+- Use short tags like AI, Resume, Job Description, React, FastAPI, RAG, Career.
+
+Document:
+{context}
+"""
+            }
+        ]
+    )
+
+    tag_text = response.choices[0].message.content
+
+    tags = [
+        tag.strip()
+        for tag in tag_text.split(",")
+        if tag.strip()
+    ]
+
+    return {
+        "filename": request.filename,
+        "tags": tags
     }
