@@ -1077,9 +1077,10 @@ function getRelatedDocuments(targetDoc) {
       });
 
       return {
-        name: doc,
-        score,
-      };
+			name: doc,
+			score,
+			percent: Math.min(score * 20, 100),
+		};
     })
     .filter((doc) => doc.score > 0)
     .sort((a, b) => b.score - a.score)
@@ -2085,10 +2086,27 @@ function getSuggestedCollectionFromTags(tags) {
 			) : (
 			<ul>
 				{relatedDocuments.map((relatedDoc) => (
-					<li key={relatedDoc.name}>
-					{relatedDoc.name}{" "}
-				
-					</li>
+					<li
+						key={relatedDoc.name}
+						style={{
+						cursor: "pointer",
+						textDecoration: "underline",
+					}}
+					onClick={() => {
+					setSelectedDocumentDetails({
+					name: relatedDoc.name,
+					category: documentCollections[relatedDoc.name],
+					tags: documentTags[relatedDoc.name],
+					metadata: documentMetadata[relatedDoc.name],
+					});
+
+					setRelatedDocuments(
+					getRelatedDocuments(relatedDoc.name)
+					);
+					}}
+					>
+				{relatedDoc.name} — {relatedDoc.percent}% Match
+				</li>
 			))}
 			</ul>
 		)}
