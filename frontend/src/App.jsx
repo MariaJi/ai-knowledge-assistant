@@ -181,6 +181,7 @@ useEffect(() => {
 }, [documentTags]);
 
 const [topicSearch, setTopicSearch] = useState("");
+const [resumeMatchResult, setResumeMatchResult] = useState(null);
 
 const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
 
@@ -1127,7 +1128,7 @@ async function analyzeResumeMatch() {
     });
 
     const data = await response.json();
-
+	setResumeMatchResult(data.answer);
     const finalMessages = [
       ...newMessages.slice(0, -1),
       {
@@ -1628,6 +1629,7 @@ async function autoTagAllDocuments() {
 				>
 					Analyze Match
 				</button>
+				
 			</div>
 
 			
