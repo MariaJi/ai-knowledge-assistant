@@ -795,6 +795,7 @@ async function summarizeDocument() {
 		...messages,
 		summaryMessage,
 	]);
+	setActiveTopTab("Chat");
   } catch (error) {
     alert("Could not summarize document.");
   }
@@ -1819,12 +1820,7 @@ function getSuggestedCollectionFromTags(tags) {
 			
 			
 
-			<button
-					onClick={summarizeDocument}
-					disabled={selectedDocument === "all"}
-					>
-				📄 Summarize Document
-			</button>
+			
 			
 			<div className="career-assistant-box">
 				<h3>Resume</h3>
@@ -1986,10 +1982,31 @@ function getSuggestedCollectionFromTags(tags) {
 	</div>
     </>
 )}
-
+	
 	{activeTopTab === "Analysis" && (
 	<div className="tab-placeholder">
 		<h2>Analysis</h2>
+		<h3>Document Summary</h3>
+			<select
+				value={selectedDocument}
+				onChange={(e) => updateCurrentSessionSelectedDocument(e.target.value)}
+			>
+				<option value="all">Select document to summarize</option>
+
+				{documents.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+				</option>
+			))}
+			</select>
+		<button
+			onClick={summarizeDocument}
+			disabled={selectedDocument === "all"}
+		>
+			📄 Summarize Document
+		</button>
+
+		
 		<h3>Compare Documents</h3>
 
 			<select
