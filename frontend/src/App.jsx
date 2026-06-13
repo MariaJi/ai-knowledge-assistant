@@ -1141,6 +1141,7 @@ async function analyzeResumeMatch() {
     ];
 
     updateCurrentSessionMessages(finalMessages);
+	setActiveTopTab("Chat");
   } catch (error) {
     const errorMessages = [
       ...newMessages.slice(0, -1),
@@ -1822,44 +1823,7 @@ function getSuggestedCollectionFromTags(tags) {
 
 			
 			
-			<div className="career-assistant-box">
-				<h3>Resume</h3>
 
-				<select
-					value={resumeDocument}
-					onChange={(e) => setResumeDocument(e.target.value)}
-				>
-					<option value="">Select Resume</option>
-
-				{documents.map((doc) => (
-					<option key={doc} value={doc}>
-					{doc}
-					</option>
-				))}
-				</select>
-
-				<h3>Job Description</h3>
-
-				<select
-						value={jobDescriptionDocument}
-						onChange={(e) => setJobDescriptionDocument(e.target.value)}
-				>
-						<option value="">Select Job Description</option>
-
-						{documents.map((doc) => (
-							<option key={doc} value={doc}>
-						{doc}
-							</option>
-						))}
-				</select>
-				<button
-					onClick={analyzeResumeMatch}
-					disabled={!resumeDocument || !jobDescriptionDocument}
-				>
-					Analyze Match
-				</button>
-				
-			</div>
 
 			
 			{documents.length === 0 ? (
@@ -2045,12 +2009,52 @@ function getSuggestedCollectionFromTags(tags) {
 {activeTopTab === "Career" && (
   <div className="tab-placeholder">
     <h2>Career</h2>
-    <p>Resume, interview, and AI job-search tools will go here.</p>
+	
+			<div className="career-assistant-box">
+				<h3>Resume</h3>
+
+				<select
+					value={resumeDocument}
+					onChange={(e) => setResumeDocument(e.target.value)}
+				>
+					<option value="">Select Resume</option>
+
+				{documents.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+					</option>
+				))}
+				</select>
+
+				<h3>Job Description</h3>
+
+				<select
+						value={jobDescriptionDocument}
+						onChange={(e) => setJobDescriptionDocument(e.target.value)}
+				>
+						<option value="">Select Job Description</option>
+
+						{documents.map((doc) => (
+							<option key={doc} value={doc}>
+						{doc}
+							</option>
+						))}
+				</select>
+				<button
+					onClick={analyzeResumeMatch}
+					disabled={!resumeDocument || !jobDescriptionDocument}
+				>
+					Analyze Match
+				</button>
+				
+			</div>
+	
+	
   </div>
 )}
 
 		
-		</div>
+	</div>
 	</main>
 	
 	{selectedDocumentDetails && (
