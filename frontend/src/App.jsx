@@ -1474,331 +1474,8 @@ function getSuggestedCollectionFromTags(tags) {
 				{" | "}Documents: {documentCount}
 				{" | "}Words: {totalWords}
 		</div>
-		<div className="upload-box">
-			<h2>Upload Document</h2>
-
-			<input
-				type="file"
-				accept=".txt,.pdf,.docx"
-				ref={fileInputRef}
-				 onChange={(e) => {
-					setSelectedFile(e.target.files[0]);
-					setUploadMessage("");
-					}}
-				/>
-
-			<button onClick={uploadFile} disabled={!selectedFile || uploading}>
-				{uploading ? "Uploading..." : "Upload"}
-			</button>
-
-			{uploadMessage && <p>{uploadMessage}</p>}
-		</div>
-	  
-		<div className="documents-box">
 		
-			<h2>Uploaded Documents ({documents.length})</h2>
-			{hasActiveDocumentFilters && (
-  <p>
-    Active Filters:
-    {selectedCollection !== "All Collections" &&
-      ` Collection = ${selectedCollection}`}
-    {tagSearch &&
-      ` | Tag = ${tagSearch}`}
-    {topicSearch &&
-      ` | Topic = ${topicSearch}`}
-  </p>
-)}
-			<div className="collection-filter">
-			<label>Collection: </label>
-
-			<select
-			value={selectedCollection}
-			onChange={(e) => setSelectedCollection(e.target.value)}
-			>
-			<option value="All">All Collections</option>
-			<option value="Uncategorized">Uncategorized</option>
-			<option value="Job Search">Job Search</option>
-			<option value="AI Learning">AI Learning</option>
-			<option value="Work">Work</option>
-			<option value="Travel">Travel</option>
-			</select>
-		</div>
 		
-		<div className="tag-filter">
-				<label>Tag Search: </label>
-
-				<input
-					type="text"
-					value={tagSearch}
-					onChange={(e) => setTagSearch(e.target.value)}
-					placeholder="Search tags..."
-					/>
-		</div>
-		
-		<div className="topic-filter">
-  <label>Topic Search: </label>
-
-  <input
-    type="text"
-    value={topicSearch}
-    onChange={(e) => setTopicSearch(e.target.value)}
-    placeholder="Search AI topics..."
-  />
-  <button onClick={clearDocumentFilters}>
-	Clear Filters
-  </button>
-</div>
-		
-		<div className="document-selection-actions">
-  <button
-    onClick={() => {
-      updateCurrentSessionSelectedDocuments(filteredDocuments);
-    }}
-    disabled={filteredDocuments.length === 0}
-  >
-    Select All
-  </button>
-
-  <button
-    onClick={() => {
-      updateCurrentSessionSelectedDocuments([]);
-    }}
-    disabled={selectedDocuments.length === 0}
-  >
-    Select None
-  </button>
-  <button onClick={autoTagAllDocuments}>
-	 Auto Tag All
-  </button>
-</div>
-		
-			<select
-				multiple
-				value={selectedDocuments}
-				onChange={(e) => {
-				const selected = Array.from(
-					e.target.selectedOptions,
-				(option) => option.value
-				);
-
-				
-				
-				updateCurrentSessionSelectedDocuments(selected);
-				}}
-			>
-
-				{filteredDocuments.map((doc) => (
-					<option key={doc} value={doc}>
-					{doc}
-					</option>
-				))}
-			
-			</select>
-			
-			<p className="selected-documents-count">
-						{selectedDocuments.length === 0
-						? "No documents selected (searching all documents)"
-						: `${selectedDocuments.length} document(s) selected`}
-			</p>
-			
-<h3>Compare Documents</h3>
-
-<select
-    value={compareDocumentA}
-    onChange={(e) => setCompareDocumentA(e.target.value)}
->
-    <option value="">Select Document A</option>
-
-    {filteredDocuments.map((doc, index) => (
-        <option key={index} value={doc}>
-            {doc}
-        </option>
-    ))}
-</select>
-
-<select
-    value={compareDocumentB}
-    onChange={(e) => setCompareDocumentB(e.target.value)}
->
-    <option value="">Select Document B</option>
-
-    {documents.map((doc, index) => (
-        <option key={index} value={doc}>
-            {doc}
-        </option>
-    ))}
-</select>
-
-<button onClick={compareDocuments}>
-    Compare Documents
-</button>
-
-
-			<button
-					onClick={summarizeDocument}
-					disabled={selectedDocument === "all"}
-					>
-				📄 Summarize Document
-			</button>
-			
-			<div className="career-assistant-box">
-				<h3>Resume</h3>
-
-				<select
-					value={resumeDocument}
-					onChange={(e) => setResumeDocument(e.target.value)}
-				>
-					<option value="">Select Resume</option>
-
-				{documents.map((doc) => (
-					<option key={doc} value={doc}>
-					{doc}
-					</option>
-				))}
-				</select>
-
-				<h3>Job Description</h3>
-
-				<select
-						value={jobDescriptionDocument}
-						onChange={(e) => setJobDescriptionDocument(e.target.value)}
-				>
-						<option value="">Select Job Description</option>
-
-						{documents.map((doc) => (
-							<option key={doc} value={doc}>
-						{doc}
-							</option>
-						))}
-				</select>
-				<button
-					onClick={analyzeResumeMatch}
-					disabled={!resumeDocument || !jobDescriptionDocument}
-				>
-					Analyze Match
-				</button>
-				
-			</div>
-
-			
-			{documents.length === 0 ? (
-  <p>No documents uploaded yet.</p>
-) : (
-  <>
-    {filteredDocuments.length === 0 ? (
-      <p>No documents in this collection.</p>
-    ) : (
-      <ul>
-        {filteredDocuments.map((doc, index) => (
-          <li key={index}
-			className="document-row">
-            📄 
-			 <span
-    style={{
-      cursor: "pointer",
-      textDecoration: "underline",
-    }}
-   
-	
-	onClick={() => {
-		setSelectedDocumentDetails({
-			name: doc,
-			category: documentCollections[doc],
-			tags: documentTags[doc],
-			metadata: documentMetadata[doc],
-		});
-
-		setRelatedDocuments(getRelatedDocuments(doc));
-	}}
-  >
-			{doc}
-</span>
-            <select
-              value={documentCollections[doc] || "Uncategorized"}
-              onChange={(e) =>
-                setDocumentCollections({
-                  ...documentCollections,
-                  [doc]: e.target.value,
-                })
-              }
-              style={{ marginLeft: "10px" }}
-            >
-              <option value="Uncategorized">Uncategorized</option>
-              <option value="Job Search">Job Search</option>
-              <option value="AI Learning">AI Learning</option>
-              <option value="Work">Work</option>
-              <option value="Travel">Travel</option>
-            </select>
-
-<input
-  type="text"
-  value={documentTags[doc] || ""}
-  onChange={(e) =>
-    setDocumentTags({
-      ...documentTags,
-      [doc]: e.target.value,
-    })
-  }
-  placeholder="Tags: RAG, React, OpenAI"
-  style={{
-  marginLeft: "10px",
-  width: "150px",
-}}
-/>
-
-<button
-  onClick={async () => {
-   const tags = await suggestTags(doc);
-
-	const tagText = tags.join(", ");
-
-	setDocumentTags((prev) => ({
-		...prev,
-		[doc]: tagText,
-	}));
-
-	const suggestedCollection =
-		getSuggestedCollectionFromTags(tagText);
-
-	setDocumentCollections((prev) => ({
-	...prev,
-	[doc]: suggestedCollection,
-		}));
-  }}
-  style={{ marginLeft: "10px" }}
->
-  Auto Tag
-</button>
-
-
-<span style={{ marginLeft: "10px" }}>
-    Uploaded: {documentMetadata[doc]?.uploadedAt || "Unknown"}
-	<br />
-	Words: {documentMetadata[doc]?.wordCount || 0}
-
-	<br />
-	Reading: {documentMetadata[doc]?.readingTime || 0} min
-  
-</span>
-
-            <button
-              onClick={() => deleteDocument(doc)}
-               style={{
-    marginLeft: "10px",
-    display: "inline-block",
-    verticalAlign: "top",
-  }}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-    )}
-  </>
-)}
-			
-		</div>
 		
 		<div className="search-box">
   <h2>Search Documents</h2>
@@ -2010,10 +1687,335 @@ function getSuggestedCollectionFromTags(tags) {
       </>
   )}
 		{activeTopTab === "Documents" && (
-  <div className="tab-placeholder">
+		
+		<>
     <h2>Documents</h2>
-    <p>Upload, organize, and manage documents here.</p>
-  </div>
+		<div className="upload-box">
+			<h2>Upload Document</h2>
+
+			<input
+				type="file"
+				accept=".txt,.pdf,.docx"
+				ref={fileInputRef}
+				 onChange={(e) => {
+					setSelectedFile(e.target.files[0]);
+					setUploadMessage("");
+					}}
+				/>
+
+			<button onClick={uploadFile} disabled={!selectedFile || uploading}>
+				{uploading ? "Uploading..." : "Upload"}
+			</button>
+
+			{uploadMessage && <p>{uploadMessage}</p>}
+		</div>
+		
+		<div className="documents-box">
+		
+				<h2>Uploaded Documents ({documents.length})</h2>
+				{hasActiveDocumentFilters && (
+				<p>
+					Active Filters:
+					{selectedCollection !== "All Collections" &&
+					` Collection = ${selectedCollection}`}
+					{tagSearch &&
+					` | Tag = ${tagSearch}`}
+					{topicSearch &&
+					` | Topic = ${topicSearch}`}
+				</p>
+				)}
+			<div className="collection-filter">
+				<label>Collection: </label>
+
+				<select
+				value={selectedCollection}
+				onChange={(e) => setSelectedCollection(e.target.value)}
+				>
+				<option value="All">All Collections</option>
+				<option value="Uncategorized">Uncategorized</option>
+				<option value="Job Search">Job Search</option>
+				<option value="AI Learning">AI Learning</option>
+				<option value="Work">Work</option>
+				<option value="Travel">Travel</option>
+				</select>
+			</div>
+		
+			<div className="tag-filter">
+				<label>Tag Search: </label>
+
+				<input
+					type="text"
+					value={tagSearch}
+					onChange={(e) => setTagSearch(e.target.value)}
+					placeholder="Search tags..."
+					/>
+			</div>
+		
+			<div className="topic-filter">
+				<label>Topic Search: </label>
+
+				<input
+					type="text"
+				value={topicSearch}
+				onChange={(e) => setTopicSearch(e.target.value)}
+				placeholder="Search AI topics..."
+				/>
+				<button onClick={clearDocumentFilters}>
+					Clear Filters
+				</button>
+			</div>
+		
+			<div className="document-selection-actions">
+				<button
+					onClick={() => {
+					updateCurrentSessionSelectedDocuments(filteredDocuments);
+					}}
+					disabled={filteredDocuments.length === 0}
+				>
+					Select All
+				</button>
+
+				<button
+					onClick={() => {
+					updateCurrentSessionSelectedDocuments([]);
+					}}
+					disabled={selectedDocuments.length === 0}
+				>
+					Select None
+				</button>
+				<button onClick={autoTagAllDocuments}>
+					Auto Tag All
+				</button>
+			</div>
+		
+			<select
+				multiple
+				value={selectedDocuments}
+				onChange={(e) => {
+				const selected = Array.from(
+					e.target.selectedOptions,
+				(option) => option.value
+				);
+
+				
+				
+				updateCurrentSessionSelectedDocuments(selected);
+				}}
+			>
+
+				{filteredDocuments.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+					</option>
+				))}
+			
+			</select>
+			
+			<p className="selected-documents-count">
+						{selectedDocuments.length === 0
+						? "No documents selected (searching all documents)"
+						: `${selectedDocuments.length} document(s) selected`}
+			</p>
+			
+			<h3>Compare Documents</h3>
+
+			<select
+				value={compareDocumentA}
+				onChange={(e) => setCompareDocumentA(e.target.value)}
+			>
+			<option value="">Select Document A</option>
+
+			{filteredDocuments.map((doc, index) => (
+				<option key={index} value={doc}>
+				{doc}
+			</option>
+			))}
+			</select>
+
+			<select
+				value={compareDocumentB}
+				onChange={(e) => setCompareDocumentB(e.target.value)}
+			>
+				<option value="">Select Document B</option>
+
+				{documents.map((doc, index) => (
+				<option key={index} value={doc}>
+					{doc}
+				</option>
+				))}
+			</select>
+
+			<button onClick={compareDocuments}>
+				Compare Documents
+			</button>
+
+
+			<button
+					onClick={summarizeDocument}
+					disabled={selectedDocument === "all"}
+					>
+				📄 Summarize Document
+			</button>
+			
+			<div className="career-assistant-box">
+				<h3>Resume</h3>
+
+				<select
+					value={resumeDocument}
+					onChange={(e) => setResumeDocument(e.target.value)}
+				>
+					<option value="">Select Resume</option>
+
+				{documents.map((doc) => (
+					<option key={doc} value={doc}>
+					{doc}
+					</option>
+				))}
+				</select>
+
+				<h3>Job Description</h3>
+
+				<select
+						value={jobDescriptionDocument}
+						onChange={(e) => setJobDescriptionDocument(e.target.value)}
+				>
+						<option value="">Select Job Description</option>
+
+						{documents.map((doc) => (
+							<option key={doc} value={doc}>
+						{doc}
+							</option>
+						))}
+				</select>
+				<button
+					onClick={analyzeResumeMatch}
+					disabled={!resumeDocument || !jobDescriptionDocument}
+				>
+					Analyze Match
+				</button>
+				
+			</div>
+
+			
+			{documents.length === 0 ? (
+				<p>No documents uploaded yet.</p>
+				) : (
+				<>
+					{filteredDocuments.length === 0 ? (
+				<p>No documents in this collection.</p>
+			) : (
+			<ul>
+					{filteredDocuments.map((doc, index) => (
+					<li key={index}
+					className="document-row">
+					📄 
+					<span
+					style={{
+					cursor: "pointer",
+					textDecoration: "underline",
+						}}
+   
+	
+						onClick={() => {
+						setSelectedDocumentDetails({
+						name: doc,
+						category: documentCollections[doc],
+						tags: documentTags[doc],
+						metadata: documentMetadata[doc],
+						});
+
+					setRelatedDocuments(getRelatedDocuments(doc));
+					}}
+					>
+						{doc}
+					</span>
+					<select
+						value={documentCollections[doc] || "Uncategorized"}
+						onChange={(e) =>
+							setDocumentCollections({
+						...documentCollections,
+						[doc]: e.target.value,
+						})
+							}
+						style={{ marginLeft: "10px" }}
+					>
+						<option value="Uncategorized">Uncategorized</option>
+						<option value="Job Search">Job Search</option>
+						<option value="AI Learning">AI Learning</option>
+						<option value="Work">Work</option>
+						<option value="Travel">Travel</option>
+					</select>
+
+					<input
+						type="text"
+						value={documentTags[doc] || ""}
+						onChange={(e) =>
+						setDocumentTags({
+						...documentTags,
+						[doc]: e.target.value,
+					})
+					}
+						placeholder="Tags: RAG, React, OpenAI"
+						style={{
+						marginLeft: "10px",
+						width: "150px",
+						}}
+					/>
+
+					<button
+						onClick={async () => {
+						const tags = await suggestTags(doc);
+
+						const tagText = tags.join(", ");
+
+						setDocumentTags((prev) => ({
+						...prev,
+						[doc]: tagText,
+						}));
+
+						const suggestedCollection =
+						getSuggestedCollectionFromTags(tagText);
+
+						setDocumentCollections((prev) => ({
+							...prev,
+							[doc]: suggestedCollection,
+						}));
+						}}
+						style={{ marginLeft: "10px" }}
+					>
+						Auto Tag
+					</button>
+
+
+						<span style={{ marginLeft: "10px" }}>
+							Uploaded: {documentMetadata[doc]?.uploadedAt || "Unknown"}
+							<br />
+								Words: {documentMetadata[doc]?.wordCount || 0}
+
+							<br />
+							Reading: {documentMetadata[doc]?.readingTime || 0} min
+  
+						</span>
+
+					<button
+							onClick={() => deleteDocument(doc)}
+							style={{
+							marginLeft: "10px",
+							display: "inline-block",
+							verticalAlign: "top",
+							}}
+					>
+						Delete
+					</button>
+				</li>
+				))}
+			</ul>
+			)}
+		</>
+		)}
+			
+	</div>
+    </>
 )}
 
 {activeTopTab === "Analysis" && (
