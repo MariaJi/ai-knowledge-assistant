@@ -1400,7 +1400,7 @@ function getSuggestedCollectionFromTags(tags) {
 		</div>
 	</aside>
 	)}
-	
+
 	<main className="container">
 	<div className="top-tabs">
   {["Documents", "Chat", "Analysis", "Career"].map((tab) => (
@@ -1413,6 +1413,9 @@ function getSuggestedCollectionFromTags(tags) {
     </button>
   ))}
 </div>
+<div className="tab-content">
+ {activeTopTab === "Chat" && (
+    <>
 		<div className="current-chat-header">
   {currentSession?.title}
 	
@@ -2004,8 +2007,9 @@ function getSuggestedCollectionFromTags(tags) {
 			
 		</div>
    )}   
-    
-		
+      </>
+  )}
+		</div>
 	</main>
 	
 	{selectedDocumentDetails && (
