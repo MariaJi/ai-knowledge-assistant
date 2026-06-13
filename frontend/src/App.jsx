@@ -2009,6 +2009,28 @@ function getSuggestedCollectionFromTags(tags) {
    )}   
       </>
   )}
+		{activeTopTab === "Documents" && (
+  <div className="tab-placeholder">
+    <h2>Documents</h2>
+    <p>Upload, organize, and manage documents here.</p>
+  </div>
+)}
+
+{activeTopTab === "Analysis" && (
+  <div className="tab-placeholder">
+    <h2>Analysis</h2>
+    <p>Summaries, comparisons, and document insights will go here.</p>
+  </div>
+)}
+
+{activeTopTab === "Career" && (
+  <div className="tab-placeholder">
+    <h2>Career</h2>
+    <p>Resume, interview, and AI job-search tools will go here.</p>
+  </div>
+)}
+
+		
 		</div>
 	</main>
 	
