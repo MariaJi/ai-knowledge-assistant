@@ -833,7 +833,7 @@ async function compareDocuments() {
             ...messages,
             comparisonMessage,
         ]);
-
+		setActiveTopTab("Chat");
     } catch (error) {
         alert("Compare failed.");
     }
@@ -1817,38 +1817,7 @@ function getSuggestedCollectionFromTags(tags) {
 						: `${selectedDocuments.length} document(s) selected`}
 			</p>
 			
-			<h3>Compare Documents</h3>
-
-			<select
-				value={compareDocumentA}
-				onChange={(e) => setCompareDocumentA(e.target.value)}
-			>
-			<option value="">Select Document A</option>
-
-			{filteredDocuments.map((doc, index) => (
-				<option key={index} value={doc}>
-				{doc}
-			</option>
-			))}
-			</select>
-
-			<select
-				value={compareDocumentB}
-				onChange={(e) => setCompareDocumentB(e.target.value)}
-			>
-				<option value="">Select Document B</option>
-
-				{documents.map((doc, index) => (
-				<option key={index} value={doc}>
-					{doc}
-				</option>
-				))}
-			</select>
-
-			<button onClick={compareDocuments}>
-				Compare Documents
-			</button>
-
+			
 
 			<button
 					onClick={summarizeDocument}
@@ -2018,12 +1987,43 @@ function getSuggestedCollectionFromTags(tags) {
     </>
 )}
 
-{activeTopTab === "Analysis" && (
-  <div className="tab-placeholder">
-    <h2>Analysis</h2>
-    <p>Summaries, comparisons, and document insights will go here.</p>
-  </div>
-)}
+	{activeTopTab === "Analysis" && (
+	<div className="tab-placeholder">
+		<h2>Analysis</h2>
+		<h3>Compare Documents</h3>
+
+			<select
+				value={compareDocumentA}
+				onChange={(e) => setCompareDocumentA(e.target.value)}
+			>
+					<option value="">Select Document A</option>
+
+					{filteredDocuments.map((doc, index) => (
+					<option key={index} value={doc}>
+					{doc}
+					</option>
+					))}
+			</select>
+
+			<select
+					value={compareDocumentB}
+					onChange={(e) => setCompareDocumentB(e.target.value)}
+			>
+					<option value="">Select Document B</option>
+
+					{documents.map((doc, index) => (
+					<option key={index} value={doc}>
+						{doc}
+					</option>
+					))}
+			</select>
+
+			<button onClick={compareDocuments}>
+				Compare Documents
+			</button>
+
+	</div>
+	)}
 
 {activeTopTab === "Career" && (
   <div className="tab-placeholder">
