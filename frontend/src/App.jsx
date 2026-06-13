@@ -151,7 +151,7 @@ const isSearching = chatSearchTerm.trim() !== "";
   const searchResultRefs = useRef([]);
   const chatSearchInputRef = useRef(null);
   const fileInputRef = useRef(null)
-  
+  const [activeTopTab, setActiveTopTab] = useState("Chat");
   const [openSources, setOpenSources] = useState({});
   const selectedDocument = currentSession?.selectedDocument || [];
   
@@ -1402,6 +1402,17 @@ function getSuggestedCollectionFromTags(tags) {
 	)}
 	
 	<main className="container">
+	<div className="top-tabs">
+  {["Documents", "Chat", "Analysis", "Career"].map((tab) => (
+    <button
+  key={tab}
+  
+  className={`top-tab ${activeTopTab === tab ? "active" : ""}`}
+  onClick={() => setActiveTopTab(tab)}
+> {tab}
+    </button>
+  ))}
+</div>
 		<div className="current-chat-header">
   {currentSession?.title}
 	

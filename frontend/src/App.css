@@ -645,3 +645,28 @@ body:has(.dark-mode) {
 .document-selection-actions button {
   flex: 1;
 }
+
+
+.top-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.top-tab {
+  margin-top: 0;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  width: auto;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.top-tab.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
