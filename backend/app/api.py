@@ -231,6 +231,37 @@ async def upload_file(file: UploadFile = File(...)):
         "suggested_questions": suggested_questions,
     }
 
+def rewrite_question_with_history(question, chat_history):
+    if not chat_history:
+        return question
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Rewrite the user's latest question into a standalone search query. "
+                        "Use the chat history only to resolve references like 'it', 'that', "
+                        "'the second one', or 'this document'. "
+                        "Do not answer the question. "
+                        "Return only the rewritten query."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": f"Chat history:\n{chat_history}\n\nLatest question:\n{question}",
+                },
+            ],
+            temperature=0,
+        )
+
+        rewritten = response.choices[0].message.content.strip()
+        return rewritten or question
+
+    except Exception:
+        return question
 
 @app.post("/ask")
 async def ask_question(request: QuestionRequest):
@@ -239,18 +270,23 @@ async def ask_question(request: QuestionRequest):
             "answer": "Please upload a document first.",
             "sources": []
         }
-
-    
+    #rewritten_question = request.question
+    rewritten_question = rewrite_question_with_history(
+    request.question,
+    request.chat_history
+)
     
     if not request.selected_documents:
     #if len(request.selected_documents) == 0:
         docs = vector_store.similarity_search(
-            request.question,
+           
+            rewritten_question,
             k=4
         )
     else:
         docs = vector_store.similarity_search(
-            request.question,
+            
+            rewritten_question,
             k=4,
             filter={
                 "filename": {
@@ -297,6 +333,8 @@ async def ask_question(request: QuestionRequest):
         "answer": answer,
         "sources": sources
     }
+
+
 @app.post("/ask-stream")
 async def ask_question_stream(request: QuestionRequest):
     if vector_store is None:
