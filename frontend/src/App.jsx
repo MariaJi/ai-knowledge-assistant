@@ -27,6 +27,10 @@ function App() {
   return JSON.parse(localStorage.getItem("recentSearches") || "[]");
 });
 
+const [analysisHistory, setAnalysisHistory] = useState(() => {
+  const saved = localStorage.getItem("analysisHistory");
+  return saved ? JSON.parse(saved) : [];
+});
 
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
@@ -209,6 +213,10 @@ useEffect(() => {
 }, [documentMetadata]);
 
   
+useEffect(() => {
+  localStorage.setItem("analysisHistory", JSON.stringify(analysisHistory));
+}, [analysisHistory]);
+
 const filteredDocuments = documents.filter((doc) => {
   const matchesCollection =
     selectedCollection === "All" ||
@@ -784,7 +792,15 @@ async function summarizeDocument() {
     });
 
     const data = await response.json();
-
+	setAnalysisHistory((prev) => [
+		{
+			type: "summary",
+			title: selectedDocument,
+			content: data.summary,
+			createdAt: new Date().toISOString(),
+		},
+		...prev,
+	]);
     const summaryMessage = {
 		role: "assistant",
 		content: `📄 Summary of ${selectedDocument}\n\n${data.summary}`,
@@ -823,17 +839,35 @@ async function compareDocuments() {
         );
 
         const data = await response.json();
+		setAnalysisHistory((prev) => [
+			{
+				type: "compare",
+				title: `${compareDocumentA} vs ${compareDocumentB}`,
+				content: data.comparison,
+				createdAt: new Date().toISOString(),
+			},
+			...prev,
+		]);
+		
+		
+		const userCompareMessage = {
+			role: "user",
+			content: `Compare ${compareDocumentA} and ${compareDocumentB}`,
+			};
 
-        const comparisonMessage = {
-            role: "assistant",
-            content: data.comparison,
-            isComparison: true,
-        };
+		const comparisonMessage = {
+				role: "assistant",
+				content: data.comparison,
+				isComparison: true,
+			};
 
-        updateCurrentSessionMessages([
-            ...messages,
-            comparisonMessage,
-        ]);
+		updateCurrentSessionMessages([
+			...messages,
+			userCompareMessage,
+			comparisonMessage,
+		]);
+
+       
 		setActiveTopTab("Chat");
     } catch (error) {
         alert("Compare failed.");
@@ -1405,65 +1439,65 @@ function getSuggestedCollectionFromTags(tags) {
 
 	<main className="container">
 	<div className="top-tabs">
-  {["Documents", "Chat", "Analysis", "Career"].map((tab) => (
-    <button
-  key={tab}
+		{["Documents", "Chat", "Analysis", "Career"].map((tab) => (
+		<button
+			key={tab}
   
-  className={`top-tab ${activeTopTab === tab ? "active" : ""}`}
-  onClick={() => setActiveTopTab(tab)}
-> {tab}
-    </button>
-  ))}
-</div>
-<div className="tab-content">
- {activeTopTab === "Chat" && (
-    <>
-		<div className="current-chat-header">
-  {currentSession?.title}
+			className={`top-tab ${activeTopTab === tab ? "active" : ""}`}
+			onClick={() => setActiveTopTab(tab)}
+		> {tab}
+		</button>
+		))}
+	</div>
+	<div className="tab-content">
+		{activeTopTab === "Chat" && (
+			<>
+				<div className="current-chat-header">
+			{currentSession?.title}
 	
-   <button
-     className="theme-toggle-button"
-     onClick={() => setDarkMode(!darkMode)}
-   >
-    {darkMode ? "☀️ Light" : "🌙 Dark"}
-   </button>
+		<button
+			className="theme-toggle-button"
+			onClick={() => setDarkMode(!darkMode)}
+		>
+			{darkMode ? "☀️ Light" : "🌙 Dark"}
+		</button>
 
 
-  <button
-    className="export-chat-button"
-    onClick={exportCurrentChat}
-	disabled={messages.length === 0}
-  >
-    Save Session
-  </button>
-  <button
-      className="clear-chat-button"
-      onClick={clearCurrentChat}
-	  disabled={messages.length === 0}
-    >
-      Clear Chat
-    </button>
+		<button
+			className="export-chat-button"
+			onClick={exportCurrentChat}
+			disabled={messages.length === 0}
+		>
+			Save Session
+		</button>
+		<button
+			className="clear-chat-button"
+			onClick={clearCurrentChat}
+			disabled={messages.length === 0}
+		>
+			Clear Chat
+		</button>
 	
-	<button
-		className="export-chat-button"
-		onClick={exportChatAsMarkdown}
-		disabled={messages.length === 0}
-	>
-		Export Markdown
-	</button>
-</div>
+		<button
+			className="export-chat-button"
+			onClick={exportChatAsMarkdown}
+			disabled={messages.length === 0}
+		>
+			Export Markdown
+		</button>
+	</div>
 
 
-<div
-  className="current-document-header"
-  title={selectedDocument}
+	<div
+		className="current-document-header"
+		title={selectedDocument}
 	>
-	Document: {
-    selectedDocument === "all"
-      ? "All documents"
-      : selectedDocument
-		}
-</div>
+		Document: {
+		selectedDocument === "all"
+		? "All documents"
+		: selectedDocument
+			}
+	</div>
 
 
 		<h1>AI Knowledge Assistant</h1>
@@ -1480,46 +1514,46 @@ function getSuggestedCollectionFromTags(tags) {
 		
 		
 		<div className="search-box">
-  <h2>Search Documents</h2>
+		<h2>Search Documents</h2>
 
-  <input
-    type="text"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    placeholder="Search uploaded documents..."
-  />
+			<input
+			type="text"
+			value={searchQuery}
+			onChange={(e) => setSearchQuery(e.target.value)}
+			placeholder="Search uploaded documents..."
+			/>
 
-  <button onClick={searchDocuments} disabled={!searchQuery.trim()}>
-    Search
-  </button>
+			<button onClick={searchDocuments} disabled={!searchQuery.trim()}>
+			Search
+			</button>
 
-  {searchResults.length > 0 && (
-    <div className="search-results">
-      <h3>Search Results</h3>
+			{searchResults.length > 0 && (
+			<div className="search-results">
+				<h3>Search Results</h3>
 
-      {searchResults.map((result, index) => (
-        <div key={index} className="search-result-card">
-          <strong>{result.filename}</strong>
-          <p>{result.snippet}</p>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+			{searchResults.map((result, index) => (
+				<div key={index} className="search-result-card">
+					<strong>{result.filename}</strong>
+					<p>{result.snippet}</p>
+				</div>
+			))}
+			</div>
+		)}
+		</div>
 		
 	  
 		<div className="ask-box">
 			<h2>Ask Question</h2>
-{selectedDocuments.length > 0 && (
-  <div className="selected-documents-bar">
-    <strong>Selected documents:</strong>
-    {selectedDocuments.map((doc) => (
-      <span key={doc} className="selected-document-chip">
-        {doc}
-      </span>
-    ))}
-  </div>
-)}
+			{selectedDocuments.length > 0 && (
+			<div className="selected-documents-bar">
+				<strong>Selected documents:</strong>
+				{selectedDocuments.map((doc) => (
+				<span key={doc} className="selected-document-chip">
+				{doc}
+			</span>
+			))}
+		</div>
+		)}
 
 
 			<textarea
@@ -2002,9 +2036,34 @@ function getSuggestedCollectionFromTags(tags) {
 			<button onClick={compareDocuments}>
 				Compare Documents
 			</button>
+			<h3>Analysis History</h3>
 
+			{analysisHistory.length === 0 ? (
+				<p>No analysis history yet.</p>
+				) : (
+				analysisHistory.map((item, index) => (
+			<div
+				key={index}
+				className="analysis-history-item"
+				onClick={() => {
+			
+				setActiveTopTab("Chat");
+			}}
+			>
+			<strong>
+				{item.type === "summary" ? "📄 Summary" : "🔍 Compare"}
+			</strong>
+			<p>{item.title}</p>
+			<small>{new Date(item.createdAt).toLocaleString()}</small>
+			<hr />
+			</div>
+			))
+		)}
 	</div>
 	)}
+
+	
+
 
 {activeTopTab === "Career" && (
   <div className="tab-placeholder">
