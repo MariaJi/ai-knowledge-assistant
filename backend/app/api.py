@@ -274,8 +274,12 @@ async def ask_question(request: QuestionRequest):
     rewritten_question = rewrite_question_with_history(
     request.question,
     request.chat_history
-)
+    )
     
+    print("Original question:", request.question)
+    print("Rewritten question:", rewritten_question)
+    #print("Chat history:", request.chat_history)
+    print(f"Chat history messages: {len(request.chat_history)}")
     if not request.selected_documents:
     #if len(request.selected_documents) == 0:
         docs = vector_store.similarity_search(

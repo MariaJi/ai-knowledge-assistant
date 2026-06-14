@@ -539,6 +539,10 @@ alert(JSON.stringify(documentsToUse));
 		body: JSON.stringify({
 			question: questionToAsk,
 			selected_documents: documentsToUse,
+			chat_history: messages.slice(-10).map((message) => ({
+				role: message.role,
+				content: message.content,
+			})),
 		}),
 	});
 
