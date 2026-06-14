@@ -2046,9 +2046,28 @@ function getSuggestedCollectionFromTags(tags) {
 				key={index}
 				className="analysis-history-item"
 				onClick={() => {
-			
+					const alreadyInChat = messages.some(
+					(message) =>
+					message.content?.includes(item.content) ||
+					message.content?.includes(item.title)
+				);
+
+					if (!alreadyInChat) {
+						const historyMessage = {
+						role: "assistant",
+						content:
+						`${item.type === "summary" ? "📄 Summary" : "🔍 Compare"}: ${item.title}\n\n${item.content}`,
+						isHistory: true,
+					};
+
+				updateCurrentSessionMessages([
+				...messages,
+				historyMessage,
+				]);
+				}
+
 				setActiveTopTab("Chat");
-			}}
+		}}
 			>
 			<strong>
 				{item.type === "summary" ? "📄 Summary" : "🔍 Compare"}
