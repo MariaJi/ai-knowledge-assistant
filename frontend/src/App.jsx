@@ -489,8 +489,6 @@ async function askAI(questionOverride = null, selectedDocumentsOverride = null) 
 
 const documentsToUse = selectedDocumentsOverride || selectedDocuments;
 
-
-alert(JSON.stringify(documentsToUse));
   try {
     const response = await fetch("http://127.0.0.1:8000/ask-stream", {
       method: "POST",
@@ -547,6 +545,7 @@ alert(JSON.stringify(documentsToUse));
 	});
 
 const sourcesData = await sourcesResponse.json();
+console.log(sourcesData);
 //setSources(sourcesData.sources || []);
 // updateCurrentSessionSources(sourcesData.sources || []);
 const finalMessages = [
@@ -555,6 +554,7 @@ const finalMessages = [
     role: "assistant",
     content: streamedAnswer,
     sources: sourcesData.sources || [],
+	rewrittenQuestion: sourcesData.rewritten_question,
   },
 ];
 
@@ -1169,14 +1169,15 @@ async function analyzeResumeMatch() {
 
     const data = await response.json();
 	setResumeMatchResult(data.answer);
-    const finalMessages = [
-      ...newMessages.slice(0, -1),
-      {
-        role: "assistant",
-        content: data.answer,
-        sources: data.sources || [],
-      },
-    ];
+	const finalMessages = [
+		...newMessages.slice(0, -1),
+	{
+		role: "assistant",
+		content: streamedAnswer,
+		sources: sourcesData.sources || [],
+		
+	},
+	];
 
     updateCurrentSessionMessages(finalMessages);
 	setActiveTopTab("Chat");
@@ -1695,7 +1696,15 @@ function getSuggestedCollectionFromTags(tags) {
     {highlightText(message.content, messageSearchTerm)}
   </div>
 )}
-					{message.sources && message.sources.length > 0 && (
+
+{(message.rewrittenQuestion || message.rewritten_question) && (
+  <div className="rewritten-question">
+    🔄 Search Query: {message.rewrittenQuestion || message.rewritten_question}
+  </div>
+)}
+
+
+				{message.sources && message.sources.length > 0 && (
   <div className="message-sources">
     <button
       className="sources-toggle"
@@ -1709,7 +1718,10 @@ function getSuggestedCollectionFromTags(tags) {
         {message.sources.map((source, sourceIndex) => (
           <div key={sourceIndex} className="message-source-card">
             <strong>{source.filename}</strong>
-            <p>{source.snippet}</p>
+				{source.chunk_count && (
+			<span> — {source.chunk_count} chunk(s) used</span>
+			)}
+			<p>{source.snippet}</p>
           </div>
         ))}
       </div>

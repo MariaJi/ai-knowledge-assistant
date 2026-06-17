@@ -321,6 +321,8 @@ async def ask_question(request: QuestionRequest):
 
     
     
+   
+
     unique_sources = {}
 
     for doc in docs:
@@ -329,13 +331,17 @@ async def ask_question(request: QuestionRequest):
         if filename not in unique_sources:
             unique_sources[filename] = {
                 "filename": filename,
-                "snippet": doc.page_content[:300]
+                "snippet": doc.page_content[:300],
+                "chunk_count": 1
             }
-
+        else:
+            unique_sources[filename]["chunk_count"] += 1
+        
     sources = list(unique_sources.values())
     return {
         "answer": answer,
-        "sources": sources
+        "sources": sources,
+        "rewritten_question": rewritten_question
     }
 
 
