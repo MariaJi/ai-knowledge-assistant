@@ -47,11 +47,14 @@ A full-stack Retrieval-Augmented Generation (RAG) application built with React, 
 
 ## Screenshots
 
-(Chat screenshot)
+### Multi-Document Chat
+Screenshot coming soon
 
-(Resume Match screenshot)
+### Resume Match Analysis
+Screenshot coming soon
 
-(Document Comparison screenshot)
+### Document Comparison
+Screenshot coming soon
 
 ## Key Challenges Solved
 
