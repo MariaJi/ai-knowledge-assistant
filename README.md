@@ -43,7 +43,25 @@ A full-stack Retrieval-Augmented Generation (RAG) application built with React, 
 
 ## Architecture
 
-(Architecture diagram here)
+```text
+User
+  ↓
+React Frontend (Vite)
+  ↓
+FastAPI Backend
+  ↓
+Question Rewriter
+  ↓
+OpenAI Embeddings
+  ↓
+ChromaDB Vector Store
+  ↓
+GPT-4o-mini
+  ↓
+Source-Grounded Answer
+```
+
+The application uses a Retrieval-Augmented Generation (RAG) pipeline. Documents are chunked, embedded using OpenAI Embeddings, stored in ChromaDB, and retrieved through semantic similarity search. Retrieved context is sent to GPT-4o-mini to generate source-grounded responses.
 
 ## Screenshots
 
