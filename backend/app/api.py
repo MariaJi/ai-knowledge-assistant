@@ -507,6 +507,197 @@ async def search_documents(request: SearchRequest):
         "results": results
     }
 
+
+
+def detect_document_type_Old(filename: str, content: str) -> str:
+    filename_lower = filename.lower()
+    content_lower = content.lower()
+    text = f"{filename_lower} {content_lower}"
+
+    if (
+        "job_description" in filename_lower
+        or "job description" in filename_lower
+        or "job description" in content_lower
+        or "responsibilities" in content_lower
+        or "required skills" in content_lower
+        or "preferred skills" in content_lower
+    ):
+        return "job_description"
+
+    if (
+        "resume" in filename_lower
+        or "professional experience" in content_lower
+        or "selected project" in content_lower
+        or "education" in content_lower and "technical skills" in content_lower
+    ):
+        return "resume"
+
+    if "requirements" in text or "functional requirements" in text or "business goal" in text:
+        return "requirements"
+
+    if "rag" in text or "retrieval-augmented generation" in text or "embeddings" in text or "vector database" in text:
+        return "technical"
+
+    if "hiking" in text or "trail" in text or "travel" in text or "visit" in text:
+        return "travel"
+
+    return "general"
+
+def detect_document_type(filename: str, content: str) -> str:
+    classification_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+You classify documents into exactly one of these types:
+
+resume
+job_description
+requirements
+technical
+travel
+general
+
+Rules:
+- Use resume for personal career documents describing a person's experience, skills, education, and projects.
+- Use job_description for hiring posts, job openings, role descriptions, responsibilities, qualifications, and required skills.
+- Use requirements for business requirements, functional requirements, user workflows, product specs, or report requirements.
+- Use technical for technical explanations, architecture notes, AI/ML concepts, software design, or engineering articles.
+- Use travel for hiking guides, travel plans, destination notes, road conditions, or trip planning.
+- Use general if none of the above fit.
+
+Return only the type name. Do not explain.
+"""
+            },
+            {
+                "role": "user",
+                "content": f"""
+Filename: {filename}
+
+Document content:
+{content[:4000]}
+"""
+            }
+        ],
+        temperature=0
+    )
+
+    document_type = classification_response.choices[0].message.content.strip().lower()
+
+    allowed_types = {
+        "resume",
+        "job_description",
+        "requirements",
+        "technical",
+        "travel",
+        "general"
+    }
+
+    if document_type not in allowed_types:
+        return "general"
+
+    return document_type
+
+def get_summary_prompt(document_type: str) -> str:
+    prompts = {
+        "job_description": """
+Summarize this job description using this format:
+
+# Role Summary
+
+# Key Responsibilities
+
+# Required Skills
+
+# Preferred Skills
+
+# Important Technologies
+
+# Interview Preparation Topics
+
+Only use information from the document.
+""",
+        "resume": """
+Summarize this resume using this format:
+
+# Professional Summary
+
+# Core Technical Skills
+
+# AI / ML Relevant Experience
+
+# Software Engineering Experience
+
+# Education and Research Background
+
+# Strengths for AI Engineering Roles
+
+Only use information from the document.
+""",
+        
+        "requirements": """
+Summarize this requirements document using this format:
+
+# Business Goal
+
+# Functional Requirements
+
+# Data / Inputs Needed
+
+# User Workflow
+
+# Open Questions or Risks
+
+Only use information from the document.
+""",
+        "technical": """
+Summarize this technical document using this format:
+
+# Executive Summary
+
+# Key Concepts
+
+# Architecture or Workflow
+
+# Technologies Mentioned
+
+# Practical Takeaways
+
+Only use information from the document.
+""",
+        "travel": """
+Summarize this travel or hiking document using this format:
+
+# Overview
+
+# Main Attractions
+
+# Important Conditions or Warnings
+
+# Practical Tips
+
+# Best Use of This Information
+
+Only use information from the document.
+""",
+        "general": """
+Summarize the document using this format:
+
+# Executive Summary
+
+# Key Points
+
+# Important Facts
+
+# Action Items
+
+Only use information from the document.
+"""
+    }
+
+    return prompts.get(document_type, prompts["general"])
+
 @app.post("/summarize")
 async def summarize_document(request: SummaryRequest):
 
@@ -521,25 +712,22 @@ async def summarize_document(request: SummaryRequest):
     context = "\n\n".join(
         [doc.page_content for doc in docs]
     )
+    
+    document_type = detect_document_type(
+        request.selected_document,
+        context
+    )
+    
+    print(f"Detected document type: {document_type}")
+    summary_prompt = get_summary_prompt(document_type)
 
+    
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
-                "content": """
-Summarize the document using this format:
-
-# Executive Summary
-
-# Key Points
-
-# Important Facts
-
-# Action Items
-
-Only use information from the document.
-"""
+                "content": summary_prompt
             },
             {
                 "role": "user",
