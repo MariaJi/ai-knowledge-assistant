@@ -576,11 +576,28 @@ updateCurrentSessionMessages(finalMessages);
   }
 }
  
- function askAboutMetadataValue(key, value) {
-    
-    const label = key.replace(/_/g, " ");
 
-	const question = `Explain this ${label}:\n\n${value}`;
+
+function askAboutMetadataValue(key, value) {
+    const label = key
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+    let question = "";
+
+    if (key.includes("warning")) {
+        question = `What should I know about this warning?\n\n${value}`;
+    } else if (key.includes("skill")) {
+        question = `Why is this skill important in this document?\n\n${value}`;
+    } else if (key.includes("technology")) {
+        question = `Explain how this technology is used in this document.\n\n${value}`;
+    } else if (key.includes("destination")) {
+        question = `What should I know before visiting this destination?\n\n${value}`;
+    } else if (key.includes("role")) {
+        question = `Explain this role and why it matters in this document.\n\n${value}`;
+    } else {
+        question = `Explain this ${label}:\n\n${value}`;
+    }
 
     setActiveTopTab("Chat");
     askAI(question);
