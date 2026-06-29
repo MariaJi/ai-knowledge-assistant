@@ -1699,29 +1699,39 @@ function getSuggestedCollectionFromTags(tags) {
     <div className="document-metadata">
         <h4>📋 Document Metadata</h4>
 
-        <div>
-            <strong>Type:</strong> {message.metadata.document_type}
+        {Object.entries(message.metadata)
+    .filter(([_, value]) => {
+        if (value === null || value === undefined) return false;
+        if (value === "") return false;
+        if (Array.isArray(value) && value.length === 0) return false;
+        return true;
+    })
+    .map(([key, value]) => (
+        <div key={key}>
+            <strong>
+                {key
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, c => c.toUpperCase())}
+                :
+            </strong>{" "}
+
+            {Array.isArray(value) ? (
+                <ul style={{
+							marginTop: "4px",
+							marginBottom: "8px",
+							paddingLeft: "20px"
+						}}>
+                    {value.map((item, index) => (
+                        <li key={index}>{item}</li>
+                    ))}
+                </ul>
+            ) : (
+                String(value)
+            )}
         </div>
-
-        {message.metadata.role && (
-            <div>
-                <strong>Role:</strong> {message.metadata.role}
-            </div>
-        )}
-
-        {message.metadata.company && (
-            <div>
-                <strong>Company:</strong> {message.metadata.company}
-            </div>
-        )}
-
-        {message.metadata.location && (
-            <div>
-                <strong>Location:</strong> {message.metadata.location}
-            </div>
-        )}
-    </div>
-)}
+    ))}
+	</div>
+	)}
 </>
 
 ) : (
