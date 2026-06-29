@@ -828,6 +828,7 @@ async function summarizeDocument() {
 			title: selectedDocument,
 			content: data.summary,
 			metadata: data.metadata,
+			insights: data.insights,
 			createdAt: new Date().toISOString(),
 		},
 		...prev,
@@ -837,6 +838,7 @@ async function summarizeDocument() {
 		content: `📄 Summary of ${selectedDocument}\n\n${data.summary}`,
 		sources: [],
 		metadata: data.metadata,
+		insights: data.insights,
 	};
 
 	updateCurrentSessionMessages([
@@ -1719,6 +1721,7 @@ function getSuggestedCollectionFromTags(tags) {
 }}
 >
   {message.content || "_Thinking..._"}
+   
 </ReactMarkdown>
 
 {message.metadata && (
@@ -1765,6 +1768,22 @@ function getSuggestedCollectionFromTags(tags) {
     ))}
 	</div>
 	)}
+	
+	{message.insights && (
+    <div className="document-insights">
+        <h4>💡 AI Insights</h4>
+
+        <ReactMarkdown
+            components={{
+                p: ({ children }) => <p>{children}</p>,
+                li: ({ children }) => <li>{children}</li>,
+            }}
+        >
+            {message.insights}
+        </ReactMarkdown>
+    </div>
+)}
+
 </>
 
 ) : (

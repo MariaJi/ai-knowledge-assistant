@@ -17,6 +17,8 @@ from langchain_chroma import Chroma
 
 from .prompts.summary_prompts import get_summary_prompt
 from .prompts.metadata_prompts import METADATA_PROMPT
+from .prompts.insights_prompts import get_document_insights_prompt
+
 import json
 load_dotenv(dotenv_path=".env")
 
@@ -599,6 +601,34 @@ Document content:
             "document_type": "general"
         }
 
+def extract_document_insights(filename: str, content: str, metadata: dict) -> str:
+    insights_prompt = get_document_insights_prompt(
+        content[:4000],
+        metadata
+    )
+
+    insights_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": insights_prompt
+            },
+            {
+                "role": "user",
+                "content": f"""
+Filename: {filename}
+
+Generate insights for this document.
+"""
+            }
+        ],
+        temperature=0
+    )
+
+    return insights_response.choices[0].message.content.strip()
+
+
 
 @app.post("/summarize")
 async def summarize_document(request: SummaryRequest):
@@ -623,11 +653,19 @@ async def summarize_document(request: SummaryRequest):
     print(f"Detected document type: {document_type}")
     
     metadata = extract_document_metadata(
-    request.selected_document,
-    context
+        request.selected_document,
+        context
     )
 
     print(f"Extracted metadata: {metadata}")
+    
+    insights = extract_document_insights(
+        request.selected_document,
+        context,
+        metadata
+    )
+
+    print(f"Extracted insights: {insights}")
     summary_prompt = get_summary_prompt(document_type)
 
     
@@ -647,7 +685,8 @@ async def summarize_document(request: SummaryRequest):
 
     return {
     "summary": response.choices[0].message.content,
-    "metadata": metadata
+    "metadata": metadata,
+    "insights": insights
     }
     
 
