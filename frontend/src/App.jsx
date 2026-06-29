@@ -801,6 +801,7 @@ async function summarizeDocument() {
 			type: "summary",
 			title: selectedDocument,
 			content: data.summary,
+			metadata: data.metadata,
 			createdAt: new Date().toISOString(),
 		},
 		...prev,
@@ -809,6 +810,7 @@ async function summarizeDocument() {
 		role: "assistant",
 		content: `📄 Summary of ${selectedDocument}\n\n${data.summary}`,
 		sources: [],
+		metadata: data.metadata,
 	};
 
 	updateCurrentSessionMessages([
@@ -1683,6 +1685,7 @@ function getSuggestedCollectionFromTags(tags) {
 				<div className="message-content">
 					
 				{message.role === "assistant" ? (
+ <>
  <ReactMarkdown
  components={{
   p: ({ children }) => <p>{children}</p>,
@@ -1691,6 +1694,36 @@ function getSuggestedCollectionFromTags(tags) {
 >
   {message.content || "_Thinking..._"}
 </ReactMarkdown>
+
+{message.metadata && (
+    <div className="document-metadata">
+        <h4>📋 Document Metadata</h4>
+
+        <div>
+            <strong>Type:</strong> {message.metadata.document_type}
+        </div>
+
+        {message.metadata.role && (
+            <div>
+                <strong>Role:</strong> {message.metadata.role}
+            </div>
+        )}
+
+        {message.metadata.company && (
+            <div>
+                <strong>Company:</strong> {message.metadata.company}
+            </div>
+        )}
+
+        {message.metadata.location && (
+            <div>
+                <strong>Location:</strong> {message.metadata.location}
+            </div>
+        )}
+    </div>
+)}
+</>
+
 ) : (
   <div>
     {highlightText(message.content, messageSearchTerm)}

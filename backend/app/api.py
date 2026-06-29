@@ -646,7 +646,8 @@ async def summarize_document(request: SummaryRequest):
     )
 
     return {
-        "summary": response.choices[0].message.content
+    "summary": response.choices[0].message.content,
+    "metadata": metadata
     }
     
 
