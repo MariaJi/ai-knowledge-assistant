@@ -576,6 +576,15 @@ updateCurrentSessionMessages(finalMessages);
   }
 }
  
+ function askAboutMetadataValue(key, value) {
+    
+    const label = key.replace(/_/g, " ");
+
+	const question = `Explain this ${label}:\n\n${value}`;
+
+    setActiveTopTab("Chat");
+    askAI(question);
+}
 
 
  async function fetchDocuments() {
@@ -1722,7 +1731,14 @@ function getSuggestedCollectionFromTags(tags) {
 							paddingLeft: "20px"
 						}}>
                     {value.map((item, index) => (
-                        <li key={index}>{item}</li>
+                       <li key={index}>
+							<button
+							className="metadata-value-button"
+							onClick={() => askAboutMetadataValue(key, item)}
+							>
+							{item}
+							</button>
+						</li>
                     ))}
                 </ul>
             ) : (
