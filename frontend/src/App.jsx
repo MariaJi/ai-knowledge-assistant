@@ -833,6 +833,25 @@ async function summarizeDocument() {
 		},
 		...prev,
 	]);
+	
+	setAnalysisHistory((prev) => [
+    {
+        type: "summary",
+        title: selectedDocument,
+        content: data.summary,
+        metadata: data.metadata,
+        insights: data.insights,
+        createdAt: new Date().toISOString(),
+    },
+    ...prev.filter(
+        (item) =>
+            !(
+                item.type === "summary" &&
+                item.title === selectedDocument
+            )
+    ),
+	]);
+
     const summaryMessage = {
 		role: "assistant",
 		content: `📄 Summary of ${selectedDocument}\n\n${data.summary}`,
@@ -2147,10 +2166,27 @@ function getSuggestedCollectionFromTags(tags) {
 			<button onClick={compareDocuments}>
 				Compare Documents
 			</button>
-			<h3>Analysis History</h3>
+			<div className="analysis-history-header">
+					<h2>Analysis History</h2>
+
+					<button
+					className="clear-history-button"
+						onClick={() => {
+						if (window.confirm("Clear Analysis History?")) {
+						setAnalysisHistory([]);
+					}
+					}}
+				>
+				🗑 Clear
+				</button>
+			</div>
 
 			{analysisHistory.length === 0 ? (
-				<p>No analysis history yet.</p>
+				<p className="empty-analysis">
+					No analysis history yet.
+					<br />
+					Summaries and document comparisons will appear here.
+				</p>
 				) : (
 				analysisHistory.map((item, index) => (
 			<div

@@ -670,3 +670,19 @@ body:has(.dark-mode) {
   color: white;
   border-color: #2563eb;
 }
+
+.empty-analysis {
+    color: #666;
+    text-align: center;
+    margin: 24px 0;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.analysis-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 550px;
+    margin: 20px auto;
+}
