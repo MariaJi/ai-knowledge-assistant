@@ -1318,6 +1318,13 @@ function getSuggestedCollectionFromTags(tags) {
   return "Uncategorized";
 }
 
+function getAnalysisIcon(type) {
+  if (type === "summary") return "📄";
+  if (type === "compare") return "🔍";
+  if (type === "resume-match") return "💼";
+  return "📝";
+}
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -2191,7 +2198,7 @@ function getSuggestedCollectionFromTags(tags) {
 				analysisHistory.map((item, index) => (
 			<div
 				key={index}
-				className="analysis-history-item"
+				className={`analysis-history-item analysis-${item.type || "general"}`}
 				onClick={() => {
 					const alreadyInChat = messages.some(
 					(message) =>
@@ -2216,12 +2223,19 @@ function getSuggestedCollectionFromTags(tags) {
 				setActiveTopTab("Chat");
 		}}
 			>
-			<strong>
-				{item.type === "summary" ? "📄 Summary" : "🔍 Compare"}
-			</strong>
-			<p>{item.title}</p>
-			<small>{new Date(item.createdAt).toLocaleString()}</small>
-			<hr />
+			<div className="analysis-history-card-header">
+				<span className="analysis-history-icon">
+				{getAnalysisIcon(item.type)}
+				</span>
+
+				<div>
+					<strong>{item.type === "summary" ? "Summary" : item.type === "resume-match" ? "Resume Match" : "Compare"}</strong>
+					<p>{item.title}</p>
+					<small>{new Date(item.createdAt).toLocaleString()}</small>
+				</div>
+			</div>
+			
+			
 			</div>
 			))
 		)}

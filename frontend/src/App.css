@@ -679,10 +679,56 @@ body:has(.dark-mode) {
     font-style: italic;
 }
 
-.analysis-history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 550px;
-    margin: 20px auto;
+
+
+.analysis-history-item {
+  max-width: 550px;
+  margin: 12px auto;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analysis-history-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+
+
+
+
+.analysis-history-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+.analysis-history-card-header > div {
+  flex: 1;
+}
+
+.analysis-history-icon {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.analysis-history-card-header p {
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.analysis-history-card-header small {
+  color: #777;
+}
+
+.analysis-history-card-header strong {
+    font-size: 16px;
+}
+.analysis-history-card-header p {
+    margin: 4px 0;
+    font-size: 15px;
 }
