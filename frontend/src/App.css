@@ -732,3 +732,10 @@ body:has(.dark-mode) {
     margin: 4px 0;
     font-size: 15px;
 }
+
+.analysis-history-preview {
+  margin-top: 8px;
+  color: #555;
+  line-height: 1.5;
+  font-size: 14px;
+}

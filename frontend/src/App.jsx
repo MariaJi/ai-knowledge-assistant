@@ -2232,6 +2232,14 @@ function getAnalysisIcon(type) {
 					<strong>{item.type === "summary" ? "Summary" : item.type === "resume-match" ? "Resume Match" : "Compare"}</strong>
 					<p>{item.title}</p>
 					<small>{new Date(item.createdAt).toLocaleString()}</small>
+					 <p className="analysis-history-preview">
+						{item.content
+							? item.content
+							.replace(/^#+\s*/gm, "")   // Remove Markdown headings like "#", "##"
+							.replace(/\n/g, " ")       // Replace newlines with spaces
+								.slice(0, 160) + "..."
+							: "No preview available."}
+					</p>
 				</div>
 			</div>
 			
