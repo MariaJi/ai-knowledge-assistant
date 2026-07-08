@@ -2201,8 +2201,8 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 				Compare Documents
 			</button>
 			<div className="analysis-history-header">
-					<h2>Analysis History</h2>
-
+					
+					<h2>Analysis History ({filteredAnalysisHistory.length})</h2>
 					<button
 					className="clear-history-button"
 						onClick={() => {
@@ -2245,7 +2245,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 				<p className="empty-analysis">
 					No analysis history yet.
 					<br />
-					Summaries and document comparisons will appear here.
+					Summaries, comparisons, and resume matches will appear here.
 				</p>
 				) : (
 				filteredAnalysisHistory.map((item, index) => (
