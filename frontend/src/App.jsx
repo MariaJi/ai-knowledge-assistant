@@ -1225,15 +1225,26 @@ async function analyzeResumeMatch() {
 		...newMessages.slice(0, -1),
 	{
 		role: "assistant",
-		content: streamedAnswer,
-		sources: sourcesData.sources || [],
+		content: data.answer,
+		sources: data.sources || []
 		
 	},
 	];
+	setAnalysisHistory((prev) => [
+	{
+		type: "resume-match",
+		title: `${resumeDocument} vs ${jobDescriptionDocument}`,
+		content: data.answer,
+		createdAt: new Date().toISOString(),
+	},
+  ...prev,
+	]);
+
 
     updateCurrentSessionMessages(finalMessages);
 	setActiveTopTab("Chat");
   } catch (error) {
+	  console.error("Error compare resume:", error);
     const errorMessages = [
       ...newMessages.slice(0, -1),
       {
