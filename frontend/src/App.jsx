@@ -190,6 +190,9 @@ const [resumeMatchResult, setResumeMatchResult] = useState(null);
 const [selectedDocumentDetails, setSelectedDocumentDetails] = useState(null)
 
 const [relatedDocuments, setRelatedDocuments] = useState([]);
+
+const [analysisTypeFilter, setAnalysisTypeFilter] = useState("all");
+
 useEffect(() => {
   const handleEsc = (event) => {
     if (event.key === "Escape") {
@@ -250,8 +253,8 @@ const hasActiveDocumentFilters =
   
   
 
-  const [categoryFilter, setCategoryFilter] = useState("All");
-
+const [categoryFilter, setCategoryFilter] = useState("All");
+const [analysisSearchTerm, setAnalysisSearchTerm] = useState("");
 
 useEffect(() => {
   console.log("Saving collections:", documentCollections);
@@ -1325,6 +1328,19 @@ function getAnalysisIcon(type) {
   return "📝";
 }
 
+const filteredAnalysisHistory = analysisHistory.filter((item) => {
+  const matchesSearch =
+    analysisSearchTerm.trim() === "" ||
+    item.title?.toLowerCase().includes(analysisSearchTerm.toLowerCase()) ||
+    item.content?.toLowerCase().includes(analysisSearchTerm.toLowerCase()) ||
+    item.type?.toLowerCase().includes(analysisSearchTerm.toLowerCase());
+
+  const matchesType =
+    analysisTypeFilter === "all" || item.type === analysisTypeFilter;
+
+  return matchesSearch && matchesType;
+});
+
  return (
 
  <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
@@ -2186,16 +2202,42 @@ function getAnalysisIcon(type) {
 				>
 				🗑 Clear
 				</button>
+				<div className="analysis-filter-buttons">
+					 <button
+						className={analysisTypeFilter === "all" ? "analysis-filter-active" : ""}
+						onClick={() => setAnalysisTypeFilter("all")}
+					>
+						All
+					</button>
+					 <button
+						className={analysisTypeFilter === "summary" ? "analysis-filter-active" : ""}
+						onClick={() => setAnalysisTypeFilter("summary")}
+					>
+						Summary
+					</button>
+					<button
+						className={analysisTypeFilter === "compare" ? "analysis-filter-active" : ""}
+						onClick={() => setAnalysisTypeFilter("compare")}
+					>
+						Compare
+					</button>
+					<button
+						className={analysisTypeFilter === "resume-match" ? "analysis-filter-active" : ""}
+						onClick={() => setAnalysisTypeFilter("resume-match")}
+					>
+						Resume Match
+					</button>
+				</div>
 			</div>
-
-			{analysisHistory.length === 0 ? (
+			
+			{filteredAnalysisHistory.length === 0 ? (
 				<p className="empty-analysis">
 					No analysis history yet.
 					<br />
 					Summaries and document comparisons will appear here.
 				</p>
 				) : (
-				analysisHistory.map((item, index) => (
+				filteredAnalysisHistory.map((item, index) => (
 			<div
 				key={index}
 				className={`analysis-history-item analysis-${item.type || "general"}`}
