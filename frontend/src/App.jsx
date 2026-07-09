@@ -2289,6 +2289,13 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 
 				<div>
 					<strong>{item.type === "summary" ? "Summary" : item.type === "resume-match" ? "Resume Match" : "Compare"}</strong>
+					<span className={`analysis-type-badge badge-${item.type || "general"}`}>
+							{item.type === "summary"
+							? "Summary"
+							: item.type === "resume-match"
+							? "Resume Match"
+							: "Compare"}
+					</span>
 					<p>{item.title}</p>
 					<small>{new Date(item.createdAt).toLocaleString()}</small>
 					 <p className="analysis-history-preview">
