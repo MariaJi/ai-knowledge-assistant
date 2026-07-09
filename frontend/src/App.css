@@ -796,3 +796,26 @@ body:has(.dark-mode) {
   background: #f3f4f6;
   color: #374151;
 }
+
+.analysis-history-item {
+  position: relative;
+}
+
+
+.analysis-favorite-button:hover {
+  transform: scale(1.15);
+}
+
+.favorite-active {
+  color: #f59e0b;
+}
+.analysis-favorite-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 26px;   /* was 22px */
+    padding: 2px;
+}

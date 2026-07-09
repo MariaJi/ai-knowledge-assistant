@@ -32,6 +32,8 @@ const [analysisHistory, setAnalysisHistory] = useState(() => {
   return saved ? JSON.parse(saved) : [];
 });
 
+const [analysisHistorySearch, setAnalysisHistorySearch] = useState("");
+
   const [currentSessionId, setCurrentSessionId] = useState(() => {
   const savedSessions = localStorage.getItem("chatSessions");
   
@@ -845,6 +847,7 @@ async function summarizeDocument() {
         metadata: data.metadata,
         insights: data.insights,
         createdAt: new Date().toISOString(),
+		isFavorite: false,
     },
     ...prev.filter(
         (item) =>
@@ -901,6 +904,7 @@ async function compareDocuments() {
 				title: `${compareDocumentA} vs ${compareDocumentB}`,
 				content: data.comparison,
 				createdAt: new Date().toISOString(),
+				isFavorite: false,
 			},
 			...prev,
 		]);
@@ -1236,6 +1240,7 @@ async function analyzeResumeMatch() {
 		title: `${resumeDocument} vs ${jobDescriptionDocument}`,
 		content: data.answer,
 		createdAt: new Date().toISOString(),
+		isFavorite: false,
 	},
   ...prev,
 	]);
@@ -1340,17 +1345,23 @@ function getAnalysisIcon(type) {
 }
 
 const filteredAnalysisHistory = analysisHistory.filter((item) => {
-  const matchesSearch =
-    analysisSearchTerm.trim() === "" ||
-    item.title?.toLowerCase().includes(analysisSearchTerm.toLowerCase()) ||
-    item.content?.toLowerCase().includes(analysisSearchTerm.toLowerCase()) ||
-    item.type?.toLowerCase().includes(analysisSearchTerm.toLowerCase());
+	const search = analysisSearchTerm.trim().toLowerCase();
 
-  const matchesType =
-    analysisTypeFilter === "all" || item.type === analysisTypeFilter;
+    const matchesSearch =
+        search === "" ||
+        item.title?.toLowerCase().includes(search) ||
+        item.content?.toLowerCase().includes(search) ||
+        item.type?.toLowerCase().includes(search);
 
-  return matchesSearch && matchesType;
-});
+    
+	const matchesType =
+		analysisTypeFilter === "all"
+		? true
+		: analysisTypeFilter === "favorites"
+		? item.isFavorite === true
+		: item.type === analysisTypeFilter;
+		return matchesSearch && matchesType;
+	});
 
  return (
 
@@ -2238,6 +2249,12 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 					>
 						Resume Match
 					</button>
+					<button
+						className={analysisTypeFilter === "favorites" ? "active" : ""}
+						onClick={() => setAnalysisTypeFilter("favorites")}
+					>
+						⭐ Favorites
+					</button>
 				</div>
 			</div>
 			
@@ -2283,12 +2300,29 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 		}}
 			>
 			<div className="analysis-history-card-header">
+				<button
+					className={`analysis-favorite-button ${item.isFavorite ? "favorite-active" : ""}`}
+					onClick={(e) => {
+					e.stopPropagation();
+
+					setAnalysisHistory((prev) =>
+					prev.map((historyItem) =>
+					historyItem.createdAt === item.createdAt
+					? { ...historyItem, isFavorite: !historyItem.isFavorite }
+					: historyItem
+					)
+					);
+				}}
+				title={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
+				>
+					{item.isFavorite ? "⭐" : "☆"}
+				</button>
 				<span className="analysis-history-icon">
 				{getAnalysisIcon(item.type)}
 				</span>
 
 				<div>
-					<strong>{item.type === "summary" ? "Summary" : item.type === "resume-match" ? "Resume Match" : "Compare"}</strong>
+					
 					<span className={`analysis-type-badge badge-${item.type || "general"}`}>
 							{item.type === "summary"
 							? "Summary"
