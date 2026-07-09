@@ -2244,10 +2244,16 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 			{filteredAnalysisHistory.length === 0 ? (
 				<p className="empty-analysis">
 					No analysis history yet.
-					<br />
-					Summaries, comparisons, and resume matches will appear here.
+				<br />
+					{analysisTypeFilter === "summary"
+					? "Document summaries will appear here."
+					: analysisTypeFilter === "compare"
+					? "Document comparisons will appear here."
+					: analysisTypeFilter === "resume-match"
+					? "Resume match analyses will appear here."
+					: "Summaries, comparisons, and resume matches will appear here."}
 				</p>
-				) : (
+			) : (
 				filteredAnalysisHistory.map((item, index) => (
 			<div
 				key={index}
