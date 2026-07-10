@@ -40,6 +40,11 @@ class QuestionRequest(BaseModel):
     selected_documents: list[str] = []
     chat_history: list = []
     
+class SuggestedQuestionsRequest(BaseModel):
+    answer: str
+    question: str = ""
+    
+
 class DeleteDocumentRequest(BaseModel):
     filename: str
 
@@ -348,6 +353,55 @@ async def ask_question(request: QuestionRequest):
         "sources": sources,
         "rewritten_question": rewritten_question
     }
+
+
+@app.post("/suggest-questions")
+def suggest_questions(request: SuggestedQuestionsRequest):
+    prompt = f"""
+You are generating follow-up questions for an AI Knowledge Assistant.
+
+The assistant answer was created from uploaded documents.
+
+User question:
+{request.question}
+
+Assistant answer:
+{request.answer}
+
+Generate 4 short follow-up questions that help the user explore the uploaded documents further.
+
+Rules:
+- Return only a JSON array of strings.
+- No markdown.
+- No explanations.
+- Each question should be under 15 words.
+- Questions should be specific and useful.
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You generate concise, document-focused follow-up questions."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.4,
+        )
+
+        text = response.choices[0].message.content.strip()
+        questions = json.loads(text)
+
+        return {"questions": questions}
+
+    except Exception as e:
+        print("Suggest questions error:", e)
+        return {"questions": []}
 
 
 @app.post("/ask-stream")
@@ -979,3 +1033,4 @@ Document:
         "filename": request.filename,
         "tags": tags
     }
+    

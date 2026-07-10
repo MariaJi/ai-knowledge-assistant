@@ -553,6 +553,11 @@ const sourcesData = await sourcesResponse.json();
 console.log(sourcesData);
 //setSources(sourcesData.sources || []);
 // updateCurrentSessionSources(sourcesData.sources || []);
+const suggestedQuestions = await getSuggestedQuestions(
+    questionToAsk,
+    streamedAnswer
+);
+
 const finalMessages = [
   ...newMessages.slice(0, -1),
   {
@@ -560,6 +565,7 @@ const finalMessages = [
     content: streamedAnswer,
     sources: sourcesData.sources || [],
 	rewrittenQuestion: sourcesData.rewritten_question,
+	suggestedQuestions: suggestedQuestions,
   },
 ];
 
@@ -931,6 +937,28 @@ async function compareDocuments() {
 		setActiveTopTab("Chat");
     } catch (error) {
         alert("Compare failed.");
+    }
+}
+
+
+async function getSuggestedQuestions(question, answer) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/suggest-questions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                question,
+                answer,
+            }),
+        });
+
+        const data = await response.json();
+        return data.questions || [];
+    } catch (error) {
+        console.error("Error getting suggested questions:", error);
+        return [];
     }
 }
 
@@ -1861,6 +1889,25 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
     🔄 Search Query: {message.rewrittenQuestion || message.rewritten_question}
   </div>
 )}
+
+{message.role === "assistant" &&
+    message.suggestedQuestions &&
+    message.suggestedQuestions.length > 0 && (
+        <div className="suggested-questions">
+            <strong>Suggested Questions</strong>
+            <div className="suggested-question-list">
+                {message.suggestedQuestions.map((suggestedQuestion, index) => (
+                    <button
+                        key={index}
+                        className="suggested-question-button"
+                        onClick={() => askAI(suggestedQuestion)}
+                    >
+                        {suggestedQuestion}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )}
 
 
 				{message.sources && message.sources.length > 0 && (
