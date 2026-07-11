@@ -82,6 +82,23 @@ Screenshot coming soon
 - Resume/job matching workflows
 - Document organization with tags and collections
 
+## What I Learned
+
+This project gave me hands-on experience building a production-style AI application from end to end. Through this project I gained practical experience with:
+
+- Building Retrieval-Augmented Generation (RAG) systems
+- Prompt engineering for different document types
+- Vector databases (ChromaDB)
+- Embedding pipelines with OpenAI Embeddings
+- FastAPI backend development
+- React frontend development
+- Streaming LLM responses
+- Semantic search
+- AI application architecture
+- Building REST APIs for AI workflows
+- Integrating LLMs into full-stack applications
+
+
 ## Future Enhancements
 
 - Deployment
