@@ -1,8 +1,8 @@
 import ReactMarkdown from "react-markdown";
 
 import "./App.css";
-import { useState, useEffect, useRef } from "react";
-
+//import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Children } from "react";
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
@@ -104,9 +104,9 @@ const totalWords = messages.reduce((count, message) => {
   return count + String(message.content || "").split(/\s+/).filter(Boolean).length;
 }, 0);
 const filteredMessages = messages.filter((message) =>
-  String(message.content || "")
-  .toLowerCase()
-  .includes(chatSearchTerm.toLowerCase())
+    String(message.content || "")
+        .toLowerCase()
+        .includes(messageSearchTerm.trim().toLowerCase())
 );
 const goToSearchResult = (index) => {
   const element = searchResultRefs.current[index];
@@ -140,9 +140,7 @@ const previousSearchResult = () => {
   goToSearchResult(prevIndex);
 };
 
-
-
-const isSearching = chatSearchTerm.trim() !== "";
+const isSearching = messageSearchTerm.trim() !== "";
 //const sources = currentSession?.sources || [];
 
    const [answer, setAnswer] = useState("");
@@ -1718,7 +1716,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 )}
 </div>
 
-{chatSearchTerm.trim() !== "" && (
+{messageSearchTerm.trim() !== "" && (
   <p className="chat-search-count">
     {filteredMessages.length === 0
       ? "No matching messages"
@@ -1806,14 +1804,29 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 					
 				{message.role === "assistant" ? (
  <>
- <ReactMarkdown
- components={{
-  p: ({ children }) => <p>{children}</p>,
-  li: ({ children }) => <li>{children}</li>,
-}}
+<ReactMarkdown
+    components={{
+        p: ({ children }) => (
+            <p>
+                {Children.map(children, (child) =>
+                    typeof child === "string"
+                        ? highlightText(child, messageSearchTerm)
+                        : child
+                )}
+            </p>
+        ),
+        li: ({ children }) => (
+            <li>
+                {Children.map(children, (child) =>
+                    typeof child === "string"
+                        ? highlightText(child, messageSearchTerm)
+                        : child
+                )}
+            </li>
+        ),
+    }}
 >
-  {message.content || "_Thinking..._"}
-   
+    {message.content || "Thinking..."}
 </ReactMarkdown>
 
 {message.metadata && (
