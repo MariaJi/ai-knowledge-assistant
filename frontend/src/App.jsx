@@ -157,8 +157,8 @@ const isSearching = messageSearchTerm.trim() !== "";
   const fileInputRef = useRef(null)
   const [activeTopTab, setActiveTopTab] = useState("Chat");
   const [openSources, setOpenSources] = useState({});
-  const selectedDocument = currentSession?.selectedDocument || [];
   
+  const selectedDocument = currentSession?.selectedDocument || "all";
   const selectedDocuments = currentSession?.selectedDocuments || [];
   
   const [selectedCollection, setSelectedCollection] = useState("All");
@@ -1804,30 +1804,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 					
 				{message.role === "assistant" ? (
  <>
-<ReactMarkdown
-    components={{
-        p: ({ children }) => (
-            <p>
-                {Children.map(children, (child) =>
-                    typeof child === "string"
-                        ? highlightText(child, messageSearchTerm)
-                        : child
-                )}
-            </p>
-        ),
-        li: ({ children }) => (
-            <li>
-                {Children.map(children, (child) =>
-                    typeof child === "string"
-                        ? highlightText(child, messageSearchTerm)
-                        : child
-                )}
-            </li>
-        ),
-    }}
->
-    {message.content || "Thinking..."}
-</ReactMarkdown>
+
 
 {message.metadata && (
     <div className="document-metadata">
