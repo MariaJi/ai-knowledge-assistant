@@ -816,6 +816,23 @@ function highlightText(text, searchTerm) {
   );
 }
 
+function highlightReactChildren(children, searchTerm) {
+  if (Array.isArray(children)) {
+    return children.map((child) =>
+      typeof child === "string"
+        ? highlightText(child, searchTerm)
+        : child
+    );
+  }
+
+  if (typeof children === "string") {
+    return highlightText(children, searchTerm);
+  }
+
+  return children;
+}
+
+
 async function summarizeDocument() {
   if (selectedDocument === "all") return;
 
@@ -934,7 +951,9 @@ async function compareDocuments() {
        
 		setActiveTopTab("Chat");
     } catch (error) {
-        alert("Compare failed.");
+        
+		  console.error("Compare failed:", error);
+		  alert(`Compare failed: ${error.message}`);
     }
 }
 
@@ -1850,7 +1869,35 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
     ))}
 	</div>
 	)}
-	
+	{message.content && (
+    <ReactMarkdown
+        components={{
+            p: ({ children }) => (
+                <p>{highlightReactChildren(children, messageSearchTerm)}</p>
+            ),
+            li: ({ children }) => (
+                <li>{highlightReactChildren(children, messageSearchTerm)}</li>
+            ),
+            strong: ({ children }) => (
+                <strong>{highlightReactChildren(children, messageSearchTerm)}</strong>
+            ),
+            em: ({ children }) => (
+                <em>{highlightReactChildren(children, messageSearchTerm)}</em>
+            ),
+            h1: ({ children }) => (
+                <h1>{highlightReactChildren(children, messageSearchTerm)}</h1>
+            ),
+            h2: ({ children }) => (
+                <h2>{highlightReactChildren(children, messageSearchTerm)}</h2>
+            ),
+            h3: ({ children }) => (
+                <h3>{highlightReactChildren(children, messageSearchTerm)}</h3>
+            ),
+        }}
+    >
+        {message.content}
+    </ReactMarkdown>
+)}
 	{message.insights && (
     <div className="document-insights">
         <h4>💡 AI Insights</h4>
