@@ -1,27 +1,38 @@
 
 # AI Knowledge Assistant
 
-A full-stack Retrieval-Augmented Generation (RAG) application built with React, FastAPI, OpenAI, and ChromaDB.
+A full-stack AI Knowledge Assistant that uses Retrieval-Augmented Generation (RAG) to answer questions across uploaded documents, generate AI-powered summaries, compare documents, and analyze resume-to-job matches.
+
+Built with **React**, **FastAPI**, **OpenAI GPT**, and **ChromaDB**.
 
 ## Features
 
 ### AI Features
+
 - Multi-document chat
 - Retrieval-Augmented Generation (RAG)
 - Context-aware query rewriting
 - AI-generated document summaries
 - Resume-to-job match analysis
-- Document comparison
-- Suggested questions
+- AI document comparison
+- AI-generated follow-up questions
 - Related document discovery
-- Auto-tagging
+- Metadata extraction
+- AI-generated document insights
+- Source-grounded answers with citations
 
 ### Productivity Features
+
+- Multiple chat sessions
 - Chat history
 - Chat categories
 - Collections
-- Session management
 - Search across chats
+- Match highlighting
+- Previous/Next search navigation
+- Analysis history
+- Favorites
+- Session management
 - Export chat as Markdown
 - Keyboard shortcuts
 
@@ -76,11 +87,14 @@ Screenshot coming soon
 
 ## Key Challenges Solved
 
-- Multi-document retrieval
-- Conversational query rewriting
-- Source-grounded answers
-- Resume/job matching workflows
-- Document organization with tags and collections
+- Built a complete Retrieval-Augmented Generation (RAG) pipeline
+- Implemented semantic search using OpenAI embeddings and ChromaDB
+- Added conversational query rewriting for better document retrieval
+- Generated source-grounded AI responses with citations
+- Built AI-powered document summaries, comparisons, and resume matching
+- Designed persistent chat sessions and analysis history
+- Added metadata extraction and AI-generated document insights
+- Implemented search with highlighting across conversations
 
 ## What I Learned
 
@@ -101,8 +115,10 @@ This project gave me hands-on experience building a production-style AI applicat
 
 ## Future Enhancements
 
-- Deployment
-- Authentication
+- Cloud deployment
+- User authentication
+- OCR support for scanned documents
+- PDF annotation with source highlighting
 - Team collaboration
 - Advanced RAG evaluation
 
