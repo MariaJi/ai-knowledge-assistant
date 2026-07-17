@@ -76,11 +76,80 @@ The application uses a Retrieval-Augmented Generation (RAG) pipeline. Documents 
 
 ## Screenshots
 
-### Multi-Document Chat
-Screenshot coming soon
+### 📂 AI Document Management
 
-### Resume Match Analysis
-Screenshot coming soon
+Upload documents, organize them into collections, automatically generate AI topics, search by tags and topics, and manage your document library.
+
+![Document Management](docs/images/document-management.png)
+
+
+### 💬 Multi-Document Chat
+
+Ask questions about one or more uploaded documents using natural language. The assistant retrieves relevant information from the selected documents and generates source-grounded answers.
+
+#### 1. Ask a Question
+
+Select a document and ask a question in natural language.
+
+![Ask Question](docs/images/chat.png)
+
+#### 2. AI Response
+
+The assistant retrieves relevant content from the selected document and generates an accurate, context-aware response instead of relying solely on the language model's built-in knowledge.
+
+![AI Response](docs/images/chat-response.png)
+
+#### 3. Search Query & Suggested Questions
+
+Before searching, the assistant automatically rewrites the user's question to improve retrieval quality. It also generates suggested follow-up questions to encourage further exploration.
+
+![Search Query and Suggested Questions](docs/images/chat-search-query.png)
+
+#### 4. Sources & Citations
+
+Every answer includes the document sources used to generate the response, allowing users to verify where the information came from.
+
+![Sources](docs/images/chat-sources.png)
+
+### 📄 Resume Match Analysis
+
+Compare a resume against a job description using AI to evaluate candidate fit, identify strengths and skill gaps, and generate personalized recommendations for improvement and interview preparation.
+
+#### 1. Select Resume and Job Description
+
+Choose a resume and a job description, then start the AI-powered analysis.
+
+![Resume Match Setup](docs/images/resume-match-setup.png)
+
+#### 2. Match Score & Summary
+
+The assistant analyzes the selected resume against the job description, calculates an overall match score, and provides a concise summary of the candidate's fit for the role.
+
+![Resume Match Score](docs/images/resume-match-score.png)
+
+#### 3. Key Strengths
+
+The assistant highlights the candidate's strengths by identifying relevant skills, experience, and qualifications that closely align with the job requirements.
+
+![Resume Match Strengths](docs/images/resume-match-strengths.png)
+
+#### 4. Missing Skills & Resume Improvements
+
+The assistant identifies missing skills and qualifications, then provides actionable recommendations to strengthen the resume and improve its alignment with the selected job description.
+
+![Resume Match Improvements](docs/images/resume-match-improvements.png)
+
+#### 5. Interview Questions
+
+Based on the resume and job description, the assistant generates personalized interview questions to help candidates prepare for technical and behavioral interviews.
+
+![Resume Match Interview Questions](docs/images/resume-match-interview.png)
+
+#### 6. Sources & Citations
+
+Every recommendation is grounded in the uploaded resume and job description. The assistant displays the document sources used during retrieval, allowing users to verify the origin of the analysis.
+
+![Resume Match Sources](docs/images/resume-match-sources.png)
 
 ### Document Comparison
 Screenshot coming soon
