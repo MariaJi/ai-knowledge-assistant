@@ -151,8 +151,86 @@ Every recommendation is grounded in the uploaded resume and job description. The
 
 ![Resume Match Sources](docs/images/resume-match-sources.png)
 
-### Document Comparison
-Screenshot coming soon
+
+### 📊 Document Comparison
+
+Compare two documents using AI to identify similarities, differences, key changes, and actionable recommendations.
+
+#### 1. Select Documents
+
+Choose two documents to compare, then start the AI-powered comparison.
+
+![Document Comparison Setup](docs/images/document-comparison-setup.png)
+
+#### 2. Executive Summary
+
+The assistant compares the selected documents and generates a high-level summary describing their overall relationship, key themes, and major findings.
+
+![Comparison Executive Summary](docs/images/document-comparison-summary.png)
+
+#### 3. Similarities
+
+The assistant identifies shared topics, concepts, and information between the selected documents, helping users quickly understand where the documents align.
+
+![Document Comparison Similarities](docs/images/document-comparison-similarities.png)
+
+#### 4. Differences
+
+The assistant highlights unique content, important distinctions, and key differences, making it easy to understand how the documents differ.
+
+![Document Comparison Differences](docs/images/document-comparison-differences.png)
+
+#### 5. Important Changes
+
+The assistant highlights significant changes and newly introduced concepts, helping users quickly identify what has changed between the selected documents.
+
+![Document Comparison Important Changes](docs/images/document-comparison-changes.png)
+
+#### 6. Recommendations
+
+Based on the comparison results, the assistant provides actionable recommendations and practical next steps to help users interpret the analysis and improve decision making.
+
+![Document Comparison Recommendations](docs/images/document-comparison-recommendations.png)
+
+### 📄 Document Summary
+
+Generate AI-powered summaries that quickly capture the key information from a document, making it easier to understand the content without reading the entire document.
+
+#### 1. Select a Document
+
+Choose a document to summarize, then start the AI-powered summary generation.
+
+![Document Summary Setup](docs/images/document-summary-setup.png)
+
+#### 2. AI Summary
+
+The assistant analyzes the selected document and generates a structured summary highlighting the main topics, key information, and important sections for quick understanding.
+
+![Document Summary Overview](docs/images/document-summary-overview.png)
+
+#### 3. Metadata & AI Insights
+
+Beyond summarization, the assistant extracts structured metadata, identifies important conditions or warnings, and provides useful contextual information to help users better understand the document.
+
+![Document Summary Metadata & Insights](docs/images/document-summary-metadata-insights.png)
+
+#### 4. AI Insights
+
+The assistant generates additional AI-powered insights, highlighting key observations, preparation guidance, potential risks, and practical recommendations to help users make informed decisions.
+
+![Document Summary AI Insights](docs/images/document-summary-ai-insights.png)
+
+### 📚 Analysis History
+
+All AI analyses are automatically saved, allowing users to revisit previous results without repeating the analysis.
+
+Users can:
+- Browse previous summaries, document comparisons, and resume match analyses
+- Filter analyses by type
+- Mark frequently used analyses as favorites
+- Quickly return to earlier AI-generated results
+
+![Analysis History](docs/images/analysis-history.png)
 
 ## Key Challenges Solved
 
