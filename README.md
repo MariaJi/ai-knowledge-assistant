@@ -3,10 +3,19 @@
 
 A full-stack AI Knowledge Assistant that uses Retrieval-Augmented Generation (RAG) to answer questions across uploaded documents, generate AI-powered summaries, compare documents, and analyze resume-to-job matches.
 
-Built with **React**, **FastAPI**, **OpenAI GPT**, and **ChromaDB**.
+Built with **React**, **FastAPI**, **OpenAI GPT-4o-mini**, and **ChromaDB**.
+
+## Highlights
+
+- 🤖 Retrieval-Augmented Generation (RAG)
+- 📄 Multi-document semantic search
+- 💬 AI-powered document chat with citations
+- 📊 AI document comparison
+- 📄 AI document summaries
+- 🎯 Resume-to-job match analysis
+- 🧠 Metadata extraction & AI insights
 
 ## Features
-
 ### AI Features
 
 - Multi-document chat
