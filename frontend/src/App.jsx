@@ -848,17 +848,6 @@ async function summarizeDocument() {
     });
 
     const data = await response.json();
-	setAnalysisHistory((prev) => [
-		{
-			type: "summary",
-			title: selectedDocument,
-			content: data.summary,
-			metadata: data.metadata,
-			insights: data.insights,
-			createdAt: new Date().toISOString(),
-		},
-		...prev,
-	]);
 	
 	setAnalysisHistory((prev) => [
     {
@@ -878,6 +867,12 @@ async function summarizeDocument() {
             )
     ),
 	]);
+	const userSummaryMessage = {
+    role: "user",
+    content: `Summarize document: ${selectedDocument}`,
+    isAnalysis: true,
+};
+
 
     const summaryMessage = {
 		role: "assistant",
@@ -889,6 +884,7 @@ async function summarizeDocument() {
 
 	updateCurrentSessionMessages([
 		...messages,
+		userSummaryMessage,
 		summaryMessage,
 	]);
 	setActiveTopTab("Chat");
@@ -2108,7 +2104,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 			
 			<p className="selected-documents-count">
 						{selectedDocuments.length === 0
-						? "No documents selected (searching all documents)"
+						? "No documents selected. Questions will search across all uploaded documents. Select documents on the Documents page to narrow the search."
 						: `${selectedDocuments.length} document(s) selected`}
 			</p>
 			
@@ -2360,27 +2356,56 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 				key={index}
 				className={`analysis-history-item analysis-${item.type || "general"}`}
 				onClick={() => {
-					const alreadyInChat = messages.some(
-					(message) =>
-					message.content?.includes(item.content) ||
-					message.content?.includes(item.title)
-				);
+					const requestText =
+    item.prompt ||
+    (item.type === "summary"
+        ? `Summarize document: ${item.title}`
+        : `Review analysis: ${item.title}`);
 
-					if (!alreadyInChat) {
-						const historyMessage = {
-						role: "assistant",
-						content:
-						`${item.type === "summary" ? "📄 Summary" : "🔍 Compare"}: ${item.title}\n\n${item.content}`,
-						isHistory: true,
-					};
+const userAlreadyInChat = messages.some(
+    (message) =>
+        message.role === "user" &&
+        message.content === requestText
+);
 
-				updateCurrentSessionMessages([
-				...messages,
-				historyMessage,
-				]);
-				}
+const assistantAlreadyInChat = messages.some(
+    (message) =>
+        message.role === "assistant" &&
+        (
+            message.content?.includes(item.content) ||
+            message.content?.includes(item.title)
+        )
+);
 
-				setActiveTopTab("Chat");
+const messagesToAdd = [];
+
+if (!userAlreadyInChat) {
+    messagesToAdd.push({
+        role: "user",
+        content: requestText,
+        isHistory: true,
+    });
+}
+
+if (!assistantAlreadyInChat) {
+    messagesToAdd.push({
+        role: "assistant",
+        content:
+            `${item.type === "summary"
+                ? "📄 Summary"
+                : "🔍 Compare"}: ${item.title}\n\n${item.content}`,
+        isHistory: true,
+    });
+}
+
+if (messagesToAdd.length > 0) {
+    updateCurrentSessionMessages([
+        ...messages,
+        ...messagesToAdd,
+    ]);
+}
+
+setActiveTopTab("Chat");
 		}}
 			>
 			<div className="analysis-history-card-header">
