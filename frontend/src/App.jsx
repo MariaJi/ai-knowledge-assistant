@@ -731,42 +731,6 @@ function renameChat(sessionId) {
   updateSessionTitle(sessionId, newTitle.trim());
 }
 
-function exportCurrentChat() {
-  if (!currentSession) return;
-
-  const text = currentSession.messages
-    .map((message) => {
-      const role = message.role === "user" ? "You" : "AI";
-
-      let messageText = `${role}:\n${message.content}`;
-
-      if (message.sources && message.sources.length > 0) {
-        const sourcesText = message.sources
-          .map((source) => {
-            return `Source: ${source.filename}\n${source.snippet}`;
-          })
-          .join("\n\n");
-
-        messageText += `\n\nSources:\n${sourcesText}`;
-      }
-
-      return messageText;
-    })
-    .join("\n\n--------------------\n\n");
-
-  const blob = new Blob([text], {
-    type: "text/plain",
-  });
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${currentSession.title}.txt`;
-  link.click();
-
-  URL.revokeObjectURL(url);
-}
 
 async function searchDocuments() {
   if (!searchQuery.trim()) {
@@ -1614,13 +1578,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 		</button>
 
 
-		<button
-			className="export-chat-button"
-			onClick={exportCurrentChat}
-			disabled={messages.length === 0}
-		>
-			Save Session
-		</button>
+		
 		<button
 			className="clear-chat-button"
 			onClick={clearCurrentChat}
