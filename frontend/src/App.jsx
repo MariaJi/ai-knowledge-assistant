@@ -34,19 +34,24 @@ const [analysisHistory, setAnalysisHistory] = useState(() => {
 
 const [analysisHistorySearch, setAnalysisHistorySearch] = useState("");
 
-  const [currentSessionId, setCurrentSessionId] = useState(() => {
-  const savedSessions = localStorage.getItem("chatSessions");
-  
+const [currentSessionId, setCurrentSessionId] = useState(() => {
+    const savedCurrentSessionId = localStorage.getItem("currentSessionId");
 
-  if (savedSessions) {
-    const parsed = JSON.parse(savedSessions);
-
-    if (parsed.length > 0) {
-      return parsed[0].id;
+    if (savedCurrentSessionId) {
+        return JSON.parse(savedCurrentSessionId);
     }
-  }
 
-  return 1;
+    const savedSessions = localStorage.getItem("chatSessions");
+
+    if (savedSessions) {
+        const parsed = JSON.parse(savedSessions);
+
+        if (parsed.length > 0) {
+            return parsed[0].id;
+        }
+    }
+
+    return 1;
 });
   /*const [messages, setMessages] = useState(() => {
   const savedMessages = localStorage.getItem("chatMessages");
@@ -207,6 +212,12 @@ useEffect(() => {
   };
 }, []);
 
+useEffect(() => {
+    localStorage.setItem(
+        "currentSessionId",
+        JSON.stringify(currentSessionId)
+    );
+}, [currentSessionId]);
 
 useEffect(() => {
   localStorage.setItem(
