@@ -121,6 +121,7 @@ This project reflects my interest in applying modern AI technologies to solve re
 
 
 The following screenshots demonstrate the application's core AI capabilities and user experience.
+
 ### Document Management
 
 Upload, organize, and manage documents for AI-powered analysis. Documents can be tagged, categorized, and selected for AI chat, document summaries, comparisons, and resume matching.
