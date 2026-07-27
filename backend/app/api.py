@@ -20,9 +20,15 @@ from .prompts.metadata_prompts import METADATA_PROMPT
 from .prompts.insights_prompts import get_document_insights_prompt
 
 import json
-load_dotenv(dotenv_path=".env")
+from pathlib import Path
+from fastapi import FastAPI, File, UploadFile, HTTPException
+
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
+
 
 app = FastAPI()
 
@@ -114,6 +120,7 @@ def create_vector_store(text, filename):
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
+    
     if DEMO_MODE:
         raise HTTPException(
             status_code=403,
