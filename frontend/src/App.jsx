@@ -6,7 +6,8 @@ import { useState, useEffect, useRef, Children } from "react";
 
 const IS_DEMO_MODE =
     import.meta.env.VITE_DEMO_MODE === "true";
-
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
@@ -341,7 +342,7 @@ async function uploadFile() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const response = await fetch("http://127.0.0.1:8000/upload", {
+    const response = await fetch(`${API_BASE_URL}/upload`, {
       method: "POST",
       body: formData,
     });
@@ -497,7 +498,7 @@ async function askAI(questionOverride = null, selectedDocumentsOverride = null) 
 const documentsToUse = selectedDocumentsOverride || selectedDocuments;
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/ask-stream", {
+    const response = await fetch(`${API_BASE_URL}/ask-stream`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -536,7 +537,7 @@ const documentsToUse = selectedDocumentsOverride || selectedDocuments;
 	updateCurrentSessionMessages(updatedMessages);
     }
 	
-	const sourcesResponse = await fetch("http://127.0.0.1:8000/ask", {
+	const sourcesResponse = await fetch(`${API_BASE_URL}/ask`, {
 		method: "POST",
 		headers: {
 		"Content-Type": "application/json",
@@ -618,32 +619,17 @@ function askAboutMetadataValue(key, value) {
 
 
  async function fetchDocuments() {
-  const response = await fetch("http://127.0.0.1:8000/documents");
+  const response = await fetch(`${API_BASE_URL}/documents`);
   const data = await response.json();
   setDocuments(data.documents || []); 
   
 }
 
-async function deleteDocument_Old(filename) {
-  const response = await fetch(
-    "http://127.0.0.1:8000/documents",
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename }),
-    }
-  );
 
-  const data = await response.json();
-
-  setDocuments(data.documents || []);
-}
 
 async function deleteDocument(filename) {
   const response = await fetch(
-    "http://127.0.0.1:8000/documents",
+    `${API_BASE_URL}/documents`,
     {
       method: "DELETE",
       headers: {
@@ -730,7 +716,7 @@ async function searchDocuments() {
     return;
   }
 
-  const response = await fetch("http://127.0.0.1:8000/search", {
+  const response = await fetch(`{API_BASE_URL}/search`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -805,7 +791,7 @@ async function summarizeDocument() {
   if (selectedDocument === "all") return;
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/summarize", {
+    const response = await fetch(`${API_BASE_URL}/summarize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -869,7 +855,7 @@ async function compareDocuments() {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:8000/compare",
+            `{API_BASE_URL}/compare`,
             {
                 method: "POST",
                 headers: {
@@ -924,7 +910,7 @@ async function compareDocuments() {
 
 async function getSuggestedQuestions(question, answer) {
     try {
-        const response = await fetch("http://127.0.0.1:8000/suggest-questions", {
+        const response = await fetch(`${API_BASE_URL}/suggest-questions`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1220,18 +1206,18 @@ async function analyzeResumeMatch() {
     jobDescriptionDocument,
   ]);
 
-  try {
-    const response = await fetch("http://127.0.0.1:8000/resume-match", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        resume_document: resumeDocument,
-        job_description_document: jobDescriptionDocument,
-      }),
+ 
+	try {
+    const response = await fetch(`${API_BASE_URL}/resume-match`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            resume_document: resumeDocument,
+            job_description_document: jobDescriptionDocument,
+        }),
     });
-
     const data = await response.json();
 	setResumeMatchResult(data.answer);
 	const finalMessages = [
@@ -1277,7 +1263,7 @@ async function analyzeResumeMatch() {
 async function suggestTags(filename) {
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/suggest-tags",
+      `${API_BASE_URL}/suggest-tags`,
       {
         method: "POST",
         headers: {
