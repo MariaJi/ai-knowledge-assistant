@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
 
 api_key = os.getenv("OPENAI_API_KEY")
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
 if not api_key:
     raise ValueError("OPENAI_API_KEY not found. Check your .env file.")

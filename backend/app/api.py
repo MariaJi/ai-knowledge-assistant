@@ -111,8 +111,14 @@ def create_vector_store(text, filename):
     )
 
     return vector_store
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
+    if DEMO_MODE:
+        raise HTTPException(
+            status_code=403,
+            detail="Upload is disabled in demo mode."
+        )
     global vector_store
 
     text = ""
@@ -500,25 +506,14 @@ async def get_documents():
         "documents": documents
     } 
 
-#@app.delete("/documents")
-async def delete_document_Old(request: DeleteDocumentRequest):
-    global vector_store
 
-    if vector_store is not None:
-        vector_store.delete(
-            where={"filename": request.filename}
-        )
-
-    if request.filename in uploaded_documents:
-        uploaded_documents.remove(request.filename)
-
-    return {
-        "message": f"{request.filename} deleted successfully",
-        "documents": uploaded_documents
-    }
-    
 @app.delete("/documents")
 async def delete_document(request: DeleteDocumentRequest):
+    if DEMO_MODE:
+        raise HTTPException(
+            status_code=403,
+            detail="Upload is disabled in demo mode."
+        )
     vector_store.delete(
         where={"filename": request.filename}
     )

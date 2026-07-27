@@ -1942,12 +1942,17 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 		
 		<>
     <h2>Documents</h2>
-	{!IS_DEMO_MODE && (
+	
 		<div className="upload-box">
 			<h2>Upload Document</h2>
-
+		{IS_DEMO_MODE && (
+			<div className="demo-message">
+				This public demo uses sample documents. Uploading new documents is disabled.
+			</div>
+		)}
 			<input
 				type="file"
+				disabled={IS_DEMO_MODE}
 				accept=".txt,.pdf,.docx"
 				ref={fileInputRef}
 				 onChange={(e) => {
@@ -1959,10 +1964,10 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 			<button onClick={uploadFile} disabled={!selectedFile || uploading}>
 				{uploading ? "Uploading..." : "Upload"}
 			</button>
-
+		
 			{uploadMessage && <p>{uploadMessage}</p>}
 		</div>
-	)}	
+	
 		<div className="documents-box">
 		
 				<h2>Uploaded Documents ({documents.length})</h2>
