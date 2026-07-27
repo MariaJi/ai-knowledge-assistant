@@ -3,6 +3,10 @@ import ReactMarkdown from "react-markdown";
 import "./App.css";
 //import { useState, useEffect, useRef } from "react";
 import { useState, useEffect, useRef, Children } from "react";
+
+const IS_DEMO_MODE =
+    import.meta.env.VITE_DEMO_MODE === "true";
+console.log("Demo Mode:", IS_DEMO_MODE);
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
@@ -53,15 +57,7 @@ const [currentSessionId, setCurrentSessionId] = useState(() => {
 
     return 1;
 });
-  /*const [messages, setMessages] = useState(() => {
-  const savedMessages = localStorage.getItem("chatMessages");
-
-  if (savedMessages) {
-    return JSON.parse(savedMessages);
-  }
-
-  return [];
-  }); */
+ 
   const [resumeDocument, setResumeDocument] = useState("");
   const [jobDescriptionDocument, setJobDescriptionDocument] = useState("");
   
@@ -297,10 +293,7 @@ useEffect(() => {
   useEffect(() => {
   fetchDocuments();
   }, []);
- /* useEffect(() => {
-  localStorage.setItem("chatMessages", JSON.stringify(messages));
-}, [messages]);*/
-
+ 
 useEffect(() => {
   localStorage.setItem("chatSessions", JSON.stringify(sessions));
 }, [sessions]);
@@ -1608,7 +1601,6 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 			}
 	</div>
 
-
 		<h1>AI Knowledge Assistant</h1>
 		
 		<div className="chat-statistics">
@@ -1950,6 +1942,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 		
 		<>
     <h2>Documents</h2>
+	{!IS_DEMO_MODE && (
 		<div className="upload-box">
 			<h2>Upload Document</h2>
 
@@ -1969,7 +1962,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 
 			{uploadMessage && <p>{uploadMessage}</p>}
 		</div>
-		
+	)}	
 		<div className="documents-box">
 		
 				<h2>Uploaded Documents ({documents.length})</h2>
@@ -2043,9 +2036,11 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 				>
 					Select None
 				</button>
+			{!IS_DEMO_MODE && (
 				<button onClick={autoTagAllDocuments}>
 					Auto Tag All
 				</button>
+			)}
 			</div>
 		
 			<select
@@ -2148,7 +2143,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 						width: "150px",
 						}}
 					/>
-
+				{!IS_DEMO_MODE && (
 					<button
 						onClick={async () => {
 						const tags = await suggestTags(doc);
@@ -2172,7 +2167,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 					>
 						Auto Tag
 					</button>
-
+				)}
 
 						<span style={{ marginLeft: "10px" }}>
 							Uploaded: {documentMetadata[doc]?.uploadedAt || "Unknown"}
@@ -2183,7 +2178,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 							Reading: {documentMetadata[doc]?.readingTime || 0} min
   
 						</span>
-
+				{!IS_DEMO_MODE && (
 					<button
 							onClick={() => deleteDocument(doc)}
 							style={{
@@ -2194,6 +2189,7 @@ const filteredAnalysisHistory = analysisHistory.filter((item) => {
 					>
 						Delete
 					</button>
+				)}
 				</li>
 				))}
 			</ul>
