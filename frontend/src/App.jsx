@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, Children } from "react";
 
 const IS_DEMO_MODE =
     import.meta.env.VITE_DEMO_MODE === "true";
-console.log("Demo Mode:", IS_DEMO_MODE);
+
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
