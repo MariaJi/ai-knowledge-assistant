@@ -25,21 +25,24 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 
 ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
-
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 
-
 app = FastAPI()
+
+
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:5173"
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 class QuestionRequest(BaseModel):
     question: str
