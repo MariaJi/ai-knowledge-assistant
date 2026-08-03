@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, Children } from "react";
 const IS_DEMO_MODE =
     import.meta.env.VITE_DEMO_MODE === "true";
 const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 function App() {
   const [question, setQuestion] = useState("");
   //const [currentSessionId, setCurrentSessionId] = useState(1);
