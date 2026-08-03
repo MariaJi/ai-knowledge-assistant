@@ -31,14 +31,14 @@ DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 app = FastAPI()
 
 
-FRONTEND_URL = os.getenv(
-    "FRONTEND_URL",
+FRONTEND_ORIGINS = os.getenv(
+    "FRONTEND_ORIGINS",
     "http://localhost:5173"
-)
+).split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
+    allow_origins=[origin.strip() for origin in FRONTEND_ORIGINS],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
