@@ -867,6 +867,12 @@ async function compareDocuments() {
                 }),
             }
         );
+		if (!response.ok) {
+				const errorText = await response.text();
+				throw new Error(
+				`Compare failed (${response.status}): ${errorText || response.statusText}`
+			);
+		}
 
         const data = await response.json();
 		setAnalysisHistory((prev) => [
