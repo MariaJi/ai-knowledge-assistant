@@ -1,11 +1,15 @@
 
 # AI Knowledge Assistant
+- 🚀 [Live Demo on Microsoft Azure](https://polite-tree-0cbbc0e1e.7.azurestaticapps.net/)
+- 🤖 Retrieval-Augmented Generation (RAG)
+- 🐳 Dockerized FastAPI Backend
+- ☁️ Automated CI/CD with GitHub Actions
 
-An AI-powered knowledge assistant that uses Retrieval-Augmented Generation (RAG) to answer questions about uploaded documents, generate AI-powered summaries, compare documents, and analyze resumes against job descriptions.
+An AI-powered knowledge assistant that uses Retrieval-Augmented Generation (RAG) to answer questions across documents, generate AI-powered summaries, compare documents, and analyze resumes against job descriptions.
 
-The application combines modern AI technologies with a production-style full-stack web application to deliver source-grounded answers through an intuitive user interface.
+The application combines modern Generative AI capabilities with a production-style full-stack architecture, containerized deployment, automated CI/CD, and cloud-native hosting.
 
-Built with **React**, **FastAPI**, **OpenAI GPT**, and **ChromaDB**.
+Built with **React**, **FastAPI**, **OpenAI GPT**, **ChromaDB**, **Docker**, **GitHub Actions**, and **Microsoft Azure**.
 
 ## Why I Built This
 
@@ -15,7 +19,14 @@ My goal was to build more than a simple chatbot. I wanted to create a complete f
 
 This project reflects my interest in applying modern AI technologies to solve real-world problems while leveraging my experience in designing and building production software.
 
+## Live Demo
 
+| Resource | Link |
+|----------|------|
+| 🌐 Live Application | [Try the AI Knowledge Assistant](https://polite-tree-0cbbc0e1e.7.azurestaticapps.net/) |
+| 📂 GitHub Repository | [Source Code](https://github.com/MariaJi/ai-knowledge-assistant) |
+
+The application is fully deployed on Microsoft Azure. The React frontend is hosted on Azure Static Web Apps, while the FastAPI backend runs as a Docker container in Azure Container Apps. GitHub Actions provides continuous integration and deployment (CI/CD), automatically building and deploying the application whenever changes are pushed to the main branch.
 
 ## Key Capabilities
 
@@ -46,47 +57,54 @@ This project reflects my interest in applying modern AI technologies to solve re
 - Light and dark mode
 
 
-## Architecture
+## System Architecture
+### Cloud Deployment Architecture
+```
+                    
+GitHub Repository
+        │
+GitHub Actions CI/CD
+        │
+ ┌──────┴──────────────┐
+ │                     │
+ ▼                     ▼
+Azure Static      Azure Container
+Web Apps             Registry
+                         │
+                         ▼
+                Azure Container Apps
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+    OpenAI GPT    OpenAI Embeddings   ChromaDB
 
 ```
-                        +----------------------+
-                        |   React Frontend     |
-                        +----------+-----------+
-                                   |
-                                   | REST API
-                                   |
-                        +----------v-----------+
-                        |       FastAPI        |
-                        +----------+-----------+
-                                   |
-                +------------------+------------------+
-                |                  |                  |
-                |                  |                  |
-       +--------v--------+ +-------v-------+ +--------v--------+
-       |   OpenAI GPT    | |   Embeddings  | |    ChromaDB     |
-       | Response Engine | |   Generation  | | Vector Database |
-       +-----------------+ +---------------+ +-----------------+
-```
+The frontend is hosted on Azure Static Web Apps while the FastAPI backend runs as a Docker container in Azure Container Apps. GitHub Actions automatically builds, deploys, and updates both frontend and backend whenever changes are pushed to the main branch.
 
 ### RAG Workflow
 
 1. Users upload one or more documents.
-2. Documents are split into smaller text chunks.
+2. Documents are processed and split into smaller text chunks.
 3. OpenAI Embeddings generates vector embeddings for each chunk.
-4. Embeddings are stored in ChromaDB.
-5. When a user asks a question, the application retrieves the most relevant document chunks.
-6. The retrieved context and user question are sent to OpenAI GPT to generate a source-grounded response.
-7. The response is streamed back to the user with supporting citations.
+4. Embeddings are stored in ChromaDB for semantic retrieval.
+5. Users select one or more documents and submit a question.
+6. The application retrieves the most relevant document chunks using vector similarity search.
+7. The retrieved context and user question are sent to OpenAI GPT to generate a source-grounded response.
+8. The AI response is streamed back to the user with supporting source citations.
 
-### Application Architecture
+### Technology Architecture
 
 - **Frontend:** React + Vite
-- **Backend:** FastAPI REST API
+- **Backend:** FastAPI
 - **AI Model:** OpenAI GPT
 - **Embeddings:** OpenAI Embeddings
 - **Vector Database:** ChromaDB
+- **Containerization:** Docker
+- **Frontend Hosting:** Azure Static Web Apps
+- **Backend Hosting:** Azure Container Apps
+- **Container Registry:** Azure Container Registry
+- **CI/CD:** GitHub Actions
 - **Communication:** REST APIs with streaming responses
-
 
 ## Tech Stack
 
@@ -109,12 +127,18 @@ This project reflects my interest in applying modern AI technologies to solve re
 - OpenAI GPT
 - OpenAI Embeddings
 - Retrieval-Augmented Generation (RAG)
+- Semantic Vector Search
 - ChromaDB (Vector Database)
+- Prompt Engineering
 
-### Development Tools
+### Cloud & DevOps
 
-- Git
-- GitHub
+- Docker
+- GitHub Actions
+- Azure Static Web Apps
+- Azure Container Apps
+- Azure Container Registry
+
 
 
 ## Screenshots
