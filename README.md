@@ -2,7 +2,7 @@
 # AI Knowledge Assistant
 - 🚀 [Live Demo on Microsoft Azure](https://polite-tree-0cbbc0e1e.7.azurestaticapps.net/)
 - 🤖 Retrieval-Augmented Generation (RAG)
-- 🐳 Dockerized FastAPI Backend
+- 🐳 Dockerized FastAPI Backend on Azure Container Apps
 - ☁️ Automated CI/CD with GitHub Actions
 
 An AI-powered knowledge assistant that uses Retrieval-Augmented Generation (RAG) to answer questions across documents, generate AI-powered summaries, compare documents, and analyze resumes against job descriptions.
