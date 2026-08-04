@@ -855,7 +855,7 @@ async function compareDocuments() {
 
     try {
         const response = await fetch(
-            `{API_BASE_URL}/compare`,
+            `${API_BASE_URL}/compare`,
             {
                 method: "POST",
                 headers: {
