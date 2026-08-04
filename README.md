@@ -9,7 +9,7 @@ An AI-powered knowledge assistant that uses Retrieval-Augmented Generation (RAG)
 
 The application combines modern Generative AI capabilities with a production-style full-stack architecture, containerized deployment, automated CI/CD, and cloud-native hosting.
 
-Built with **React**, **FastAPI**, **OpenAI GPT**, **ChromaDB**, **Docker**, **GitHub Actions**, and **Microsoft Azure**.
+Built with React, FastAPI, OpenAI GPT, ChromaDB, Docker, GitHub Actions, and Microsoft Azure (Azure Static Web Apps, Azure Container Apps, and Azure Container Registry).
 
 ## Why I Built This
 
